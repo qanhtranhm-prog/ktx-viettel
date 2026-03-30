@@ -14,6 +14,7 @@
         .viettel-text-red { color: #ee0000; }
         .custom-scroll::-webkit-scrollbar { width: 4px; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .btn-active:active { transform: scale(0.95); transition: 0.1s; }
     </style>
 </head>
 <body class="bg-slate-100 min-h-screen">
@@ -21,10 +22,10 @@
     <div class="max-w-md mx-auto min-h-screen flex flex-col shadow-2xl bg-white relative">
         <header class="viettel-red text-white p-4 sticky top-0 z-50 shadow-md flex justify-between items-center">
             <div class="flex items-center space-x-2" onclick="goHome()" style="cursor: pointer;">
-                <i class="fas fa-building text-lg"></i>
-                <h1 class="font-black text-sm uppercase tracking-tighter">KTX VIETTEL</h1>
+                <i class="fas fa-building text-lg text-white"></i>
+                <h1 class="font-black text-sm uppercase tracking-tighter text-white">KTX VIETTEL</h1>
             </div>
-            <button onclick="switchAdminView()" id="toggleBtn" class="bg-white/20 px-3 py-1.5 rounded-lg text-[10px] font-bold border border-white/30 uppercase">
+            <button onclick="switchAdminView()" id="toggleBtn" class="bg-white/20 px-3 py-1.5 rounded-lg text-[10px] font-bold border border-white/30 uppercase text-white">
                 <i class="fas fa-user-shield mr-1"></i> QUẢN LÝ
             </button>
         </header>
@@ -33,14 +34,14 @@
             <section id="homeView" class="space-y-6 pt-8">
                 <div class="text-center mb-10">
                     <h2 class="text-2xl font-black text-slate-800 uppercase tracking-tight">Hệ thống KTX</h2>
-                    <p class="text-slate-500 text-sm mt-1">Học viện Viettel</p>
+                    <p class="text-slate-500 text-sm mt-1 font-semibold">Học viện Viettel</p>
                 </div>
                 <div class="grid grid-cols-1 gap-5">
-                    <button onclick="showCheckIn()" class="bg-white border-2 border-blue-100 p-8 rounded-[2.5rem] shadow-xl flex flex-col items-center space-y-4 hover:border-blue-500 active:scale-95 transition-all">
+                    <button onclick="showCheckIn()" class="bg-white border-2 border-blue-100 p-8 rounded-[2.5rem] shadow-xl flex flex-col items-center space-y-4 hover:border-blue-500 btn-active">
                         <div class="bg-blue-50 p-5 rounded-full text-blue-600"><i class="fas fa-door-open text-4xl"></i></div>
                         <span class="font-black text-xl text-slate-800 uppercase">NHẬN PHÒNG</span>
                     </button>
-                    <button onclick="showCheckOut()" class="bg-white border-2 border-red-100 p-8 rounded-[2.5rem] shadow-xl flex flex-col items-center space-y-4 hover:border-red-500 active:scale-95 transition-all">
+                    <button onclick="showCheckOut()" class="bg-white border-2 border-red-100 p-8 rounded-[2.5rem] shadow-xl flex flex-col items-center space-y-4 hover:border-red-500 btn-active">
                         <div class="bg-red-50 p-5 rounded-full text-red-600"><i class="fas fa-key text-4xl"></i></div>
                         <span class="font-black text-xl text-slate-800 uppercase">TRẢ PHÒNG</span>
                     </button>
@@ -54,31 +55,45 @@
                 
                 <div class="bg-blue-600 text-white p-5 rounded-2xl shadow-lg mb-4 space-y-3">
                     <div>
-                        <p class="text-[10px] font-bold opacity-80 uppercase tracking-widest mb-1 italic">Họ và Tên khách hàng:</p>
-                        <input type="text" id="checkInName" placeholder="HỌ VÀ TÊN" class="w-full p-3 text-lg font-bold text-slate-800 rounded-xl outline-none shadow-inner uppercase">
+                        <p class="text-[10px] font-bold opacity-80 uppercase tracking-widest mb-1 italic uppercase">Họ và Tên khách hàng:</p>
+                        <input type="text" id="checkInName" placeholder="NHẬP HỌ TÊN" class="w-full p-3 text-lg font-bold text-slate-800 rounded-xl outline-none shadow-inner uppercase">
                     </div>
                     <div>
-                        <p class="text-[10px] font-bold opacity-80 uppercase tracking-widest mb-1 italic">Số phòng:</p>
+                        <p class="text-[10px] font-bold opacity-80 uppercase tracking-widest mb-1 italic uppercase">Số phòng:</p>
                         <input type="number" id="checkInRoom" placeholder="SỐ PHÒNG" class="w-full p-3 text-2xl font-black text-center text-slate-800 rounded-xl outline-none shadow-inner">
                     </div>
                 </div>
 
-                <div class="border-2 border-slate-200 rounded-2xl overflow-hidden bg-white">
-                    <div class="bg-slate-100 p-2 text-center font-black text-[9px] uppercase text-slate-500 tracking-widest">Kiểm tra Tài sản</div>
-                    <div class="h-64 overflow-y-auto custom-scroll p-4 text-[12px] text-slate-700 space-y-3" id="assetList">
-                        </div>
-                    <div class="p-3 border-t">
-                        <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Ghi chú sự cố (nếu có):</p>
-                        <textarea id="checkInNote" class="w-full p-2 border rounded-lg text-xs outline-none focus:border-blue-400" rows="2" placeholder="Ví dụ: Tivi hỏng, thiếu khăn..."></textarea>
+                <div class="border-2 border-red-200 rounded-2xl overflow-hidden bg-white shadow-sm mb-4">
+                    <div class="bg-red-50 p-2 text-center font-black text-[10px] uppercase text-red-600 tracking-widest italic">Nội quy Ký túc xá</div>
+                    <div class="h-40 overflow-y-auto custom-scroll p-4 text-[11px] text-slate-700 space-y-2 leading-relaxed">
+                        <p><b>Điều 1:</b> Thực hiện đúng giờ giấc sinh hoạt và làm việc của Học viện.</p>
+                        <p><b>Điều 2:</b> Giữ gìn vệ sinh chung, không vứt rác bừa bãi, để giày dép đúng nơi quy định.</p>
+                        <p><b>Điều 3:</b> Không tự ý thay đổi vị trí tài sản hoặc mang tài sản ra khỏi phòng.</p>
+                        <p><b>Điều 4:</b> Tiết kiệm điện, nước; tắt mọi thiết bị điện khi ra khỏi phòng.</p>
+                        <p><b>Điều 5:</b> Không tàng trữ chất cấm, chất dễ cháy nổ, không đánh bạc dưới mọi hình thức.</p>
+                        <p><b>Điều 6:</b> Không tiếp khách trong phòng riêng sau 21h00.</p>
+                        <p><b>Điều 7:</b> Chấp hành nghiêm chỉnh các quy định về an ninh trật tự và PCCC.</p>
+                        <p><b>Điều 8:</b> Mọi hư hỏng tài sản phải báo ngay cho Ban quản lý để xử lý.</p>
+                        <p><b>Điều 9:</b> Bàn giao đầy đủ tài sản khi trả phòng theo quy định.</p>
+                    </div>
+                </div>
+
+                <div class="border-2 border-slate-200 rounded-2xl overflow-hidden bg-white shadow-sm">
+                    <div class="bg-slate-100 p-2 text-center font-black text-[9px] uppercase text-slate-500 tracking-widest italic uppercase">Kiểm kê tài sản phòng</div>
+                    <div class="h-56 overflow-y-auto custom-scroll p-3 text-[12px] text-slate-700 space-y-2" id="assetList"></div>
+                    <div class="p-3 border-t bg-slate-50">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase mb-1 uppercase">Ghi chú sự cố (nếu có):</p>
+                        <textarea id="checkInNote" class="w-full p-2 border rounded-lg text-xs outline-none focus:border-blue-400" rows="2" placeholder="Ví dụ: Tường bẩn, thiếu dép..."></textarea>
                     </div>
                 </div>
 
                 <label class="flex items-start space-x-3 p-4 bg-blue-50 rounded-2xl border border-blue-200 cursor-pointer">
                     <input type="checkbox" id="agreeCheckIn" class="mt-1 w-5 h-5 accent-blue-600 rounded">
-                    <span class="text-[11px] font-bold text-blue-900 leading-tight">Tôi cam đoan đã kiểm tra kỹ. Tài sản được tích là đầy đủ và tốt.</span>
+                    <span class="text-[11px] font-bold text-blue-900 leading-tight italic">Tôi đã đọc kỹ 9 điều Nội quy và cam đoan tài sản được tích là đầy đủ, tốt.</span>
                 </label>
 
-                <button onclick="handleCheckIn()" class="w-full bg-blue-600 text-white font-black py-4 rounded-xl shadow-lg active:scale-95 transition-all text-lg uppercase tracking-widest">
+                <button onclick="handleCheckIn()" class="w-full bg-blue-600 text-white font-black py-4 rounded-xl shadow-lg btn-active text-lg uppercase tracking-widest">
                     XÁC NHẬN NHẬN PHÒNG
                 </button>
             </section>
@@ -89,9 +104,9 @@
                 </div>
                 <div class="bg-white p-8 rounded-[2rem] shadow-2xl border border-slate-100 text-center">
                     <div class="bg-red-50 inline-block p-6 rounded-full mb-4 text-red-600"><i class="fas fa-paper-plane text-4xl"></i></div>
-                    <h2 class="text-2xl font-black text-slate-800 uppercase mb-6">BÁO TRẢ PHÒNG</h2>
+                    <h2 class="text-2xl font-black text-slate-800 uppercase mb-6 tracking-tight">Báo trả phòng</h2>
                     <input type="number" id="checkOutRoom" placeholder="SỐ PHÒNG" class="w-full p-4 text-5xl font-black text-center border-b-4 border-slate-200 focus:border-red-500 focus:outline-none mb-8">
-                    <button onclick="handleCheckOut()" class="w-full viettel-red text-white font-black py-5 rounded-2xl shadow-xl active:scale-95 transition-all text-lg uppercase">
+                    <button onclick="handleCheckOut()" class="w-full viettel-red text-white font-black py-5 rounded-2xl shadow-xl btn-active text-lg uppercase tracking-widest">
                         GỬI THÔNG BÁO TRẢ
                     </button>
                 </div>
@@ -111,9 +126,9 @@
     </div>
 
     <script>
+        const sheetURL = "https://script.google.com/macros/s/AKfycbzgmLSydKi8L7_b_MopivUWfEvxVrj0DNW7b7OXAAYA5qGbDB_34ARUqHcFmt3gzBkA/exec";
         const telegramToken = "8628522316:AAEEZavf7qnnENTEzGTb2dmmYDHhunZ9qT4"; 
         const chatId = "6074347518"; 
-        const sheetURL = "https://script.google.com/macros/s/AKfycbzgmLSydKi8L7_b_MopivUWfEvxVrj0DNW7b7OXAAYA5qGbDB_34ARUqHcFmt3gzBkA/exec";
 
         const assetNames = [
             "Chìa khóa", "Tivi", "Điều khiển Tivi", "Đầu KTS", "Tủ lạnh", "Điều hòa", 
@@ -142,14 +157,21 @@
             const assetList = document.getElementById('assetList');
             assetNames.forEach((name, i) => {
                 const div = document.createElement('label');
-                div.className = "flex items-center justify-between p-2 bg-slate-50 rounded-lg border text-[11px]";
-                div.innerHTML = `<span>${i+1}. ${name}</span><input type="checkbox" checked class="asset-item w-4 h-4 accent-green-600" data-name="${name}">`;
+                div.className = "flex items-center justify-between p-2.5 bg-slate-50 rounded-xl border border-slate-100 text-[11px] shadow-sm";
+                div.innerHTML = `<span><b class='text-slate-300 mr-1 italic'>${i+1}.</b> ${name}</span><input type="checkbox" checked class="asset-item w-5 h-5 accent-green-600 rounded" data-name="${name}">`;
                 assetList.appendChild(div);
             });
         }
 
-        function sendToSheet(data) {
-            fetch(sheetURL, { method: "POST", mode: "no-cors", body: JSON.stringify(data) });
+        async function sendDataToSheets(payload) {
+            try {
+                await fetch(sheetURL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+            } catch (e) { console.error("Sheets Error:", e); }
         }
 
         async function handleCheckIn() {
@@ -159,22 +181,21 @@
             const extraNote = document.getElementById('checkInNote').value.trim();
             const room = rooms.find(r => r.id === roomNo);
 
-            if (!name || !room || !isAgreed) return showNotification("Vui lòng điền đủ thông tin!", "error");
+            if (!name || !room || !isAgreed) return showNotification("Chưa nhập tên, số phòng hoặc chưa đồng ý nội quy!", "error");
             
             let issues = [];
-            document.querySelectorAll('.asset-item').forEach(cb => { if(!cb.checked) issues.push(cb.getAttribute('data-name')); });
+            document.querySelectorAll('.asset-item').forEach(cb => { 
+                if(!cb.checked) issues.push(cb.getAttribute('data-name')); 
+            });
             
-            room.status = 'occupied';
-            room.occupant = name;
+            const issueString = issues.join(", ") || "Không có";
+            sendDataToSheets({ type: "NHẬN PHÒNG", room: roomNo, name: name.toUpperCase(), issues: issueString, note: extraNote || "Không" });
 
-            const msg = `🟢 NHẬN PHÒNG: ${roomNo}\n👤 Khách: ${name.toUpperCase()}\n⚠️ Lỗi: ${issues.join(", ") || "Không"}\n📝 Ghi chú: ${extraNote || "Không"}`;
-            
-            sendToSheet({ type: "NHẬN PHÒNG", room: roomNo, name: name.toUpperCase(), issues: issues.join(", ") || "Không có", note: extraNote || "Không" });
-            
+            const msg = `🟢 NHẬN PHÒNG: ${roomNo}\n👤 Khách: ${name.toUpperCase()}\n⚠️ Lỗi: ${issueString}\n📝 Ghi chú: ${extraNote || "Không"}`;
             try {
                 await fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(msg)}`);
-                showNotification(`Thành công phòng ${roomNo}`, "success");
-                goHome();
+                showNotification(`Đã ghi nhận phòng ${roomNo}`, "success");
+                setTimeout(goHome, 2000);
             } catch (e) { showNotification("Lỗi kết nối!", "error"); }
         }
 
@@ -183,14 +204,13 @@
             const room = rooms.find(r => r.id === roomNo);
             if (!room) return showNotification("Số phòng không đúng!", "error");
             
-            room.status = 'pending';
-            const msg = `🔴 BÁO TRẢ PHÒNG: ${roomNo}`;
-            sendToSheet({ type: "TRẢ PHÒNG", room: roomNo, name: room.occupant || "Không tên", issues: "", note: "" });
+            sendDataToSheets({ type: "TRẢ PHÒNG", room: roomNo, name: "TRẢ PHÒNG", issues: "", note: "" });
 
+            const msg = `🔴 BÁO TRẢ PHÒNG: ${roomNo}`;
             try {
                 await fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(msg)}`);
                 showNotification(`Đã báo trả phòng ${roomNo}`, "success");
-                goHome();
+                setTimeout(goHome, 2000);
             } catch (e) { showNotification("Lỗi kết nối!", "error"); }
         }
 
@@ -211,17 +231,16 @@
         function renderAdminDashboard() {
             const container = document.getElementById('floorContainer');
             container.innerHTML = '';
-            const floors = [...new Set(rooms.map(r => r.floor))];
+            const floors = [1, 2, 3, 4, 5, 6, 7, 8, 9];
             floors.forEach(f => {
                 const floorDiv = document.createElement('div');
-                floorDiv.innerHTML = `<h3 class="text-[10px] font-black text-slate-400 mb-2 uppercase border-l-4 border-red-500 pl-2">Tầng ${f}</h3><div class="room-grid"></div>`;
+                floorDiv.innerHTML = `<h3 class="text-[10px] font-black text-slate-400 mb-2 uppercase border-l-4 border-red-500 pl-2 italic">Tầng ${f}</h3><div class="room-grid"></div>`;
                 const grid = floorDiv.querySelector('.room-grid');
                 rooms.filter(r => r.floor === f).forEach(room => {
                     const btn = document.createElement('div');
-                    let style = room.status === 'occupied' ? 'bg-blue-600 text-white shadow-md' : room.status === 'pending' ? 'bg-red-600 text-white animate-pulse shadow-lg' : 'bg-slate-50 text-slate-300 border border-slate-100';
+                    let style = room.status === 'occupied' ? 'bg-blue-600 text-white shadow-md' : room.status === 'pending' ? 'bg-red-600 text-white animate-pulse' : 'bg-slate-50 text-slate-300 border border-slate-100';
                     btn.className = `${style} py-2.5 rounded-lg text-center font-black text-[9px] cursor-pointer`;
                     btn.innerText = room.id;
-                    btn.onclick = () => { if(confirm(`Dọn xong phòng ${room.id}?`)) { room.status = 'available'; room.occupant = ''; renderAdminDashboard(); }};
                     grid.appendChild(btn);
                 });
                 container.appendChild(floorDiv);
