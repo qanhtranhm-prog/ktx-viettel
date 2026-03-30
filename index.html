@@ -14,7 +14,6 @@
         .viettel-text-red { color: #ee0000; }
         .custom-scroll::-webkit-scrollbar { width: 4px; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        input[type="checkbox"] { cursor: pointer; }
     </style>
 </head>
 <body class="bg-slate-100 min-h-screen">
@@ -34,7 +33,7 @@
             <section id="homeView" class="space-y-6 pt-8">
                 <div class="text-center mb-10">
                     <h2 class="text-2xl font-black text-slate-800 uppercase tracking-tight">Hệ thống KTX</h2>
-                    <p class="text-slate-500 text-sm mt-1">Vui lòng chọn thao tác</p>
+                    <p class="text-slate-500 text-sm mt-1">Học viện Viettel</p>
                 </div>
                 <div class="grid grid-cols-1 gap-5">
                     <button onclick="showCheckIn()" class="bg-white border-2 border-blue-100 p-8 rounded-[2.5rem] shadow-xl flex flex-col items-center space-y-4 hover:border-blue-500 active:scale-95 transition-all">
@@ -50,7 +49,7 @@
 
             <section id="checkInView" class="hidden space-y-4 pt-2 pb-10">
                 <div class="flex items-center space-x-2 mb-4 cursor-pointer text-slate-400" onclick="goHome()">
-                    <i class="fas fa-arrow-left"></i> <span class="text-sm font-bold uppercase tracking-tight">Quay lại</span>
+                    <i class="fas fa-arrow-left"></i> <span class="text-sm font-bold uppercase">Quay lại</span>
                 </div>
                 
                 <div class="bg-blue-600 text-white p-5 rounded-2xl shadow-lg mb-4 space-y-3">
@@ -65,27 +64,18 @@
                 </div>
 
                 <div class="border-2 border-slate-200 rounded-2xl overflow-hidden bg-white">
-                    <div class="bg-slate-100 p-2 text-center font-black text-[9px] uppercase text-slate-500 tracking-widest">Kiểm tra Nội quy & Tài sản</div>
-                    <div class="h-80 overflow-y-auto custom-scroll p-4 text-[12px] text-slate-700 space-y-5">
-                        <h3 class="font-black text-red-600 text-center uppercase border-b pb-1">Nội quy lưu trú</h3>
-                        <p class="text-[11px] leading-relaxed">Quý khách vui lòng tuân thủ 9 điều nội quy của KTX Viettel. Tiết kiệm điện nước, giữ gìn vệ sinh và không hút thuốc trong phòng.</p>
-                        
-                        <h3 class="font-black text-blue-600 text-center uppercase border-b pb-1 pt-2">Bàn giao tài sản</h3>
-                        <p class="text-[10px] text-slate-500 italic mb-2 text-center">Bỏ tích nếu món đồ bị THIẾU hoặc HỎNG</p>
-                        
-                        <div id="assetList" class="space-y-2">
-                            </div>
-
-                        <div class="mt-4">
-                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Ghi chú khác (nếu có):</p>
-                            <textarea id="checkInNote" class="w-full p-2 border rounded-lg text-xs outline-none focus:border-blue-400" rows="2" placeholder="Ví dụ: Tường hơi bẩn, rèm bị tuột..."></textarea>
+                    <div class="bg-slate-100 p-2 text-center font-black text-[9px] uppercase text-slate-500 tracking-widest">Kiểm tra Tài sản</div>
+                    <div class="h-64 overflow-y-auto custom-scroll p-4 text-[12px] text-slate-700 space-y-3" id="assetList">
                         </div>
+                    <div class="p-3 border-t">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Ghi chú sự cố (nếu có):</p>
+                        <textarea id="checkInNote" class="w-full p-2 border rounded-lg text-xs outline-none focus:border-blue-400" rows="2" placeholder="Ví dụ: Tivi hỏng, thiếu khăn..."></textarea>
                     </div>
                 </div>
 
                 <label class="flex items-start space-x-3 p-4 bg-blue-50 rounded-2xl border border-blue-200 cursor-pointer">
                     <input type="checkbox" id="agreeCheckIn" class="mt-1 w-5 h-5 accent-blue-600 rounded">
-                    <span class="text-[11px] font-bold text-blue-900 leading-tight tracking-tight">Tôi cam đoan đã kiểm tra kỹ. Các món đồ được tích chọn là đầy đủ và hoạt động tốt.</span>
+                    <span class="text-[11px] font-bold text-blue-900 leading-tight">Tôi cam đoan đã kiểm tra kỹ. Tài sản được tích là đầy đủ và tốt.</span>
                 </label>
 
                 <button onclick="handleCheckIn()" class="w-full bg-blue-600 text-white font-black py-4 rounded-xl shadow-lg active:scale-95 transition-all text-lg uppercase tracking-widest">
@@ -95,12 +85,12 @@
 
             <section id="checkOutView" class="hidden space-y-6 pt-2">
                 <div class="flex items-center space-x-2 mb-4 cursor-pointer text-slate-400" onclick="goHome()">
-                    <i class="fas fa-arrow-left"></i> <span class="text-sm font-bold uppercase tracking-tight">Quay lại</span>
+                    <i class="fas fa-arrow-left"></i> <span class="text-sm font-bold uppercase">Quay lại</span>
                 </div>
                 <div class="bg-white p-8 rounded-[2rem] shadow-2xl border border-slate-100 text-center">
                     <div class="bg-red-50 inline-block p-6 rounded-full mb-4 text-red-600"><i class="fas fa-paper-plane text-4xl"></i></div>
-                    <h2 class="text-2xl font-black text-slate-800 uppercase mb-6 tracking-tighter">BÁO TRẢ PHÒNG</h2>
-                    <input type="number" id="checkOutRoom" placeholder="SỐ PHÒNG" class="w-full p-4 text-5xl font-black text-center border-b-4 border-slate-200 focus:border-red-500 focus:outline-none mb-8 placeholder:text-slate-200">
+                    <h2 class="text-2xl font-black text-slate-800 uppercase mb-6">BÁO TRẢ PHÒNG</h2>
+                    <input type="number" id="checkOutRoom" placeholder="SỐ PHÒNG" class="w-full p-4 text-5xl font-black text-center border-b-4 border-slate-200 focus:border-red-500 focus:outline-none mb-8">
                     <button onclick="handleCheckOut()" class="w-full viettel-red text-white font-black py-5 rounded-2xl shadow-xl active:scale-95 transition-all text-lg uppercase">
                         GỬI THÔNG BÁO TRẢ
                     </button>
@@ -123,14 +113,14 @@
     <script>
         const telegramToken = "8628522316:AAEEZavf7qnnENTEzGTb2dmmYDHhunZ9qT4"; 
         const chatId = "6074347518"; 
+        const sheetURL = "https://script.google.com/macros/s/AKfycbzgmLSydKi8L7_b_MopivUWfEvxVrj0DNW7b7OXAAYA5qGbDB_34ARUqHcFmt3gzBkA/exec";
 
         const assetNames = [
-            "Chìa khóa phòng", "Tivi", "Điều khiển Tivi", "Đầu KTS Viettel", "Tủ lạnh", 
-            "Điều hòa", "Điều khiển điều hòa", "Điều khiển quạt", "Tủ để đồ", "Khóa tủ để đồ",
-            "Đệm", "Chăn", "Ga", "Gối", "Cốc thủy tinh", 
-            "Khay đựng cốc inox", "Giá phơi quần áo", "Lọ đựng sữa tắm", "Lọ đựng dầu gội", "Lọ nước rửa tay",
-            "Cốc đánh răng", "Bộ đồ dùng cá nhân", "Xô nhựa", "Chậu nhựa", "Thùng rác",
-            "Ấm siêu tốc", "Đèn học", "Dép đi trong nhà", "Cầu là", "Bàn là"
+            "Chìa khóa", "Tivi", "Điều khiển Tivi", "Đầu KTS", "Tủ lạnh", "Điều hòa", 
+            "Đ.khiển điều hòa", "Đ.khiển quạt", "Tủ đồ", "Khóa tủ", "Đệm", "Chăn", "Ga", "Gối", 
+            "Cốc thủy tinh", "Khay inox", "Giá phơi", "Lọ sữa tắm", "Lọ dầu gội", "Lọ rửa tay", 
+            "Cốc đánh răng", "Đồ cá nhân", "Xô nhựa", "Chậu nhựa", "Thùng rác", "Ấm siêu tốc", 
+            "Đèn học", "Dép", "Cầu là", "Bàn là"
         ];
 
         let rooms = [];
@@ -149,36 +139,17 @@
                 }
             });
 
-            // Tạo danh sách tài sản trong giao diện Nhận phòng
-            const assetListContainer = document.getElementById('assetList');
-            assetNames.forEach((name, index) => {
-                const item = document.createElement('label');
-                item.className = "flex items-center justify-between p-2 bg-slate-50 rounded-lg border border-slate-100";
-                item.innerHTML = `
-                    <span class="text-[11px] font-medium text-slate-600">${index + 1}. ${name}</span>
-                    <input type="checkbox" checked class="asset-item w-4 h-4 accent-green-600" data-name="${name}">
-                `;
-                assetListContainer.appendChild(item);
+            const assetList = document.getElementById('assetList');
+            assetNames.forEach((name, i) => {
+                const div = document.createElement('label');
+                div.className = "flex items-center justify-between p-2 bg-slate-50 rounded-lg border text-[11px]";
+                div.innerHTML = `<span>${i+1}. ${name}</span><input type="checkbox" checked class="asset-item w-4 h-4 accent-green-600" data-name="${name}">`;
+                assetList.appendChild(div);
             });
         }
 
-        function hideAllViews() {
-            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
-            document.getElementById('toggleBtn').innerHTML = '<i class="fas fa-user-shield mr-1"></i> QUẢN LÝ';
-        }
-
-        function goHome() { hideAllViews(); document.getElementById('homeView').classList.remove('hidden'); }
-        function showCheckIn() { hideAllViews(); document.getElementById('checkInView').classList.remove('hidden'); }
-        function showCheckOut() { hideAllViews(); document.getElementById('checkOutView').classList.remove('hidden'); }
-        
-        function switchAdminView() {
-            const adminView = document.getElementById('adminView');
-            if (adminView.classList.contains('hidden')) {
-                hideAllViews();
-                adminView.classList.remove('hidden');
-                document.getElementById('toggleBtn').innerHTML = '<i class="fas fa-home mr-1"></i> TRANG CHỦ';
-                renderAdminDashboard();
-            } else { goHome(); }
+        function sendToSheet(data) {
+            fetch(sheetURL, { method: "POST", mode: "no-cors", body: JSON.stringify(data) });
         }
 
         async function handleCheckIn() {
@@ -188,54 +159,53 @@
             const extraNote = document.getElementById('checkInNote').value.trim();
             const room = rooms.find(r => r.id === roomNo);
 
-            if (!name) return showNotification("Vui lòng nhập Họ và Tên!", "error");
-            if (!room) return showNotification("Số phòng không tồn tại!", "error");
-            if (!isAgreed) return showNotification("Vui lòng tích xác nhận cam đoan!", "error");
+            if (!name || !room || !isAgreed) return showNotification("Vui lòng điền đủ thông tin!", "error");
             
-            // Kiểm tra các món đồ bị thiếu/hỏng
             let issues = [];
-            document.querySelectorAll('.asset-item').forEach(checkbox => {
-                if (!checkbox.checked) {
-                    issues.push(checkbox.getAttribute('data-name'));
-                }
-            });
-
+            document.querySelectorAll('.asset-item').forEach(cb => { if(!cb.checked) issues.push(cb.getAttribute('data-name')); });
+            
             room.status = 'occupied';
             room.occupant = name;
 
-            let issueText = issues.length > 0 ? `\n❌ BÁO LỖI TÀI SẢN: ${issues.join(", ")}` : `\n✅ TÀI SẢN: Đầy đủ & Tốt`;
-            let noteText = extraNote ? `\n📝 GHI CHÚ: ${extraNote}` : "";
-
-            const message = `🟢 KTX VIETTEL - NHẬN PHÒNG\n👤 Khách: ${name.toUpperCase()}\n🏠 Phòng: ${roomNo}${issueText}${noteText}\n\n👉 Đội kỹ thuật/buồng phòng lưu ý kiểm tra.`;
+            const msg = `🟢 NHẬN PHÒNG: ${roomNo}\n👤 Khách: ${name.toUpperCase()}\n⚠️ Lỗi: ${issues.join(", ") || "Không"}\n📝 Ghi chú: ${extraNote || "Không"}`;
+            
+            sendToSheet({ type: "NHẬN PHÒNG", room: roomNo, name: name.toUpperCase(), issues: issues.join(", ") || "Không có", note: extraNote || "Không" });
             
             try {
-                await fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`);
-                showNotification(`Hoàn tất nhận phòng ${roomNo}`, "success");
-                // Reset form
-                document.getElementById('checkInName').value = '';
-                document.getElementById('checkInRoom').value = '';
-                document.getElementById('checkInNote').value = '';
-                document.getElementById('agreeCheckIn').checked = false;
-                document.querySelectorAll('.asset-item').forEach(c => c.checked = true);
-                setTimeout(goHome, 2500);
+                await fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(msg)}`);
+                showNotification(`Thành công phòng ${roomNo}`, "success");
+                goHome();
             } catch (e) { showNotification("Lỗi kết nối!", "error"); }
         }
 
         async function handleCheckOut() {
             const roomNo = parseInt(document.getElementById('checkOutRoom').value);
             const room = rooms.find(r => r.id === roomNo);
-
             if (!room) return showNotification("Số phòng không đúng!", "error");
             
             room.status = 'pending';
-            const message = `🔴 KTX VIETTEL - BÁO TRẢ\n🏠 Phòng: ${roomNo}\n⚠️ Vui lòng kiểm tra tài sản trước khi khách đi.`;
-            
+            const msg = `🔴 BÁO TRẢ PHÒNG: ${roomNo}`;
+            sendToSheet({ type: "TRẢ PHÒNG", room: roomNo, name: room.occupant || "Không tên", issues: "", note: "" });
+
             try {
-                await fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`);
+                await fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(msg)}`);
                 showNotification(`Đã báo trả phòng ${roomNo}`, "success");
-                document.getElementById('checkOutRoom').value = '';
-                setTimeout(goHome, 2000);
+                goHome();
             } catch (e) { showNotification("Lỗi kết nối!", "error"); }
+        }
+
+        function hideAllViews() { document.querySelectorAll('section').forEach(s => s.classList.add('hidden')); }
+        function goHome() { hideAllViews(); document.getElementById('homeView').classList.remove('hidden'); }
+        function showCheckIn() { hideAllViews(); document.getElementById('checkInView').classList.remove('hidden'); }
+        function showCheckOut() { hideAllViews(); document.getElementById('checkOutView').classList.remove('hidden'); }
+        
+        function switchAdminView() {
+            const admin = document.getElementById('adminView');
+            if (admin.classList.contains('hidden')) {
+                hideAllViews(); admin.classList.remove('hidden');
+                document.getElementById('toggleBtn').innerHTML = '<i class="fas fa-home mr-1"></i> TRANG CHỦ';
+                renderAdminDashboard();
+            } else { goHome(); }
         }
 
         function renderAdminDashboard() {
@@ -248,21 +218,10 @@
                 const grid = floorDiv.querySelector('.room-grid');
                 rooms.filter(r => r.floor === f).forEach(room => {
                     const btn = document.createElement('div');
-                    let style = 'bg-slate-50 text-slate-300 border border-slate-100'; 
-                    if (room.status === 'occupied') style = 'bg-blue-600 text-white shadow-md';
-                    if (room.status === 'pending') style = 'bg-red-600 text-white animate-pulse shadow-lg';
-
-                    btn.className = `${style} py-2.5 rounded-lg text-center font-black text-[9px] cursor-pointer active:scale-95 transition-all`;
+                    let style = room.status === 'occupied' ? 'bg-blue-600 text-white shadow-md' : room.status === 'pending' ? 'bg-red-600 text-white animate-pulse shadow-lg' : 'bg-slate-50 text-slate-300 border border-slate-100';
+                    btn.className = `${style} py-2.5 rounded-lg text-center font-black text-[9px] cursor-pointer`;
                     btn.innerText = room.id;
-                    
-                    btn.onclick = () => {
-                        let info = room.occupant ? `Khách: ${room.occupant}` : 'Phòng trống';
-                        if(confirm(`${info}\n\nXác nhận dọn dẹp xong phòng ${room.id}?`)) {
-                            room.status = 'available';
-                            room.occupant = '';
-                            renderAdminDashboard();
-                        }
-                    };
+                    btn.onclick = () => { if(confirm(`Dọn xong phòng ${room.id}?`)) { room.status = 'available'; room.occupant = ''; renderAdminDashboard(); }};
                     grid.appendChild(btn);
                 });
                 container.appendChild(floorDiv);
@@ -272,11 +231,10 @@
         function showNotification(msg, type) {
             const notif = document.getElementById('notification');
             const content = document.getElementById('notifContent');
-            const icon = document.getElementById('notifIcon');
             const message = document.getElementById('notifMessage');
             message.innerText = msg;
             content.className = `p-5 rounded-3xl shadow-2xl flex items-center space-x-4 border-2 bg-white ${type === 'success' ? 'border-green-500 text-green-600' : 'border-red-500 text-red-600'}`;
-            icon.className = `fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}`;
+            document.getElementById('notifIcon').className = `fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}`;
             notif.classList.remove('translate-y-48');
             setTimeout(() => notif.classList.add('translate-y-48'), 3000);
         }
