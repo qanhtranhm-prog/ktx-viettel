@@ -15,18 +15,20 @@
         .noiquy-box::-webkit-scrollbar { width: 4px; }
         .noiquy-box::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
         .asset-row { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f8fafc; border-radius: 12px; margin-bottom: 5px; border: 1px solid #f1f5f9; }
+        .room-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(65px, 1fr)); gap: 8px; }
     </style>
 </head>
 <body class="text-slate-800 antialiased">
 
     <div class="max-w-md mx-auto min-h-screen flex flex-col bg-slate-50 relative shadow-2xl overflow-hidden">
         
+        <!-- HEADER -->
         <header class="viettel-gradient text-white p-5 sticky top-0 z-40 shadow-md flex justify-between items-center rounded-b-[24px]">
             <div class="flex items-center space-x-3 cursor-pointer" onclick="location.reload()">
                 <div class="bg-white p-2 rounded-xl shadow-sm"><i class="fas fa-hotel text-red-600"></i></div>
                 <div>
                     <h1 class="font-bold text-sm uppercase tracking-tighter leading-none">Công ty QLTS Viettel</h1>
-                    <p class="text-[9px] font-bold opacity-80 uppercase mt-1">Quản lý Ký túc xá</p>
+                    <p class="text-[9px] font-bold opacity-80 uppercase mt-1">Smart KTX 2026</p>
                 </div>
             </div>
             <button onclick="authAdmin()" class="bg-white/10 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase border border-white/20">Admin</button>
@@ -34,6 +36,7 @@
 
         <main class="flex-grow p-4 space-y-4">
             
+            <!-- TRANG CHỦ -->
             <section id="homeView" class="space-y-4 animate-[fadeIn_0.3s]">
                 <div class="bg-white rounded-[2rem] p-6 card-shadow border border-white relative overflow-hidden">
                     <h2 class="text-center font-black text-red-600 uppercase tracking-widest text-sm mb-5 italic border-b pb-3 text-[13px]">Nội quy lưu trú tại Ký túc xá Viettel</h2>
@@ -66,6 +69,7 @@
                 </div>
             </section>
 
+            <!-- NHẬN PHÒNG -->
             <section id="checkInView" class="hidden space-y-3">
                 <div class="bg-white p-5 rounded-3xl card-shadow space-y-4">
                     <input type="text" id="inName" placeholder="HỌ VÀ TÊN KHÁCH" class="w-full p-4 bg-slate-50 border rounded-2xl font-bold uppercase outline-none focus:border-red-500 text-sm">
@@ -85,6 +89,7 @@
                 </div>
             </section>
 
+            <!-- TRẢ PHÒNG -->
             <section id="checkOutView" class="hidden space-y-3">
                 <div class="bg-white p-8 rounded-[2rem] card-shadow text-center space-y-5">
                     <input type="text" id="outName" placeholder="TÊN NGƯỜI TRẢ" class="w-full p-4 bg-slate-50 border rounded-2xl font-bold text-center uppercase outline-none focus:border-red-500 text-sm">
@@ -93,7 +98,36 @@
                     <button onclick="showView('homeView')" class="w-full text-slate-400 font-bold text-[10px] uppercase py-1">Quay lại</button>
                 </div>
             </section>
+
+            <!-- ADMIN VIEW (ĐÃ SỬA LỖI) -->
+            <section id="adminView" class="hidden space-y-6 pb-20">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex justify-between items-center">
+                    <h2 class="font-black text-slate-800 uppercase tracking-tight text-sm">Sơ đồ tổng quát</h2>
+                    <div class="flex space-x-3 text-[10px] font-bold">
+                        <span class="flex items-center"><span class="w-2 h-2 bg-slate-100 border border-slate-300 rounded-full mr-1"></span> Trống</span>
+                        <span class="flex items-center"><span class="w-2 h-2 bg-red-400 rounded-full mr-1"></span> Có người</span>
+                    </div>
+                </div>
+                <div id="adminContent" class="space-y-8"></div>
+                <button onclick="showView('homeView')" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-8 py-3 rounded-full font-bold text-xs shadow-xl z-50">ĐÓNG SƠ ĐỒ</button>
+            </section>
+
         </main>
+
+        <!-- BẢNG NHẬP MÃ PIN MỚI (CHỐNG LỖI TRÊN MOBILE) -->
+        <div id="pinModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] hidden flex-col items-center justify-center p-6 transition-all">
+            <div class="bg-white p-8 rounded-[2rem] shadow-2xl w-full max-w-xs text-center animate-[fadeIn_0.2s]">
+                <div class="bg-red-50 w-16 h-16 mx-auto rounded-full flex items-center justify-center text-red-600 mb-4">
+                    <i class="fas fa-lock text-2xl"></i>
+                </div>
+                <h3 class="font-black uppercase text-slate-800 mb-6 tracking-widest text-sm">Mã Quản Lý</h3>
+                <input type="password" id="pinInput" placeholder="••••••" class="w-full text-center tracking-[0.5em] font-black text-3xl p-4 bg-slate-50 border rounded-2xl mb-6 outline-none focus:border-red-500 transition-all">
+                <div class="flex space-x-3">
+                    <button onclick="closePinModal()" class="flex-1 p-4 bg-slate-100 text-slate-500 font-bold rounded-2xl active:scale-95 transition-all">HỦY</button>
+                    <button onclick="verifyPin()" class="flex-1 p-4 viettel-gradient text-white font-bold rounded-2xl shadow-lg shadow-red-200 active:scale-95 transition-all">MỞ</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -110,7 +144,7 @@
             { n: "Bình nóng lạnh", q: 1 }, { n: "Ấm siêu tốc", q: 1 }, { n: "Vòi hoa sen", q: 1 },
             { n: "Thảm lau chân", q: 1 }, { n: "Gương soi", q: 1 }, { n: "Rèm cửa", q: 1 },
             { n: "Bàn làm việc", q: 1 }, { n: "Thùng rác", q: 3 }, { n: "Tranh trang trí", q: 1 },
-            { n: "Mắc áo gỗ", q: 5 }, // Ví dụ món bổ sung
+            { n: "Mắc áo gỗ", q: 5 }, 
             { n: "Giường", q: "P" }, { n: "Đệm", q: "P" }, { n: "Chăn", q: "P" }, { n: "Ga giường", q: "P" },
             { n: "Gối", q: "P" }, { n: "Vỏ gối", q: "P" }, { n: "Dép đi trong nhà", q: "P" },
             { n: "Khăn tắm", q: "P" }, { n: "Khăn mặt", q: "P" }, { n: "Cốc thủy tinh", q: "P" },
@@ -136,7 +170,7 @@
             else if(r==501 || r==502 || (r>=513 && r<=525) || (r>=401 && r<=412 && r!=405 && r!=406) || (r>=301 && r<=312 && r!=305 && r!=306) || (r>=201 && r<=212 && r!=205 && r!=206)) {
                 type = "3 GIƯỜNG"; p = 3; badge.innerText = "3 GIƯỜNG";
             }
-            // MẶC ĐỊNH 2 GIƯỜNG (Bao gồm các phòng bị trừ phía trên)
+            // MẶC ĐỊNH 2 GIƯỜNG
             else { badge.innerText = "2 GIƯỜNG"; p = 2; }
 
             badge.classList.remove('hidden');
@@ -152,6 +186,48 @@
         function showView(id) {
             document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
             document.getElementById(id).classList.remove('hidden');
+            window.scrollTo(0,0);
+        }
+
+        // HÀM MỞ ADMIN BẰNG MODAL ĐÃ ĐƯỢC LÀM LẠI
+        function authAdmin() { 
+            const modal = document.getElementById('pinModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.getElementById('pinInput').value = '';
+            setTimeout(() => document.getElementById('pinInput').focus(), 100);
+        }
+
+        function closePinModal() {
+            const modal = document.getElementById('pinModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function verifyPin() {
+            if(document.getElementById('pinInput').value === "271020") {
+                closePinModal();
+                showView('adminView');
+                renderAdmin();
+            } else {
+                alert("Mã PIN không đúng!");
+                document.getElementById('pinInput').value = '';
+                document.getElementById('pinInput').focus();
+            }
+        }
+
+        function renderAdmin() {
+            const cont = document.getElementById('adminContent');
+            cont.innerHTML = '';
+            for(let f=1; f<=9; f++) {
+                let start = f*100+1;
+                let end = (f===1)?111:(f<=5?f*100+25:f*100+12);
+                let roomsHTML = "";
+                for(let i=start; i<=end; i++) {
+                    roomsHTML += `<div class="bg-slate-50 border border-slate-100 text-[10px] font-black text-slate-400 py-3 rounded-xl text-center shadow-sm hover:bg-white transition-all">${i}</div>`;
+                }
+                cont.innerHTML += `<div><h3 class="text-[10px] font-black text-slate-400 uppercase mb-3 ml-2 tracking-widest">Tầng ${f}</h3><div class="room-grid">${roomsHTML}</div></div>`;
+            }
         }
 
         async function handleIn() {
@@ -174,7 +250,6 @@
             await fetch(`https://api.telegram.org/bot${cfg.token}/sendMessage?chat_id=${cfg.chat}&text=${encodeURIComponent(`🔴 TRẢ PHÒNG: ${room}\n👤 Người trả: ${name}`)}`);
             alert("Đã báo trả phòng thành công!"); location.reload();
         }
-        function authAdmin() { if(prompt("Mã PIN Admin:") === "271020") alert("Hệ thống quản lý đang mở..."); }
     </script>
 </body>
 </html>
