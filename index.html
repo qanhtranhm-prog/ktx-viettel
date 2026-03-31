@@ -3,130 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Quản lý KTX Viettel</title>
+    <title>Hệ thống Quản lý KTX Viettel</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
-        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
-        .room-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(65px, 1fr)); gap: 6px; }
-        .viettel-red { background-color: #ee0000; }
-        .viettel-text-red { color: #ee0000; }
-        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; background-color: #f8fafc; }
+        .viettel-gradient { background: linear-gradient(135deg, #ee0000 0%, #cc0000 100%); }
+        .glass-panel { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .custom-scroll::-webkit-scrollbar { width: 5px; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        .btn-active:active { transform: scale(0.95); transition: 0.1s; }
+        /* Hiệu ứng nhấp nháy cho trạng thái đang tải */
+        .loading-pulse { animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
     </style>
 </head>
-<body class="bg-slate-100 min-h-screen">
+<body class="text-slate-800 antialiased selection:bg-red-200 selection:text-red-900">
 
-    <div class="max-w-md mx-auto min-h-screen flex flex-col shadow-2xl bg-white relative">
-        <header class="viettel-red text-white p-4 sticky top-0 z-50 shadow-md flex justify-between items-center">
-            <div class="flex items-center space-x-2" onclick="goHome()" style="cursor: pointer;">
-                <i class="fas fa-building text-lg text-white"></i>
-                <h1 class="font-black text-sm uppercase tracking-tighter text-white">KTX VIETTEL</h1>
+    <div class="max-w-md mx-auto min-h-screen flex flex-col shadow-2xl bg-white relative overflow-hidden">
+        
+        <header class="viettel-gradient text-white p-5 sticky top-0 z-50 shadow-md flex justify-between items-center rounded-b-[20px] mb-2">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="goHome()">
+                <div class="bg-white p-2 rounded-lg shadow-sm">
+                    <i class="fas fa-building text-red-600 text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-black text-lg uppercase tracking-tight leading-none">KTX VIETTEL</h1>
+                    <p class="text-[10px] font-medium opacity-80 uppercase tracking-widest mt-0.5">Property Management</p>
+                </div>
             </div>
-            <button onclick="switchAdminView()" id="toggleBtn" class="bg-white/20 px-3 py-1.5 rounded-lg text-[10px] font-bold border border-white/30 uppercase text-white">
-                <i class="fas fa-user-shield mr-1"></i> QUẢN LÝ
+            <button onclick="switchAdminView()" id="toggleBtn" class="bg-white/10 hover:bg-white/20 transition-colors px-4 py-2 rounded-xl text-xs font-bold border border-white/20 uppercase flex items-center">
+                <i class="fas fa-shield-alt mr-2"></i> Admin
             </button>
         </header>
 
-        <main class="flex-grow p-4">
-            <section id="homeView" class="space-y-6 pt-8">
-                <div class="text-center mb-10">
-                    <h2 class="text-2xl font-black text-slate-800 uppercase tracking-tight">Hệ thống KTX</h2>
-                    <p class="text-slate-500 text-sm mt-1 font-semibold">Học viện Viettel</p>
+        <main class="flex-grow p-5">
+            <section id="homeView" class="space-y-6 pt-6 animate-[fadeIn_0.3s_ease-out]">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-black text-slate-800 tracking-tight">Xin chào,</h2>
+                    <p class="text-slate-500 text-sm mt-1 font-medium">Vui lòng chọn thao tác bên dưới</p>
                 </div>
                 <div class="grid grid-cols-1 gap-5">
-                    <button onclick="showCheckIn()" class="bg-white border-2 border-blue-100 p-8 rounded-[2.5rem] shadow-xl flex flex-col items-center space-y-4 hover:border-blue-500 btn-active">
-                        <div class="bg-blue-50 p-5 rounded-full text-blue-600"><i class="fas fa-door-open text-4xl"></i></div>
-                        <span class="font-black text-xl text-slate-800 uppercase">NHẬN PHÒNG</span>
+                    <button onclick="showCheckIn()" class="group relative overflow-hidden bg-white border border-slate-200 p-8 rounded-[2rem] shadow-sm hover:shadow-xl hover:border-blue-500 transition-all duration-300 transform hover:-translate-y-1 text-left flex items-center justify-between">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full -mr-10 -mt-10 transition-transform group-hover:scale-150 duration-500"></div>
+                        <div class="relative z-10">
+                            <span class="block text-sm font-bold text-blue-600 uppercase tracking-wider mb-1">Thủ tục đầu vào</span>
+                            <span class="block font-black text-2xl text-slate-800 uppercase">Nhận Phòng</span>
+                        </div>
+                        <div class="relative z-10 bg-blue-100 w-16 h-16 rounded-2xl flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                            <i class="fas fa-door-open text-2xl"></i>
+                        </div>
                     </button>
-                    <button onclick="showCheckOut()" class="bg-white border-2 border-red-100 p-8 rounded-[2.5rem] shadow-xl flex flex-col items-center space-y-4 hover:border-red-500 btn-active">
-                        <div class="bg-red-50 p-5 rounded-full text-red-600"><i class="fas fa-key text-4xl"></i></div>
-                        <span class="font-black text-xl text-slate-800 uppercase">TRẢ PHÒNG</span>
+
+                    <button onclick="showCheckOut()" class="group relative overflow-hidden bg-white border border-slate-200 p-8 rounded-[2rem] shadow-sm hover:shadow-xl hover:border-red-500 transition-all duration-300 transform hover:-translate-y-1 text-left flex items-center justify-between">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-red-50 rounded-full -mr-10 -mt-10 transition-transform group-hover:scale-150 duration-500"></div>
+                        <div class="relative z-10">
+                            <span class="block text-sm font-bold text-red-600 uppercase tracking-wider mb-1">Thủ tục đầu ra</span>
+                            <span class="block font-black text-2xl text-slate-800 uppercase">Trả Phòng</span>
+                        </div>
+                        <div class="relative z-10 bg-red-100 w-16 h-16 rounded-2xl flex items-center justify-center text-red-600 group-hover:bg-red-600 group-hover:text-white transition-colors">
+                            <i class="fas fa-key text-2xl"></i>
+                        </div>
                     </button>
                 </div>
             </section>
 
-            <section id="checkInView" class="hidden space-y-4 pt-2 pb-10">
-                <div class="flex items-center space-x-2 mb-4 cursor-pointer text-slate-400" onclick="goHome()">
-                    <i class="fas fa-arrow-left"></i> <span class="text-sm font-bold uppercase">Quay lại</span>
-                </div>
+            <section id="checkInView" class="hidden space-y-5 pt-2 pb-10">
+                <button class="flex items-center text-slate-500 hover:text-slate-800 font-bold text-sm transition-colors mb-2" onclick="goHome()">
+                    <i class="fas fa-arrow-left mr-2"></i> Quay lại trang chủ
+                </button>
                 
-                <div class="bg-blue-600 text-white p-5 rounded-2xl shadow-lg mb-4 space-y-3">
-                    <div>
-                        <p class="text-[10px] font-bold opacity-80 uppercase tracking-widest mb-1 italic uppercase">Họ và Tên khách hàng:</p>
-                        <input type="text" id="checkInName" placeholder="NHẬP HỌ TÊN" class="w-full p-3 text-lg font-bold text-slate-800 rounded-xl outline-none shadow-inner uppercase">
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 space-y-5">
+                    <div class="relative">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Họ và Tên khách hàng</label>
+                        <div class="flex items-center bg-slate-50 rounded-xl border border-slate-200 focus-within:border-blue-500 focus-within:ring-2 ring-blue-100 transition-all overflow-hidden">
+                            <div class="pl-4 text-slate-400"><i class="fas fa-user"></i></div>
+                            <input type="text" id="checkInName" placeholder="Ví dụ: NGUYEN VAN A" class="w-full p-4 bg-transparent outline-none font-bold text-slate-800 uppercase text-sm">
+                        </div>
                     </div>
-                    <div>
-                        <p class="text-[10px] font-bold opacity-80 uppercase tracking-widest mb-1 italic uppercase">Số phòng:</p>
-                        <input type="number" id="checkInRoom" placeholder="SỐ PHÒNG" class="w-full p-3 text-2xl font-black text-center text-slate-800 rounded-xl outline-none shadow-inner">
-                    </div>
-                </div>
-
-                <div class="border-2 border-red-200 rounded-2xl overflow-hidden bg-white shadow-sm mb-4">
-                    <div class="bg-red-50 p-2 text-center font-black text-[10px] uppercase text-red-600 tracking-widest italic">Nội quy Ký túc xá</div>
-                    <div class="h-40 overflow-y-auto custom-scroll p-4 text-[11px] text-slate-700 space-y-2 leading-relaxed">
-                        <p><b>Điều 1:</b> Thực hiện đúng giờ giấc sinh hoạt và làm việc của Học viện.</p>
-                        <p><b>Điều 2:</b> Giữ gìn vệ sinh chung, không vứt rác bừa bãi, để giày dép đúng nơi quy định.</p>
-                        <p><b>Điều 3:</b> Không tự ý thay đổi vị trí tài sản hoặc mang tài sản ra khỏi phòng.</p>
-                        <p><b>Điều 4:</b> Tiết kiệm điện, nước; tắt mọi thiết bị điện khi ra khỏi phòng.</p>
-                        <p><b>Điều 5:</b> Không tàng trữ chất cấm, chất dễ cháy nổ, không đánh bạc dưới mọi hình thức.</p>
-                        <p><b>Điều 6:</b> Không tiếp khách trong phòng riêng sau 21h00.</p>
-                        <p><b>Điều 7:</b> Chấp hành nghiêm chỉnh các quy định về an ninh trật tự và PCCC.</p>
-                        <p><b>Điều 8:</b> Mọi hư hỏng tài sản phải báo ngay cho Ban quản lý để xử lý.</p>
-                        <p><b>Điều 9:</b> Bàn giao đầy đủ tài sản khi trả phòng theo quy định.</p>
+                    <div class="relative">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Số phòng nhận</label>
+                        <div class="flex items-center bg-slate-50 rounded-xl border border-slate-200 focus-within:border-blue-500 focus-within:ring-2 ring-blue-100 transition-all overflow-hidden">
+                            <div class="pl-4 text-slate-400"><i class="fas fa-hashtag"></i></div>
+                            <input type="number" id="checkInRoom" placeholder="Ví dụ: 101" class="w-full p-4 bg-transparent outline-none font-black text-slate-800 text-lg">
+                        </div>
                     </div>
                 </div>
 
-                <div class="border-2 border-slate-200 rounded-2xl overflow-hidden bg-white shadow-sm">
-                    <div class="bg-slate-100 p-2 text-center font-black text-[9px] uppercase text-slate-500 tracking-widest italic uppercase">Kiểm kê tài sản phòng</div>
-                    <div class="h-56 overflow-y-auto custom-scroll p-3 text-[12px] text-slate-700 space-y-2" id="assetList"></div>
-                    <div class="p-3 border-t bg-slate-50">
-                        <p class="text-[10px] font-bold text-slate-400 uppercase mb-1 uppercase">Ghi chú sự cố (nếu có):</p>
-                        <textarea id="checkInNote" class="w-full p-2 border rounded-lg text-xs outline-none focus:border-blue-400" rows="2" placeholder="Ví dụ: Tường bẩn, thiếu dép..."></textarea>
+                <div class="bg-red-50 border border-red-100 rounded-3xl overflow-hidden shadow-sm">
+                    <div class="bg-red-100/50 p-3 text-center border-b border-red-100">
+                        <span class="font-black text-[10px] uppercase text-red-600 tracking-widest"><i class="fas fa-scroll mr-1"></i> Nội quy Ký túc xá</span>
+                    </div>
+                    <div class="h-32 overflow-y-auto custom-scroll p-4 text-[11px] text-slate-700 space-y-2.5 font-medium">
+                        <p><b>1.</b> Thực hiện đúng giờ giấc sinh hoạt và làm việc của Học viện.</p>
+                        <p><b>2.</b> Giữ gìn vệ sinh chung, không vứt rác bừa bãi, để giày dép đúng nơi.</p>
+                        <p><b>3.</b> Không tự ý thay đổi vị trí tài sản hoặc mang ra khỏi phòng.</p>
+                        <p><b>4.</b> Tiết kiệm điện, nước; tắt mọi thiết bị khi ra ngoài.</p>
+                        <p><b>5.</b> Không tàng trữ chất cấm, chất cháy nổ, không đánh bạc.</p>
+                        <p><b>6.</b> Không tiếp khách trong phòng riêng sau 21h00.</p>
+                        <p><b>7.</b> Chấp hành nghiêm chỉnh quy định an ninh và PCCC.</p>
+                        <p><b>8.</b> Báo ngay cho Ban quản lý nếu có hư hỏng tài sản.</p>
+                        <p><b>9.</b> Bàn giao đầy đủ tài sản khi làm thủ tục trả phòng.</p>
                     </div>
                 </div>
 
-                <label class="flex items-start space-x-3 p-4 bg-blue-50 rounded-2xl border border-blue-200 cursor-pointer">
-                    <input type="checkbox" id="agreeCheckIn" class="mt-1 w-5 h-5 accent-blue-600 rounded">
-                    <span class="text-[11px] font-bold text-blue-900 leading-tight italic">Tôi đã đọc kỹ 9 điều Nội quy và cam đoan tài sản được tích là đầy đủ, tốt.</span>
+                <div class="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm">
+                    <div class="bg-slate-50 p-3 text-center border-b border-slate-100">
+                        <span class="font-black text-[10px] uppercase text-slate-500 tracking-widest"><i class="fas fa-clipboard-check mr-1"></i> Danh mục Tài sản</span>
+                    </div>
+                    <div class="h-48 overflow-y-auto custom-scroll p-2 text-[12px] text-slate-700 space-y-1" id="assetList"></div>
+                    <div class="p-4 border-t border-slate-100 bg-slate-50/50">
+                        <textarea id="checkInNote" class="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:border-blue-400 focus:ring-2 ring-blue-100 transition-all resize-none" rows="2" placeholder="Ghi chú sự cố (nếu có). VD: Tường bẩn, thiếu dép..."></textarea>
+                    </div>
+                </div>
+
+                <label class="flex items-start space-x-3 p-4 bg-blue-50/50 rounded-2xl border border-blue-100 cursor-pointer hover:bg-blue-50 transition-colors">
+                    <input type="checkbox" id="agreeCheckIn" class="mt-0.5 w-5 h-5 accent-blue-600 rounded cursor-pointer">
+                    <span class="text-xs font-semibold text-blue-900 leading-snug">Tôi đã đọc nội quy và xác nhận tài sản được tích là đầy đủ, hoạt động tốt.</span>
                 </label>
 
-                <button onclick="handleCheckIn()" class="w-full bg-blue-600 text-white font-black py-4 rounded-xl shadow-lg btn-active text-lg uppercase tracking-widest">
-                    XÁC NHẬN NHẬN PHÒNG
+                <button id="btnSubmitCheckIn" onclick="handleCheckIn()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-2xl shadow-lg shadow-blue-600/30 transition-all text-sm uppercase tracking-widest flex justify-center items-center disabled:opacity-70 disabled:cursor-not-allowed">
+                    <span id="txtBtnCheckIn">Xác nhận Nhận phòng</span>
                 </button>
             </section>
 
-            <section id="checkOutView" class="hidden space-y-6 pt-2">
-                <div class="flex items-center space-x-2 mb-4 cursor-pointer text-slate-400" onclick="goHome()">
-                    <i class="fas fa-arrow-left"></i> <span class="text-sm font-bold uppercase">Quay lại</span>
-                </div>
-                <div class="bg-white p-8 rounded-[2rem] shadow-2xl border border-slate-100 text-center">
-                    <div class="bg-red-50 inline-block p-6 rounded-full mb-4 text-red-600"><i class="fas fa-paper-plane text-4xl"></i></div>
-                    <h2 class="text-2xl font-black text-slate-800 uppercase mb-6 tracking-tight">Báo trả phòng</h2>
-                    <input type="number" id="checkOutRoom" placeholder="SỐ PHÒNG" class="w-full p-4 text-5xl font-black text-center border-b-4 border-slate-200 focus:border-red-500 focus:outline-none mb-8">
-                    <button onclick="handleCheckOut()" class="w-full viettel-red text-white font-black py-5 rounded-2xl shadow-xl btn-active text-lg uppercase tracking-widest">
-                        GỬI THÔNG BÁO TRẢ
+            <section id="checkOutView" class="hidden space-y-5 pt-2">
+                <button class="flex items-center text-slate-500 hover:text-slate-800 font-bold text-sm transition-colors mb-2" onclick="goHome()">
+                    <i class="fas fa-arrow-left mr-2"></i> Quay lại trang chủ
+                </button>
+                <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200 text-center mt-10">
+                    <div class="bg-red-50 w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-6 text-red-600">
+                        <i class="fas fa-sign-out-alt text-3xl"></i>
+                    </div>
+                    <h2 class="text-xl font-black text-slate-800 uppercase mb-8 tracking-tight">Xác nhận Trả phòng</h2>
+                    
+                    <div class="relative mb-10">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Nhập số phòng cần trả</label>
+                        <input type="number" id="checkOutRoom" placeholder="000" class="w-full bg-slate-50 p-4 text-4xl font-black text-center text-slate-800 rounded-2xl border border-slate-200 focus:border-red-500 focus:ring-2 ring-red-100 outline-none transition-all">
+                    </div>
+
+                    <button id="btnSubmitCheckOut" onclick="handleCheckOut()" class="w-full viettel-gradient text-white font-black py-4 rounded-2xl shadow-lg shadow-red-600/30 transition-all text-sm uppercase tracking-widest flex justify-center items-center disabled:opacity-70 disabled:cursor-not-allowed">
+                        <span id="txtBtnCheckOut">Gửi Yêu Cầu Trả Phòng</span>
                     </button>
                 </div>
             </section>
 
-            <section id="adminView" class="hidden space-y-6 pb-20">
-                <div id="floorContainer" class="space-y-6"></div>
-            </section>
+            <section id="adminView" class="hidden space-y-6 pb-20 pt-2"></section>
         </main>
 
-        <div id="notification" class="fixed bottom-10 left-6 right-6 transform translate-y-48 transition duration-500 z-[100]">
-            <div id="notifContent" class="p-5 rounded-3xl shadow-2xl flex items-center space-x-4 border-2 bg-white">
-                <i id="notifIcon" class="text-3xl"></i>
-                <p id="notifMessage" class="text-sm font-black uppercase tracking-tight leading-tight"></p>
+        <div id="notification" class="fixed top-5 left-4 right-4 transform -translate-y-32 opacity-0 transition-all duration-300 z-[100]">
+            <div id="notifContent" class="p-4 rounded-2xl shadow-xl flex items-center space-x-3 bg-white border-l-4">
+                <i id="notifIcon" class="text-2xl"></i>
+                <p id="notifMessage" class="text-sm font-bold text-slate-700 leading-tight"></p>
             </div>
         </div>
     </div>
 
     <script>
-        const sheetURL = "https://script.google.com/macros/s/AKfycbwfSjG1Oa3hYSLLZHtuJxsHPVNWslFrfNXp4Rs78hsWNr7NwwSsnp9Bs3nQ37pOVDDW/exec";
+        const sheetURL = "https://script.google.com/macros/s/AKfycbzgmLSydKi8L7_b_MopivUWfEvxVrj0DNW7b7OXAAYA5qGbDB_34ARUqHcFmt3gzBkA/exec";
         const telegramToken = "8628522316:AAEEZavf7qnnENTEzGTb2dmmYDHhunZ9qT4"; 
         const chatId = "6074347518"; 
 
@@ -138,40 +172,41 @@
             "Đèn học", "Dép", "Cầu là", "Bàn là"
         ];
 
-        let rooms = [];
-
         function initRooms() {
-            const config = [
-                { floor: 1, start: 101, end: 111 }, { floor: 2, start: 201, end: 225 },
-                { floor: 3, start: 301, end: 325 }, { floor: 4, start: 401, end: 425 },
-                { floor: 5, start: 501, end: 525 }, { floor: 6, start: 601, end: 612 },
-                { floor: 7, start: 701, end: 712 }, { floor: 8, start: 801, end: 812 },
-                { floor: 9, start: 901, end: 912 }
-            ];
-            config.forEach(c => {
-                for(let i = c.start; i <= c.end; i++) {
-                    rooms.push({ id: i, floor: c.floor, status: 'available', occupant: '' });
-                }
-            });
-
             const assetList = document.getElementById('assetList');
             assetNames.forEach((name, i) => {
                 const div = document.createElement('label');
-                div.className = "flex items-center justify-between p-2.5 bg-slate-50 rounded-xl border border-slate-100 text-[11px] shadow-sm";
-                div.innerHTML = `<span><b class='text-slate-300 mr-1 italic'>${i+1}.</b> ${name}</span><input type="checkbox" checked class="asset-item w-5 h-5 accent-green-600 rounded" data-name="${name}">`;
+                div.className = "flex items-center justify-between p-2.5 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer";
+                div.innerHTML = `
+                    <span class="text-xs font-medium text-slate-700"><b class='text-slate-400 w-5 inline-block'>${i+1}.</b> ${name}</span>
+                    <input type="checkbox" checked class="asset-item w-4 h-4 accent-green-500 rounded cursor-pointer" data-name="${name}">
+                `;
                 assetList.appendChild(div);
             });
         }
 
+        // --- HÀM KHÓA NÚT BẤM (CHỐNG SPAM CLICK) ---
+        function setLoadingState(btnId, txtId, isLoading, originalText) {
+            const btn = document.getElementById(btnId);
+            const txt = document.getElementById(txtId);
+            if (isLoading) {
+                btn.disabled = true;
+                txt.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i> ĐANG XỬ LÝ...';
+                btn.classList.add('loading-pulse');
+            } else {
+                btn.disabled = false;
+                txt.innerHTML = originalText;
+                btn.classList.remove('loading-pulse');
+            }
+        }
+
         async function sendDataToSheets(payload) {
-            try {
-                await fetch(sheetURL, {
-                    method: "POST",
-                    mode: "no-cors",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                });
-            } catch (e) { console.error("Sheets Error:", e); }
+            return fetch(sheetURL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
         }
 
         async function handleCheckIn() {
@@ -179,39 +214,71 @@
             const roomNo = parseInt(document.getElementById('checkInRoom').value);
             const isAgreed = document.getElementById('agreeCheckIn').checked;
             const extraNote = document.getElementById('checkInNote').value.trim();
-            const room = rooms.find(r => r.id === roomNo);
 
-            if (!name || !room || !isAgreed) return showNotification("Chưa nhập tên, số phòng hoặc chưa đồng ý nội quy!", "error");
+            if (!name) return showNotification("Vui lòng nhập Họ và Tên!", "error");
+            if (!roomNo || isNaN(roomNo)) return showNotification("Vui lòng nhập chính xác Số phòng!", "error");
+            if (!isAgreed) return showNotification("Bạn cần đánh dấu đồng ý với Nội quy!", "error");
             
+            // Bật chế độ CHỐNG SPAM
+            setLoadingState('btnSubmitCheckIn', 'txtBtnCheckIn', true, 'Xác nhận Nhận phòng');
+
             let issues = [];
             document.querySelectorAll('.asset-item').forEach(cb => { 
                 if(!cb.checked) issues.push(cb.getAttribute('data-name')); 
             });
-            
             const issueString = issues.join(", ") || "Không có";
-            sendDataToSheets({ type: "NHẬN PHÒNG", room: roomNo, name: name.toUpperCase(), issues: issueString, note: extraNote || "Không" });
+            const upperName = name.toUpperCase();
 
-            const msg = `🟢 NHẬN PHÒNG: ${roomNo}\n👤 Khách: ${name.toUpperCase()}\n⚠️ Lỗi: ${issueString}\n📝 Ghi chú: ${extraNote || "Không"}`;
             try {
+                // Gửi Sheet
+                await sendDataToSheets({ type: "NHẬN PHÒNG", room: roomNo, name: upperName, issues: issueString, note: extraNote || "Không" });
+
+                // Gửi Telegram
+                const msg = `🟢 NHẬN PHÒNG: ${roomNo}\n👤 Khách: ${upperName}\n⚠️ Lỗi: ${issueString}\n📝 Ghi chú: ${extraNote || "Không"}`;
                 await fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(msg)}`);
+                
                 showNotification(`Đã ghi nhận phòng ${roomNo}`, "success");
-                setTimeout(goHome, 2000);
-            } catch (e) { showNotification("Lỗi kết nối!", "error"); }
+                
+                // Reset form sau khi thành công
+                setTimeout(() => {
+                    document.getElementById('checkInName').value = '';
+                    document.getElementById('checkInRoom').value = '';
+                    document.getElementById('checkInNote').value = '';
+                    goHome();
+                }, 2000);
+
+            } catch (e) { 
+                showNotification("Lỗi mạng, vui lòng thử lại!", "error"); 
+            } finally {
+                // Tắt chế độ chống spam để khách có thể thao tác lại nếu lỗi
+                setLoadingState('btnSubmitCheckIn', 'txtBtnCheckIn', false, 'Xác nhận Nhận phòng');
+            }
         }
 
         async function handleCheckOut() {
             const roomNo = parseInt(document.getElementById('checkOutRoom').value);
-            const room = rooms.find(r => r.id === roomNo);
-            if (!room) return showNotification("Số phòng không đúng!", "error");
+            if (!roomNo || isNaN(roomNo)) return showNotification("Vui lòng nhập số phòng!", "error");
             
-            sendDataToSheets({ type: "TRẢ PHÒNG", room: roomNo, name: "TRẢ PHÒNG", issues: "", note: "" });
+            // Bật chế độ CHỐNG SPAM
+            setLoadingState('btnSubmitCheckOut', 'txtBtnCheckOut', true, 'Gửi Yêu Cầu Trả Phòng');
 
-            const msg = `🔴 BÁO TRẢ PHÒNG: ${roomNo}`;
             try {
+                await sendDataToSheets({ type: "TRẢ PHÒNG", room: roomNo, name: "TRẢ PHÒNG", issues: "", note: "" });
+
+                const msg = `🔴 BÁO TRẢ PHÒNG: ${roomNo}`;
                 await fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(msg)}`);
+                
                 showNotification(`Đã báo trả phòng ${roomNo}`, "success");
-                setTimeout(goHome, 2000);
-            } catch (e) { showNotification("Lỗi kết nối!", "error"); }
+                
+                setTimeout(() => {
+                    document.getElementById('checkOutRoom').value = '';
+                    goHome();
+                }, 2000);
+            } catch (e) { 
+                showNotification("Lỗi mạng, vui lòng thử lại!", "error"); 
+            } finally {
+                setLoadingState('btnSubmitCheckOut', 'txtBtnCheckOut', false, 'Gửi Yêu Cầu Trả Phòng');
+            }
         }
 
         function hideAllViews() { document.querySelectorAll('section').forEach(s => s.classList.add('hidden')); }
@@ -219,43 +286,30 @@
         function showCheckIn() { hideAllViews(); document.getElementById('checkInView').classList.remove('hidden'); }
         function showCheckOut() { hideAllViews(); document.getElementById('checkOutView').classList.remove('hidden'); }
         
-        function switchAdminView() {
-            const admin = document.getElementById('adminView');
-            if (admin.classList.contains('hidden')) {
-                hideAllViews(); admin.classList.remove('hidden');
-                document.getElementById('toggleBtn').innerHTML = '<i class="fas fa-home mr-1"></i> TRANG CHỦ';
-                renderAdminDashboard();
-            } else { goHome(); }
-        }
-
-        function renderAdminDashboard() {
-            const container = document.getElementById('floorContainer');
-            container.innerHTML = '';
-            const floors = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-            floors.forEach(f => {
-                const floorDiv = document.createElement('div');
-                floorDiv.innerHTML = `<h3 class="text-[10px] font-black text-slate-400 mb-2 uppercase border-l-4 border-red-500 pl-2 italic">Tầng ${f}</h3><div class="room-grid"></div>`;
-                const grid = floorDiv.querySelector('.room-grid');
-                rooms.filter(r => r.floor === f).forEach(room => {
-                    const btn = document.createElement('div');
-                    let style = room.status === 'occupied' ? 'bg-blue-600 text-white shadow-md' : room.status === 'pending' ? 'bg-red-600 text-white animate-pulse' : 'bg-slate-50 text-slate-300 border border-slate-100';
-                    btn.className = `${style} py-2.5 rounded-lg text-center font-black text-[9px] cursor-pointer`;
-                    btn.innerText = room.id;
-                    grid.appendChild(btn);
-                });
-                container.appendChild(floorDiv);
-            });
-        }
+        function switchAdminView() { showNotification("Chức năng Admin đang được nâng cấp bảo mật", "error"); }
 
         function showNotification(msg, type) {
             const notif = document.getElementById('notification');
             const content = document.getElementById('notifContent');
             const message = document.getElementById('notifMessage');
+            
             message.innerText = msg;
-            content.className = `p-5 rounded-3xl shadow-2xl flex items-center space-x-4 border-2 bg-white ${type === 'success' ? 'border-green-500 text-green-600' : 'border-red-500 text-red-600'}`;
-            document.getElementById('notifIcon').className = `fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}`;
-            notif.classList.remove('translate-y-48');
-            setTimeout(() => notif.classList.add('translate-y-48'), 3000);
+            
+            if(type === 'success') {
+                content.className = `p-4 rounded-2xl shadow-xl flex items-center space-x-3 bg-white border-l-4 border-green-500`;
+                document.getElementById('notifIcon').className = `fas fa-check-circle text-green-500`;
+            } else {
+                content.className = `p-4 rounded-2xl shadow-xl flex items-center space-x-3 bg-white border-l-4 border-red-500`;
+                document.getElementById('notifIcon').className = `fas fa-exclamation-circle text-red-500`;
+            }
+
+            notif.classList.remove('-translate-y-32', 'opacity-0');
+            notif.classList.add('translate-y-0', 'opacity-100');
+            
+            setTimeout(() => {
+                notif.classList.remove('translate-y-0', 'opacity-100');
+                notif.classList.add('-translate-y-32', 'opacity-0');
+            }, 3000);
         }
 
         window.onload = () => { initRooms(); };
