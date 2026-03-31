@@ -7,79 +7,72 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { font-family: sans-serif; -webkit-tap-highlight-color: transparent; background: #f1f5f9; }
-        .v-btn { background: linear-gradient(135deg, #ee0000 0%, #cc0000 100%); color: white; }
-        .card { background: white; border-radius: 16px; border: 1px solid #e2e8f0; }
-        .room-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 6px; }
-        .scroll-thin::-webkit-scrollbar { width: 4px; }
-        .scroll-thin::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        body { font-family: -apple-system, sans-serif; background: #f8fafc; -webkit-tap-highlight-color: transparent; }
+        .v-btn { background: #ee0000; color: white; transition: 0.2s; }
+        .v-btn:active { transform: scale(0.98); opacity: 0.9; }
+        .card { background: white; border-radius: 12px; border: 1px solid #e2e8f0; }
+        .room-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(55px, 1fr)); gap: 5px; }
+        .status-empty { background: #f1f5f9; color: #94a3b8; border: 1px solid #e2e8f0; }
+        .status-occupied { background: #fee2e2; color: #ef4444; border: 1px solid #fecaca; }
     </style>
 </head>
 <body class="p-3">
-    <div class="max-w-md mx-auto min-h-screen flex flex-col space-y-4">
+    <div class="max-w-md mx-auto min-h-screen flex flex-col space-y-3">
         
-        <header class="v-btn p-4 rounded-2xl flex justify-between items-center shadow-lg">
+        <header class="v-btn p-3.5 rounded-xl flex justify-between items-center shadow-md">
             <div onclick="location.reload()" class="flex items-center space-x-2">
-                <i class="fas fa-building text-xl"></i>
-                <span class="font-black text-lg">KTX VIETTEL</span>
+                <i class="fas fa-hotel"></i>
+                <span class="font-bold text-sm tracking-tight uppercase">Quản lý KTX Viettel</span>
             </div>
-            <button onclick="openAdmin()" class="bg-white/20 px-3 py-1.5 rounded-lg text-xs font-bold uppercase">Admin</button>
+            <button onclick="authAdmin()" class="bg-white/20 px-3 py-1 rounded-lg text-[10px] font-bold uppercase">Admin</button>
         </header>
 
-        <div id="homeView" class="space-y-4 pt-4">
-            <button onclick="showView('checkInView')" class="card w-full p-8 text-left flex justify-between items-center hover:bg-slate-50 transition-all">
-                <div>
-                    <p class="text-blue-600 font-bold text-xs uppercase mb-1">Thủ tục vào</p>
-                    <h2 class="text-2xl font-black text-slate-800">NHẬN PHÒNG</h2>
-                </div>
-                <i class="fas fa-door-open text-3xl text-blue-500"></i>
+        <div id="homeView" class="grid grid-cols-2 gap-3 pt-2">
+            <button onclick="showView('checkInView')" class="card p-6 text-center space-y-2 hover:bg-slate-50 transition-all">
+                <i class="fas fa-sign-in-alt text-2xl text-blue-500"></i>
+                <p class="font-bold text-xs">NHẬN PHÒNG</p>
             </button>
-            <button onclick="showView('checkOutView')" class="card w-full p-8 text-left flex justify-between items-center hover:bg-slate-50 transition-all">
-                <div>
-                    <p class="text-red-600 font-bold text-xs uppercase mb-1">Thủ tục ra</p>
-                    <h2 class="text-2xl font-black text-slate-800">TRẢ PHÒNG</h2>
-                </div>
-                <i class="fas fa-key text-3xl text-red-500"></i>
+            <button onclick="showView('checkOutView')" class="card p-6 text-center space-y-2 hover:bg-slate-50 transition-all">
+                <i class="fas fa-sign-out-alt text-2xl text-red-500"></i>
+                <p class="font-bold text-xs">TRẢ PHÒNG</p>
             </button>
         </div>
 
-        <section id="checkInView" class="hidden space-y-4">
-            <button onclick="showView('homeView')" class="text-slate-400 font-bold text-sm"><i class="fas fa-arrow-left mr-1"></i> Quay lại</button>
-            <div class="card p-5 space-y-4">
-                <input type="text" id="inName" placeholder="HỌ VÀ TÊN" class="w-full p-4 bg-slate-50 rounded-xl border font-bold uppercase outline-none focus:border-red-500">
-                <input type="number" id="inRoom" placeholder="SỐ PHÒNG" class="w-full p-4 bg-slate-50 rounded-xl border font-black text-xl outline-none focus:border-red-500">
-                
-                <div class="border rounded-xl overflow-hidden">
-                    <div class="bg-slate-100 p-2 text-center text-[10px] font-bold text-slate-500 uppercase tracking-widest">Danh mục tài sản đầy đủ</div>
-                    <div class="h-40 overflow-y-auto p-2 space-y-1 scroll-thin" id="assetList"></div>
-                </div>
-                <textarea id="inNote" placeholder="Ghi chú sự cố (nếu có)..." class="w-full p-3 bg-slate-50 border rounded-xl text-sm outline-none" rows="2"></textarea>
-                
-                <label class="flex items-start space-x-2 cursor-pointer">
-                    <input type="checkbox" id="inAgree" class="mt-1 w-5 h-5 accent-red-600">
-                    <span class="text-[11px] font-bold text-slate-500 leading-tight">Tôi cam kết thực hiện đúng nội quy và xác nhận tài sản đầy đủ.</span>
+        <section id="checkInView" class="hidden space-y-3">
+            <div class="card p-4 space-y-3">
+                <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest">Thông tin khách đến</h3>
+                <input type="text" id="inName" placeholder="HỌ VÀ TÊN" class="w-full p-3 bg-slate-50 border rounded-lg font-bold uppercase outline-none focus:border-red-500 text-sm">
+                <input type="number" id="inRoom" placeholder="SỐ PHÒNG" class="w-full p-3 bg-slate-50 border rounded-lg font-black text-lg outline-none focus:border-red-500">
+                <textarea id="inNote" placeholder="Ghi chú hỏng hóc nếu có..." class="w-full p-3 bg-slate-50 border rounded-lg text-xs outline-none" rows="2"></textarea>
+                <label class="flex items-center space-x-2 py-2 cursor-pointer">
+                    <input type="checkbox" id="inAgree" class="w-5 h-5 accent-red-600 rounded">
+                    <span class="text-[10px] font-bold text-slate-500 uppercase">Xác nhận đúng tài sản & nội quy</span>
                 </label>
-            </div>
-            <button id="btnIn" onclick="handleIn()" class="v-btn w-full py-4 rounded-xl font-black shadow-lg">XÁC NHẬN NHẬN PHÒNG</button>
-        </section>
-
-        <section id="checkOutView" class="hidden space-y-4">
-            <button onclick="showView('homeView')" class="text-slate-400 font-bold text-sm"><i class="fas fa-arrow-left mr-1"></i> Quay lại</button>
-            <div class="card p-8 text-center space-y-6">
-                <div class="bg-red-50 w-16 h-16 mx-auto rounded-full flex items-center justify-center text-red-600"><i class="fas fa-sign-out-alt text-2xl"></i></div>
-                <h2 class="font-black text-xl text-slate-800 uppercase">Trả phòng</h2>
-                <input type="text" id="outName" placeholder="TÊN CỦA BẠN" class="w-full p-4 bg-slate-50 border rounded-xl font-bold text-center uppercase outline-none focus:border-red-500">
-                <input type="number" id="outRoom" placeholder="SỐ PHÒNG" class="w-full p-4 bg-slate-50 border rounded-xl font-black text-3xl text-center outline-none focus:border-red-500">
-                <button id="btnOut" onclick="handleOut()" class="v-btn w-full py-4 rounded-xl font-black shadow-lg">XÁC NHẬN TRẢ PHÒNG</button>
+                <button id="btnIn" onclick="handleIn()" class="v-btn w-full py-3.5 rounded-lg font-bold text-sm shadow-lg shadow-red-200">XÁC NHẬN GỬI</button>
+                <button onclick="showView('homeView')" class="w-full text-slate-400 font-bold text-[10px] uppercase py-1">Quay lại</button>
             </div>
         </section>
 
-        <section id="adminView" class="hidden space-y-4 pb-20">
-            <div class="card p-4 flex justify-between items-center">
-                <h2 class="font-black text-slate-800 uppercase">Sơ đồ KTX</h2>
-                <button onclick="showView('homeView')" class="text-xs bg-slate-100 px-3 py-1.5 rounded-lg font-bold">Đóng</button>
+        <section id="checkOutView" class="hidden space-y-3">
+            <div class="card p-4 space-y-4 text-center">
+                <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest">Thủ tục trả phòng</h3>
+                <input type="text" id="outName" placeholder="TÊN NGƯỜI TRẢ" class="w-full p-3 bg-slate-50 border rounded-lg font-bold text-center uppercase outline-none focus:border-red-500 text-sm">
+                <input type="number" id="outRoom" placeholder="SỐ PHÒNG" class="w-full p-3 bg-slate-50 border rounded-lg font-black text-2xl text-center outline-none focus:border-red-500">
+                <button id="btnOut" onclick="handleOut()" class="v-btn w-full py-3.5 rounded-lg font-bold text-sm shadow-lg shadow-red-200">BÁO TRẢ PHÒNG</button>
+                <button onclick="showView('homeView')" class="w-full text-slate-400 font-bold text-[10px] uppercase py-1">Quay lại</button>
             </div>
-            <div id="adminContent" class="space-y-6"></div>
+        </section>
+
+        <section id="adminView" class="hidden space-y-3 pb-20">
+            <div class="flex justify-between items-center px-1">
+                <h2 class="font-black text-slate-800 text-sm uppercase">Sơ đồ KTX hiện tại</h2>
+                <div class="flex space-x-2 text-[9px] font-bold">
+                    <span class="flex items-center"><span class="w-2 h-2 bg-slate-200 rounded-full mr-1"></span> TRỐNG</span>
+                    <span class="flex items-center"><span class="w-2 h-2 bg-red-400 rounded-full mr-1"></span> ĐANG Ở</span>
+                </div>
+            </div>
+            <div id="adminContent" class="space-y-4"></div>
+            <button onclick="showView('homeView')" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-6 py-2.5 rounded-full font-bold text-xs shadow-xl z-50">ĐÓNG SƠ ĐỒ</button>
         </section>
 
     </div>
@@ -92,81 +85,69 @@
             pin: "271020"
         };
 
-        const assets = ["Chìa khóa", "Tivi", "Điều hòa", "Tủ lạnh", "Bình nóng lạnh", "Chăn/Ga/Gối", "Ấm siêu tốc", "Dép", "Thùng rác", "Cốc chén"];
+        // Danh sách phòng giả định để quản lý (Bạn có thể sửa danh sách này)
+        let roomStatus = {}; 
 
         function showView(id) {
             document.querySelectorAll('section, #homeView').forEach(v => v.classList.add('hidden'));
             document.getElementById(id).classList.remove('hidden');
-            window.scrollTo(0,0);
-        }
-
-        function init() {
-            const list = document.getElementById('assetList');
-            assets.forEach(a => {
-                list.innerHTML += `<label class="flex justify-between p-2 hover:bg-slate-50 rounded cursor-pointer border-b border-slate-50"><span class="text-xs font-medium text-slate-600">${a}</span><input type="checkbox" checked class="asset-item w-4 h-4 accent-green-600"></label>`;
-            });
-        }
-
-        async function postData(data) {
-            try { await fetch(config.sheet, { method: "POST", mode: "no-cors", body: JSON.stringify(data) }); } catch(e){}
-        }
-
-        async function sendTele(msg) {
-            await fetch(`https://api.telegram.org/bot${config.token}/sendMessage?chat_id=${config.chatId}&text=${encodeURIComponent(msg)}`);
         }
 
         async function handleIn() {
             const name = document.getElementById('inName').value.trim().toUpperCase();
             const room = document.getElementById('inRoom').value;
-            if(!name || !room || !document.getElementById('inAgree').checked) return alert("Vui lòng nhập tên, số phòng và đồng ý nội quy!");
+            if(!name || !room || !document.getElementById('inAgree').checked) return alert("Thiếu thông tin!");
             
             setBtn('btnIn', true);
-            await postData({ type: "NHẬN PHÒNG", room: room, name: name });
-            await sendTele(`🟢 NHẬN PHÒNG: ${room}\n👤 Khách: ${name}\n📝 Ghi chú: ${document.getElementById('inNote').value || "Không"}`);
-            alert("Đã gửi thành công!");
+            roomStatus[room] = name; // Cập nhật trạng thái
+            await fetch(config.sheet, { method: "POST", mode: "no-cors", body: JSON.stringify({ type: "NHẬN PHÒNG", room: room, name: name }) });
+            await fetch(`https://api.telegram.org/bot${config.token}/sendMessage?chat_id=${config.chatId}&text=${encodeURIComponent(`🟢 NHẬN: ${room}\n👤 Tên: ${name}\n📝 Ghi chú: ${document.getElementById('inNote').value || "Không"}`)}`);
+            alert("Thành công!");
             location.reload();
         }
 
         async function handleOut() {
             const name = document.getElementById('outName').value.trim().toUpperCase();
             const room = document.getElementById('outRoom').value;
-            if(!name || !room) return alert("Vui lòng nhập tên và số phòng!");
+            if(!name || !room) return alert("Thiếu thông tin!");
 
             setBtn('btnOut', true);
-            await postData({ type: "TRẢ PHÒNG", room: room, name: name });
-            await sendTele(`🔴 TRẢ PHÒNG: ${room}\n👤 Người trả: ${name}`);
-            alert("Đã gửi thông báo trả phòng!");
+            delete roomStatus[room]; // Xóa trạng thái ở
+            await fetch(config.sheet, { method: "POST", mode: "no-cors", body: JSON.stringify({ type: "TRẢ PHÒNG", room: room, name: name }) });
+            await fetch(`https://api.telegram.org/bot${config.token}/sendMessage?chat_id=${config.chatId}&text=${encodeURIComponent(`🔴 TRẢ: ${room}\n👤 Tên: ${name}`)}`);
+            alert("Đã báo trả!");
             location.reload();
         }
 
         function setBtn(id, loading) {
             const btn = document.getElementById(id);
             btn.disabled = loading;
-            btn.innerHTML = loading ? '<i class="fas fa-spinner fa-spin"></i> ĐANG XỬ LÝ...' : 'XÁC NHẬN';
-            btn.style.opacity = loading ? "0.6" : "1";
+            btn.innerHTML = loading ? '<i class="fas fa-sync fa-spin"></i>' : 'XÁC NHẬN';
         }
 
-        function openAdmin() {
-            const p = prompt("Nhập mã PIN Quản lý:");
-            if(p === config.pin) {
+        function authAdmin() {
+            if(prompt("Mã PIN:") === config.pin) {
                 showView('adminView');
                 renderAdmin();
-            } else if(p !== null) alert("Mã PIN không đúng!");
+            }
         }
 
         function renderAdmin() {
             const cont = document.getElementById('adminContent');
             cont.innerHTML = '';
+            // Quy tắc tạo số phòng KTX của bạn
             for(let f=1; f<=9; f++) {
-                let rooms = "";
+                let roomsHTML = "";
                 let start = f*100+1;
-                let end = f===1 ? 111 : (f<=5 ? f*100+25 : f*100+12);
-                for(let i=start; i<=end; i++) rooms += `<div class="bg-white border text-[10px] font-bold text-slate-400 py-3 rounded-lg text-center shadow-sm">${i}</div>`;
-                cont.innerHTML += `<div><h3 class="text-[10px] font-black text-slate-400 uppercase mb-2 ml-1 tracking-widest">Tầng ${f}</h3><div class="room-grid">${rooms}</div></div>`;
+                let end = (f===1)?111:(f<=5?f*100+25:f*100+12);
+                
+                for(let i=start; i<=end; i++) {
+                    // Logic kiểm tra phòng có người hay không (tạm thời demo màu sắc)
+                    roomsHTML += `<div class="status-empty py-2.5 rounded-lg text-[10px] font-black text-center shadow-sm">${i}</div>`;
+                }
+                cont.innerHTML += `<div><h3 class="text-[9px] font-black text-slate-400 uppercase mb-1.5 ml-1">Tầng ${f}</h3><div class="room-grid">${roomsHTML}</div></div>`;
             }
         }
-
-        window.onload = init;
     </script>
 </body>
 </html>
