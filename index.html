@@ -189,7 +189,7 @@
     </div>
 
     <script>
-        // MÌNH ĐÃ ĐIỀN SẴN LINK CHUẨN CỦA BẠN VÀO ĐÂY RỒI NHÉ!
+        // LINK APP SCRIPT ĐÃ ĐƯỢC ĐIỀN CHUẨN XÁC TỪ ẢNH BẠN GỬI
         const sheetURL = "https://script.google.com/macros/s/AKfycbyCFrostOu5bPgjxOOTCoMrR8XF1GQnn05x_7lymeQYP113Tsgm9vqa7Olzi04bfBRW/exec"; 
         
         const telegramToken = "8628522316:AAEEZavf7qnnENTEzGTb2dmmYDHhunZ9qT4"; 
@@ -243,12 +243,20 @@
             }
         }
 
-        function sendDataToSheets(payload) {
-            fetch(sheetURL, {
-                method: "POST",
-                mode: "no-cors",
-                body: JSON.stringify(payload)
-            }).catch(e => console.log(e));
+        // HÀM GỬI DỮ LIỆU ĐÃ ĐƯỢC VÁ LỖI - BỔ SUNG AWAIT VÀ HEADERS
+        async function sendDataToSheets(payload) {
+            try {
+                await fetch(sheetURL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: {
+                        "Content-Type": "text/plain;charset=utf-8"
+                    },
+                    body: JSON.stringify(payload)
+                });
+            } catch (e) {
+                console.error("Lỗi gửi dữ liệu:", e);
+            }
         }
 
         async function handleCheckIn() {
@@ -272,7 +280,8 @@
             room.occupant = upperName;
 
             try {
-                sendDataToSheets({ type: "NHẬN PHÒNG", room: roomNo, name: upperName, issues: issueString, note: extraNote || "Không" });
+                // ĐÃ BỔ SUNG LỆNH AWAIT CHỜ GỬI XONG SHEETS RỒI MỚI CHẠY TIẾP
+                await sendDataToSheets({ type: "NHẬN PHÒNG", room: roomNo, name: upperName, issues: issueString, note: extraNote || "Không" });
                 
                 const msg = `🟢 NHẬN PHÒNG: ${roomNo}\n👤 Khách: ${upperName}\n⚠️ Lỗi: ${issueString}\n📝 Ghi chú: ${extraNote || "Không"}`;
                 await fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(msg)}`);
@@ -294,7 +303,8 @@
             room.occupant = '';
 
             try {
-                sendDataToSheets({ type: "TRẢ PHÒNG", room: roomNo, name: "TRẢ PHÒNG", issues: "", note: "" });
+                // ĐÃ BỔ SUNG LỆNH AWAIT
+                await sendDataToSheets({ type: "TRẢ PHÒNG", room: roomNo, name: "TRẢ PHÒNG", issues: "", note: "" });
                 
                 const msg = `🔴 BÁO TRẢ PHÒNG: ${roomNo}`;
                 await fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(msg)}`);
