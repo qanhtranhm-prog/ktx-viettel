@@ -3,29 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Quản lý KTX Viettel</title>
+    <title>QLTS Viettel - KTX</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; -webkit-tap-highlight-color: transparent; }
         .viettel-gradient { background: linear-gradient(135deg, #ee0000 0%, #cc0000 100%); }
-        .card-shadow { box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .noiquy-box { height: 320px; overflow-y: auto; }
+        .card-shadow { box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+        .noiquy-box { height: 350px; overflow-y: auto; scroll-behavior: smooth; padding-right: 8px; }
         .noiquy-box::-webkit-scrollbar { width: 4px; }
         .noiquy-box::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
-        .asset-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8fafc; border-radius: 12px; margin-bottom: 4px; border: 1px solid #f1f5f9; }
+        .asset-row { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f8fafc; border-radius: 12px; margin-bottom: 5px; border: 1px solid #f1f5f9; transition: 0.2s; }
+        .asset-row:active { background: #f1f5f9; }
     </style>
 </head>
-<body class="text-slate-800">
+<body class="text-slate-800 antialiased selection:bg-red-100 selection:text-red-900">
 
     <div class="max-w-md mx-auto min-h-screen flex flex-col bg-slate-50 relative shadow-2xl overflow-hidden">
         
         <header class="viettel-gradient text-white p-5 sticky top-0 z-40 shadow-md flex justify-between items-center rounded-b-[24px]">
-            <div class="flex items-center space-x-3" onclick="location.reload()">
-                <div class="bg-white p-2 rounded-xl"><i class="fas fa-hotel text-red-600"></i></div>
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="location.reload()">
+                <div class="bg-white p-2 rounded-xl shadow-sm"><i class="fas fa-hotel text-red-600"></i></div>
                 <div>
-                    <h1 class="font-black text-sm uppercase tracking-tighter leading-none">Học viện Viettel</h1>
+                    <h1 class="font-bold text-sm uppercase tracking-tighter leading-none">Công ty QLTS Viettel</h1>
                     <p class="text-[9px] font-bold opacity-80 uppercase mt-1">Quản lý Ký túc xá</p>
                 </div>
             </div>
@@ -34,10 +35,10 @@
 
         <main class="flex-grow p-4 space-y-4">
             
-            <section id="homeView" class="space-y-4">
+            <section id="homeView" class="space-y-4 animate-[fadeIn_0.3s]">
                 <div class="bg-white rounded-[2rem] p-6 card-shadow border border-white relative overflow-hidden">
-                    <h2 class="text-center font-black text-red-600 uppercase tracking-widest text-sm mb-4 italic">9 Điều Nội quy Ký túc xá</h2>
-                    <div class="noiquy-box pr-2 text-[12px] leading-relaxed text-slate-600 space-y-4">
+                    <h2 class="text-center font-black text-red-600 uppercase tracking-widest text-sm mb-5 italic border-b pb-3">Nội quy lưu trú tại Ký túc xá Viettel</h2>
+                    <div class="noiquy-box text-[12px] leading-relaxed text-slate-600 space-y-4 font-medium">
                         <p><b>1.</b> Giữ gìn vệ sinh chung, không xả rác, xả nước, để đồ vật bừa bãi. Không vẽ bậy, dán giấy, tranh ảnh lên tường, cửa chính, cửa ban công.</p>
                         <p><b>2.</b> Sử dụng điện, nước an toàn, tiết kiệm, tắt hết các thiết bị điện không sử dụng khi ra khỏi phòng.</p>
                         <p><b>3.</b> Không tự ý thay đổi, xê dịch các trang thiết bị, tài sản bố trí trong phòng nghỉ.</p>
@@ -46,48 +47,68 @@
                         <p><b>6.</b> Phơi quần áo, khăn mặt, các đồ dùng theo vị trí đã quy định.</p>
                         <p><b>7.</b> Không sử dụng chất kích thích, bia rượu, đồ ăn thức uống trong phòng nghỉ.</p>
                         <p><b>8.</b> Quý khách có trách nhiệm bàn giao lại các trang thiết bị trong phòng với cán bộ quản lý của Ký túc xá trước khi kết thúc thời gian nghỉ.</p>
-                        <p><b>9. Thời gian ăn:</b> Sáng: 06h-07h; Trưa: 11h30-12h30; Tối: 18h-19h.</p>
+                        <div class="bg-slate-50 p-3 rounded-xl border border-dashed border-slate-200 mt-2">
+                            <p class="font-bold text-red-600 mb-1">9. Thời gian ăn:</p>
+                            <ul class="space-y-0.5 ml-2">
+                                <li>- Bữa sáng: Từ 06h00 đến 07h00;</li>
+                                <li>- Bữa trưa: Từ 11h30 đến 12h30;</li>
+                                <li>- Bữa tối: Từ 18h00 đến 19h00.</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
-                    <button onclick="showView('checkInView')" class="bg-red-600 text-white p-5 rounded-[1.5rem] font-black text-xs uppercase shadow-lg flex flex-col items-center space-y-2">
+                    <button onclick="showView('checkInView')" class="bg-red-600 text-white p-5 rounded-[1.5rem] font-black text-xs uppercase shadow-lg shadow-red-100 flex flex-col items-center space-y-2 hover:bg-red-700 transition">
                         <i class="fas fa-sign-in-alt text-xl"></i><span>Nhận phòng</span>
                     </button>
-                    <button onclick="showView('checkOutView')" class="bg-slate-800 text-white p-5 rounded-[1.5rem] font-black text-xs uppercase shadow-lg flex flex-col items-center space-y-2">
+                    <button onclick="showView('checkOutView')" class="bg-slate-800 text-white p-5 rounded-[1.5rem] font-black text-xs uppercase shadow-lg shadow-slate-100 flex flex-col items-center space-y-2 hover:bg-slate-900 transition">
                         <i class="fas fa-sign-out-alt text-xl"></i><span>Trả phòng</span>
                     </button>
                 </div>
             </section>
 
             <section id="checkInView" class="hidden space-y-3">
-                <div class="bg-white p-5 rounded-3xl card-shadow space-y-4">
+                <div class="bg-white p-5 rounded-3xl card-shadow space-y-4 border border-white">
+                    <div class="flex items-center space-x-2 border-b pb-3 mb-2">
+                        <i class="fas fa-edit text-red-600"></i>
+                        <h2 class="font-black text-sm uppercase">Khai báo thông tin nhận phòng</h2>
+                    </div>
                     <div class="grid grid-cols-2 gap-3">
                         <div class="col-span-2">
-                            <input type="text" id="inName" placeholder="HỌ VÀ TÊN KHÁCH" class="w-full p-3.5 bg-slate-50 border rounded-xl font-bold uppercase outline-none focus:border-red-500 text-sm">
+                            <input type="text" id="inName" placeholder="HỌ VÀ TÊN KHÁCH" class="w-full p-4 bg-slate-50 border rounded-2xl font-bold uppercase outline-none focus:border-red-500 text-sm">
                         </div>
-                        <input type="number" id="inRoom" placeholder="SỐ PHÒNG" class="w-full p-3.5 bg-slate-50 border rounded-xl font-black text-xl outline-none focus:border-red-500">
-                        <input type="number" id="inCount" value="1" min="1" oninput="updateAssetQuantities()" placeholder="QUÂN SỐ" class="w-full p-3.5 bg-blue-50 border-blue-100 border rounded-xl font-black text-xl outline-none focus:border-blue-500 text-blue-600">
+                        <input type="number" id="inRoom" placeholder="SỐ PHÒNG" class="w-full p-4 bg-slate-50 border rounded-2xl font-black text-xl outline-none focus:border-red-500">
+                        <input type="number" id="inCount" value="1" min="1" oninput="updateAssetQuantities()" placeholder="QUÂN SỐ" class="w-full p-4 bg-blue-50 border-blue-100 border rounded-2xl font-black text-xl outline-none focus:border-red-500 text-blue-600">
                     </div>
                     
-                    <div id="assetContainer" class="space-y-2">
-                        <p class="text-[10px] font-black text-slate-400 uppercase ml-1">Danh mục tài sản (Theo quân số: <span id="displayCount" class="text-blue-600">1</span>)</p>
-                        <div id="assetList" class="max-h-60 overflow-y-auto pr-1 custom-scroll"></div>
+                    <div id="assetContainer" class="space-y-2 pt-1 animate-[fadeIn_0.3s]">
+                        <p class="text-[10px] font-black text-slate-400 uppercase ml-1">Danh mục 30 tài sản (Theo quân số: <span id="displayCount" class="text-blue-600">1</span>)</p>
+                        <div id="assetList" class="max-h-[250px] overflow-y-auto pr-1 custom-scroll space-y-1">
+                            </div>
                     </div>
 
-                    <textarea id="inNote" placeholder="Ghi chú hỏng hóc..." class="w-full p-3.5 bg-slate-50 border rounded-xl text-xs outline-none" rows="2"></textarea>
-                    <button id="btnIn" onclick="handleIn()" class="w-full viettel-gradient text-white py-4 rounded-xl font-black shadow-lg uppercase text-xs">Xác nhận nhận phòng</button>
-                    <button onclick="showView('homeView')" class="w-full text-slate-400 font-bold text-[10px] uppercase">Quay lại</button>
+                    <textarea id="inNote" placeholder="Ghi chú nếu thiếu đồ hoặc hỏng hóc..." class="w-full p-4 bg-slate-50 border rounded-2xl text-xs outline-none focus:border-red-500" rows="2"></textarea>
+                    
+                    <button id="btnIn" onclick="handleIn()" class="w-full viettel-gradient text-white py-4.5 rounded-2xl font-black shadow-lg uppercase text-xs tracking-widest hover:shadow-xl transition-all shadow-red-200">Xác nhận & Gửi thông tin</button>
+                    <button onclick="showView('homeView')" class="w-full text-slate-400 font-bold text-[10px] uppercase py-1">Quay lại</button>
                 </div>
             </section>
 
             <section id="checkOutView" class="hidden space-y-3">
-                <div class="bg-white p-8 rounded-3xl card-shadow text-center space-y-5">
-                    <input type="text" id="outName" placeholder="TÊN NGƯỜI TRẢ" class="w-full p-4 bg-slate-50 border rounded-xl font-bold text-center uppercase outline-none focus:border-red-500">
-                    <input type="number" id="outRoom" placeholder="SỐ PHÒNG" class="w-full p-4 bg-slate-50 border rounded-xl font-black text-3xl text-center outline-none focus:border-red-500">
-                    <button id="btnOut" onclick="handleOut()" class="w-full viettel-gradient text-white py-4 rounded-xl font-black shadow-lg uppercase text-xs">Báo trả phòng</button>
-                    <button onclick="showView('homeView')" class="w-full text-slate-400 font-bold text-[10px] uppercase">Quay lại</button>
+                <div class="bg-white p-8 rounded-[2rem] card-shadow border border-white text-center space-y-6">
+                    <div class="bg-red-50 w-20 h-20 mx-auto rounded-3xl flex items-center justify-center text-red-600 border border-red-100 shadow-inner">
+                        <i class="fas fa-door-open text-3xl"></i>
+                    </div>
+                    <h2 class="font-black text-lg uppercase tracking-tight">Thủ tục trả phòng</h2>
+                    <div class="space-y-4 text-left">
+                        <input type="text" id="outName" placeholder="TÊN NGƯỜI TRẢ PHÒNG" class="w-full p-4 bg-slate-50 border rounded-2xl font-bold text-center uppercase outline-none focus:border-red-500 text-sm">
+                        <input type="number" id="outRoom" placeholder="SỐ PHÒNG" class="w-full p-4 bg-slate-50 border rounded-2xl font-black text-4xl text-center outline-none focus:border-red-500">
+                    </div>
+                    <button id="btnOut" onclick="handleOut()" class="w-full viettel-gradient text-white py-4.5 rounded-2xl font-black shadow-lg uppercase text-xs tracking-widest shadow-red-200">Xác nhận báo trả phòng</button>
+                    <button onclick="showView('homeView')" class="w-full text-slate-400 font-bold text-[10px] uppercase py-1">Quay lại</button>
                 </div>
             </section>
+
         </main>
     </div>
 
@@ -98,26 +119,32 @@
             chat: "-1003878344099"
         };
 
-        // PHÂN LOẠI TÀI SẢN
+        // DANH MỤC 30 TÀI SẢN (ĐÃ PHÂN LOẠI)
         const assets = [
+            // Cố định (Luôn là 1)
             { n: "Chìa khóa phòng", type: "fixed" }, { n: "Tivi", type: "fixed" }, { n: "Điều khiển Tivi", type: "fixed" },
             { n: "Điều hòa", type: "fixed" }, { n: "Điều khiển điều hòa", type: "fixed" }, { n: "Tủ lạnh", type: "fixed" },
-            { n: "Bình nóng lạnh", type: "fixed" }, { n: "Ấm siêu tốc", type: "fixed" }, { n: "Thùng rác", type: "fixed" },
-            { n: "Rèm cửa", type: "fixed" }, { n: "Thảm lau chân", type: "fixed" }, { n: "Vòi hoa sen", type: "fixed" },
+            { n: "Ấm siêu tốc", type: "fixed" }, { n: "Bình nóng lạnh", type: "fixed" }, { n: "Vòi hoa sen", type: "fixed" },
+            { n: "Tranh trang trí", type: "fixed" },
+
+            // Theo quân số (Nhân theo số lượng người)
             { n: "Giường", type: "person" }, { n: "Đệm", type: "person" }, { n: "Chăn", type: "person" },
             { n: "Ga giường", type: "person" }, { n: "Gối", type: "person" }, { n: "Vỏ gối", type: "person" },
-            { n: "Dép đi trong nhà", type: "person" }, { n: "Khăn tắm", type: "person" }, { n: "Khăn mặt", type: "person" },
-            { n: "Móc áo", type: "person" }, { n: "Cốc thủy tinh", type: "person" }, { n: "Ghế", type: "person" }
+            { n: "Khăn tắm", type: "person" }, { n: "Khăn mặt", type: "person" }, { n: "Cốc thủy tinh", type: "person" },
+            { n: "Dép đi trong nhà", type: "person" }, { n: "Ghế", type: "person" }, { n: "Móc áo (bộ)", type: "person" },
+            { n: "Thảm lau chân", type: "person" }, { n: "Gương soi", type: "person" }, { n: "Bàn làm việc", type: "person" },
+            { n: "Tủ quần áo", type: "person" }, { n: "Rèm cửa", type: "person" }, { n: "Thùng rác", type: "person" },
+            { n: "Ổ cắm điện", type: "person" }, { n: "Móc treo đồ", type: "person" }
         ];
 
         function showView(id) {
             document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
             document.getElementById(id).classList.remove('hidden');
-            if(id === 'checkInView') updateAssetQuantities();
+            if(id === 'checkInView') updateAssetQuantities(); // Cập nhật ngay khi vào view
         }
 
         function updateAssetQuantities() {
-            const count = parseInt(document.getElementById('inCount').value) || 1;
+            const count = parseInt(document.getElementById('inCount').value) || 1; // Nếu trống thì là 1
             document.getElementById('displayCount').innerText = count;
             const list = document.getElementById('assetList');
             list.innerHTML = '';
@@ -128,9 +155,9 @@
                 <div class="asset-row">
                     <div class="flex flex-col">
                         <span class="text-[11px] font-bold text-slate-700">${i+1}. ${a.n}</span>
-                        <span class="text-[9px] text-slate-400 font-bold uppercase">Số lượng: ${qty}</span>
+                        <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wide">Số lượng: ${qty}</span>
                     </div>
-                    <input type="checkbox" checked class="w-5 h-5 accent-green-600">
+                    <input type="checkbox" checked class="w-5 h-5 accent-green-600 rounded-md cursor-pointer">
                 </div>`;
             });
         }
@@ -139,36 +166,44 @@
             const name = document.getElementById('inName').value.trim().toUpperCase();
             const room = document.getElementById('inRoom').value;
             const count = document.getElementById('inCount').value;
-            if(!name || !room) return alert("Vui lòng nhập đủ thông tin!");
+            if(!name || !room) return alert("Vui lòng nhập đủ Tên và Số phòng!");
             
             const btn = document.getElementById('btnIn');
             btn.disabled = true; btn.innerText = "ĐANG GỬI...";
 
             const msg = `🟢 NHẬN PHÒNG: ${room}\n👤 Khách: ${name}\n👥 Quân số: ${count}\n📝 Ghi chú: ${document.getElementById('inNote').value || "Không"}`;
             
-            await fetch(cfg.sheet, { method: "POST", mode: "no-cors", body: JSON.stringify({ type: "NHẬN PHÒNG", room: room, name: name, count: count }) });
-            await fetch(`https://api.telegram.org/bot${cfg.token}/sendMessage?chat_id=${cfg.chat}&text=${encodeURIComponent(msg)}`);
+            // Gửi dữ liệu song song
+            await Promise.all([
+                fetch(cfg.sheet, { method: "POST", mode: "no-cors", body: JSON.stringify({ type: "NHẬN PHÒNG", room: room, name: name, count: count }) }),
+                fetch(`https://api.telegram.org/bot${cfg.token}/sendMessage?chat_id=${cfg.chat}&text=${encodeURIComponent(msg)}`)
+            ]);
             
-            alert("Thành công!");
+            alert("Đã nhận phòng thành công!");
             location.reload();
         }
 
         async function handleOut() {
             const name = document.getElementById('outName').value.trim().toUpperCase();
             const room = document.getElementById('outRoom').value;
-            if(!name || !room) return alert("Vui lòng nhập đủ thông tin!");
+            if(!name || !room) return alert("Vui lòng nhập đủ Tên và Số phòng!");
+            
             const btn = document.getElementById('btnOut');
             btn.disabled = true; btn.innerText = "ĐANG GỬI...";
 
-            await fetch(cfg.sheet, { method: "POST", mode: "no-cors", body: JSON.stringify({ type: "TRẢ PHÒNG", room: room, name: name }) });
-            await fetch(`https://api.telegram.org/bot${cfg.token}/sendMessage?chat_id=${cfg.chat}&text=${encodeURIComponent(`🔴 TRẢ PHÒNG: ${room}\n👤 Người trả: ${name}`)}`);
-            alert("Đã báo trả phòng!");
+            await Promise.all([
+                fetch(cfg.sheet, { method: "POST", mode: "no-cors", body: JSON.stringify({ type: "TRẢ PHÒNG", room: room, name: name }) }),
+                fetch(`https://api.telegram.org/bot${cfg.token}/sendMessage?chat_id=${cfg.chat}&text=${encodeURIComponent(`🔴 TRẢ PHÒNG: ${room}\n👤 Người trả: ${name}`)}`)
+            ]);
+            
+            alert("Đã báo trả phòng thành công!");
             location.reload();
         }
 
         function authAdmin() {
             if(prompt("Mã PIN Quản lý:") === "271020") alert("Hệ thống quản lý đang mở...");
         }
+
     </script>
 </body>
 </html>
