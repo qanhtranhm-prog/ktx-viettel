@@ -83,17 +83,23 @@
             position: fixed;
             inset: 0;
             background: rgba(255,255,255,0.8);
-            display: none;
+            display: flex;
             align-items: center;
             justify-content: center;
             z-index: 9999;
             backdrop-filter: blur(4px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+        .loading-overlay.active {
+            opacity: 1;
+            pointer-events: all;
         }
     </style>
 </head>
 <body class="text-slate-800 antialiased">
 
-    <!-- LOADING OVERLAY -->
     <div id="loading" class="loading-overlay">
         <div class="flex flex-col items-center">
             <div class="w-12 h-12 border-4 border-red-600 border-t-transparent rounded-full animate-spin"></div>
@@ -103,9 +109,8 @@
 
     <div class="max-w-md mx-auto min-h-screen flex flex-col bg-slate-50 relative shadow-2xl overflow-hidden">
         
-        <!-- HEADER -->
         <header class="viettel-gradient text-white p-6 sticky top-0 z-40 shadow-lg flex justify-between items-center rounded-b-[32px]">
-            <div class="flex items-center space-x-3 cursor-pointer" onclick="location.reload()">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="resetApp()">
                 <div class="bg-white p-2 rounded-2xl shadow-inner text-red-600">
                     <i class="fas fa-hotel text-lg"></i>
                 </div>
@@ -121,37 +126,37 @@
 
         <main class="flex-grow p-4 space-y-6">
             
-            <!-- HOME VIEW -->
             <section id="homeView" class="space-y-6 animate-fade">
                 <div class="bg-white rounded-[2.5rem] p-6 card-shadow border border-white relative overflow-hidden">
                     <div class="absolute top-0 right-0 p-4 opacity-5"><i class="fas fa-shield-alt text-6xl"></i></div>
                     <h2 class="text-center font-black text-red-600 uppercase tracking-widest text-[13px] mb-4 italic flex items-center justify-center gap-2">
-                        <span class="h-px w-8 bg-red-100"></span>Nội quy lưu trú KTX<span class="h-px w-8 bg-red-100"></span>
+                        <span class="h-px w-8 bg-red-100"></span>Thông tin tiện ích<span class="h-px w-8 bg-red-100"></span>
                     </h2>
                     
-                    <div class="noiquy-box text-[12px] leading-relaxed text-slate-600 space-y-4 font-medium pr-2">
-                        <p class="flex gap-3"><span class="text-red-500 font-black">01.</span> Giữ gìn vệ sinh chung, không xả rác, xả nước, để đồ vật bừa bãi. Không vẽ bậy, dán giấy lên tường.</p>
-                        <p class="flex gap-3"><span class="text-red-500 font-black">02.</span> Sử dụng điện, nước an toàn, tiết kiệm, tắt hết các thiết bị khi ra khỏi phòng.</p>
-                        <p class="flex gap-3"><span class="text-red-500 font-black">03.</span> Không tự ý thay đổi, xê dịch các trang thiết bị, tài sản bố trí trong phòng nghỉ.</p>
-                        <p class="flex gap-3"><span class="text-red-500 font-black">04.</span> Không tiếp khách tại phòng nghỉ sau 22h00.</p>
-                        <p class="flex gap-3"><span class="text-red-500 font-black">05.</span> Sử dụng internet đúng quy định, không lan truyền nội dung xấu độc.</p>
-                        <p class="flex gap-3"><span class="text-red-500 font-black">06.</span> Phơi quần áo, đồ dùng đúng nơi quy định.</p>
-                        <p class="flex gap-3"><span class="text-red-500 font-black">07.</span> Không sử dụng chất kích thích, bia rượu trong phòng nghỉ.</p>
-                        <p class="flex gap-3"><span class="text-red-500 font-black">08.</span> Bàn giao đầy đủ trang thiết bị trước khi rời khỏi Ký túc xá.</p>
-                        
-                        <div class="bg-red-50/50 p-4 rounded-2xl border border-red-100 mt-4">
-                            <p class="font-black text-red-600 mb-2 text-[10px] uppercase tracking-wider">Lịch phục vụ ăn uống:</p>
+                    <div class="space-y-4 font-medium pr-2">
+                        <div class="bg-red-50/50 p-4 rounded-2xl border border-red-100">
+                            <p class="font-black text-red-600 mb-3 text-[10px] uppercase tracking-wider flex items-center gap-2"><i class="fas fa-utensils"></i> Lịch phục vụ ăn uống:</p>
                             <div class="grid grid-cols-1 gap-2 text-[11px] font-bold text-slate-700">
-                                <div class="flex justify-between items-center bg-white p-2 rounded-lg shadow-sm">
-                                    <span>Bữa sáng</span> <span class="text-red-600">06h00 - 07h00</span>
+                                <div class="flex justify-between items-center bg-white p-3 rounded-xl shadow-sm border border-red-50">
+                                    <span class="flex items-center gap-2"><i class="fas fa-sun text-orange-400"></i> Bữa sáng</span> <span class="text-red-600 bg-red-50 px-2 py-1 rounded-md">06h00 - 07h00</span>
                                 </div>
-                                <div class="flex justify-between items-center bg-white p-2 rounded-lg shadow-sm">
-                                    <span>Bữa trưa</span> <span class="text-red-600">11h30 - 12h30</span>
+                                <div class="flex justify-between items-center bg-white p-3 rounded-xl shadow-sm border border-red-50">
+                                    <span class="flex items-center gap-2"><i class="fas fa-cloud-sun text-blue-400"></i> Bữa trưa</span> <span class="text-red-600 bg-red-50 px-2 py-1 rounded-md">11h30 - 12h30</span>
                                 </div>
-                                <div class="flex justify-between items-center bg-white p-2 rounded-lg shadow-sm">
-                                    <span>Bữa tối</span> <span class="text-red-600">18h00 - 19h00</span>
+                                <div class="flex justify-between items-center bg-white p-3 rounded-xl shadow-sm border border-red-50">
+                                    <span class="flex items-center gap-2"><i class="fas fa-moon text-indigo-400"></i> Bữa tối</span> <span class="text-red-600 bg-red-50 px-2 py-1 rounded-md">18h00 - 19h00</span>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="bg-slate-800 text-white p-5 rounded-2xl flex items-center justify-between shadow-lg shadow-slate-200">
+                            <div>
+                                <p class="text-[10px] font-bold uppercase text-slate-400 mb-1 tracking-widest">Hotline hỗ trợ KTX</p>
+                                <p class="text-xl font-black tracking-wider text-white">0983.863.380</p>
+                            </div>
+                            <a href="tel:0983863380" class="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center text-white shadow-lg active:scale-95 transition-all">
+                                <i class="fas fa-phone-alt text-lg"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -168,7 +173,6 @@
                 </div>
             </section>
 
-            <!-- LOOKUP VIEW (TÌM PHÒNG TỰ ĐỘNG) -->
             <section id="lookupView" class="hidden space-y-4 animate-fade">
                 <div class="bg-white p-6 rounded-[2.5rem] card-shadow border border-white space-y-5">
                     <div class="text-center space-y-2 mb-6">
@@ -186,7 +190,6 @@
                         </button>
                     </div>
 
-                    <!-- Kết quả tìm kiếm -->
                     <div id="lookupResult" class="hidden bg-slate-50 p-4 rounded-2xl border border-slate-200 mt-4 space-y-3 animate-fade">
                         <div class="flex justify-between items-center border-b border-slate-200 pb-2">
                             <span class="text-[10px] font-bold text-slate-400 uppercase">Khách lưu trú</span>
@@ -205,7 +208,7 @@
                         </button>
                     </div>
 
-                    <button onclick="showView('homeView'); document.getElementById('lookupResult').classList.add('hidden');" class="w-full text-slate-400 font-bold text-[10px] uppercase py-2 mt-2">Quay lại trang chủ</button>
+                    <button onclick="resetApp()" class="w-full text-slate-400 font-bold text-[10px] uppercase py-2 mt-2">Quay lại trang chủ</button>
                 </div>
                 
                 <div class="text-center">
@@ -213,7 +216,6 @@
                 </div>
             </section>
 
-            <!-- CHECK-IN VIEW -->
             <section id="checkInView" class="hidden space-y-4 animate-fade">
                 <div class="bg-white p-6 rounded-[2.5rem] card-shadow space-y-5 border border-white">
                     <div class="space-y-1">
@@ -230,24 +232,19 @@
                     </div>
                     
                     <div id="assetContainer" class="hidden space-y-3 pt-2">
-                        <div class="flex justify-between items-center px-1">
-                            <p class="text-[10px] font-black text-slate-400 uppercase">Kiểm kê 30 tài sản:</p>
-                            <label class="flex items-center gap-2 cursor-pointer">
-                                <span class="text-[10px] font-bold text-red-600 uppercase">Tất cả</span>
-                                <input type="checkbox" id="selectAll" onchange="toggleAllAssets(this.checked)" checked class="rounded-md accent-red-600">
-                            </label>
+                        <div class="flex justify-between items-center px-2 py-2 bg-red-50 rounded-xl border border-red-100">
+                            <p class="text-[11px] font-black text-red-600 uppercase flex items-center gap-2"><i class="fas fa-exclamation-triangle"></i> Tích chọn nếu tài sản hỏng/lỗi:</p>
                         </div>
                         <div id="assetList" class="max-h-[280px] overflow-y-auto pr-1 space-y-1 bg-slate-50 p-2 rounded-2xl border border-dashed border-slate-200"></div>
                     </div>
 
-                    <textarea id="inNote" placeholder="Ghi chú về tình trạng phòng nếu có hỏng hóc..." class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl text-xs outline-none focus:border-red-500" rows="2"></textarea>
+                    <textarea id="inNote" placeholder="Ghi chú thêm về tình trạng phòng (nếu có)..." class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl text-xs outline-none focus:border-red-500" rows="2"></textarea>
                     
                     <button id="btnIn" onclick="handleIn()" class="w-full viettel-gradient text-white py-5 rounded-2xl font-black shadow-xl uppercase text-xs tracking-widest active:scale-[0.98] transition-all">Xác nhận nhận phòng</button>
-                    <button onclick="showView('homeView')" class="w-full text-slate-400 font-bold text-[10px] uppercase py-2 hover:text-slate-600">Hủy bỏ & Quay lại</button>
+                    <button onclick="resetApp()" class="w-full text-slate-400 font-bold text-[10px] uppercase py-2 hover:text-slate-600">Hủy bỏ & Quay lại</button>
                 </div>
             </section>
 
-            <!-- CHECK-OUT VIEW -->
             <section id="checkOutView" class="hidden space-y-4 animate-fade">
                 <div class="bg-white p-8 rounded-[3rem] card-shadow text-center space-y-6 border border-white">
                     <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto text-slate-400">
@@ -259,11 +256,10 @@
                     </div>
                     <p class="text-[11px] text-slate-400 font-medium px-4 leading-relaxed">Đảm bảo tắt các thiết bị điện và gửi lại chìa khóa cho quản lý.</p>
                     <button id="btnOut" onclick="handleOut()" class="w-full viettel-gradient text-white py-5 rounded-2xl font-black shadow-xl uppercase text-xs tracking-widest active:scale-[0.98] transition-all">Xác nhận trả phòng</button>
-                    <button onclick="showView('homeView')" class="w-full text-slate-400 font-bold text-[10px] uppercase py-2">Quay lại</button>
+                    <button onclick="resetApp()" class="w-full text-slate-400 font-bold text-[10px] uppercase py-2">Quay lại</button>
                 </div>
             </section>
 
-            <!-- ADMIN VIEW -->
             <section id="adminView" class="hidden space-y-6 pb-24 animate-fade">
                 <div class="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 flex justify-between items-center">
                     <div>
@@ -280,7 +276,7 @@
 
                 <div class="fixed bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-slate-50 via-slate-50 to-transparent pointer-events-none">
                     <div class="max-w-md mx-auto pointer-events-auto">
-                        <button onclick="showView('homeView')" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black text-[11px] uppercase shadow-2xl tracking-widest border border-slate-700">
+                        <button onclick="resetApp()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black text-[11px] uppercase shadow-2xl tracking-widest border border-slate-700">
                             Thoát chế độ quản lý
                         </button>
                     </div>
@@ -289,7 +285,6 @@
 
         </main>
 
-        <!-- PIN MODAL -->
         <div id="pinModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[100] hidden flex-col items-center justify-center p-6">
             <div class="bg-white p-8 rounded-[3rem] shadow-2xl w-full max-w-xs text-center space-y-6 animate-fade">
                 <div class="bg-red-50 w-20 h-20 mx-auto rounded-3xl flex items-center justify-center text-red-600 rotate-3"><i class="fas fa-user-shield text-3xl"></i></div>
@@ -305,7 +300,6 @@
             </div>
         </div>
 
-        <!-- INFO MODAL -->
         <div id="infoModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[110] hidden items-center justify-center p-6" onclick="this.classList.add('hidden')">
             <div class="bg-white p-6 rounded-3xl w-full max-w-xs text-center space-y-4" onclick="event.stopPropagation()">
                 <div id="infoIcon" class="w-16 h-16 rounded-full mx-auto flex items-center justify-center text-2xl"></div>
@@ -317,17 +311,15 @@
     </div>
 
     <script>
-        // CẤU HÌNH HỆ THỐNG
         const cfg = {
-            // LƯU Ý: HÃY ĐẢM BẢO ĐÂY LÀ ĐƯỜNG LINK APPS SCRIPT MỚI NHẤT CỦA BẠN
             sheet: "https://script.google.com/macros/s/AKfycbyCFrostOu5bPgjxOOTCoMrR8XF1GQnn05x_7lymeQYP113Tsgm9vqa7Olzi04bfBRW/exec",
             token: "8628522316:AAEEZavf7qnnENTEzGTb2dmmYDHhunZ9qT4",
             chat: "-1003878344099",
             pin: "271020"
         };
 
-        let occupiedRooms = {}; // Dữ liệu quản lý sơ đồ
-        let guestList = []; // Dữ liệu danh sách khách hàng từ Google Sheets
+        let occupiedRooms = {}; 
+        let guestList = []; 
 
         const assetsTemplate = [
             { n: "Chìa khóa phòng", q: 1 }, { n: "Tivi", q: 1 }, { n: "Điều khiển Tivi", q: 1 },
@@ -344,7 +336,9 @@
         ];
 
         function setLoading(state) {
-            document.getElementById('loading').style.display = state ? 'flex' : 'none';
+            const overlay = document.getElementById('loading');
+            if (state) overlay.classList.add('active');
+            else overlay.classList.remove('active');
         }
 
         function showInfo(title, desc, type='info') {
@@ -364,14 +358,27 @@
             window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
-        // ======================= TÍNH NĂNG TÌM PHÒNG (MỚI) =======================
+        function resetApp() {
+            document.getElementById('searchEmpId').value = '';
+            document.getElementById('inName').value = '';
+            document.getElementById('inRoom').value = '';
+            document.getElementById('inNote').value = '';
+            document.getElementById('outName').value = '';
+            document.getElementById('outRoom').value = '';
+            document.getElementById('lookupResult').classList.add('hidden');
+            
+            document.querySelectorAll('.asset-checkbox').forEach(cb => cb.checked = false);
+            
+            autoCheckRoom('');
+            showView('homeView');
+        }
+
         async function searchRoom() {
             const empId = document.getElementById('searchEmpId').value.trim().toUpperCase();
             if(!empId) return showInfo("Thiếu thông tin", "Vui lòng nhập Mã Nhân Viên");
             
             setLoading(true);
             try {
-                // KẾT NỐI API ĐỂ LẤY DỮ LIỆU TỪ SHEET "DanhSachKhach"
                 const res = await fetch(`${cfg.sheet}?type=getGuests`);
                 guestList = await res.json();
 
@@ -389,7 +396,7 @@
                 }
             } catch (e) {
                 setLoading(false);
-                showInfo("Lỗi hệ thống", "Không thể lấy danh sách. Đảm bảo bạn đã Deploy phiên bản Apps Script mới nhất.");
+                showInfo("Lỗi hệ thống", "Đang có quá đông người truy cập. Vui lòng thử lại!");
             }
         }
 
@@ -397,7 +404,6 @@
             const name = document.getElementById('resName').innerText;
             const room = document.getElementById('resRoom').innerText;
             
-            // Khóa ô nhập liệu
             const nameInput = document.getElementById('inName');
             const roomInput = document.getElementById('inRoom');
             
@@ -414,7 +420,6 @@
         }
 
         function showManualCheckIn() {
-            // Mở lại ô nhập liệu cho Quản lý tự điền
             document.getElementById('inName').readOnly = false;
             document.getElementById('inRoom').readOnly = false;
             document.getElementById('inName').value = '';
@@ -424,12 +429,6 @@
             
             autoCheckRoom(''); 
             showView('checkInView');
-        }
-
-        // ======================= NHẬN TRẢ PHÒNG & TÀI SẢN =======================
-        function toggleAllAssets(checked) {
-            const checks = document.querySelectorAll('#assetList input[type="checkbox"]');
-            checks.forEach(c => c.checked = checked);
         }
 
         function autoCheckRoom(room) {
@@ -460,39 +459,59 @@
             assetsTemplate.forEach((a, i) => {
                 const qty = a.q === "P" ? p : a.q;
                 list.innerHTML += `
-                    <div class="asset-row">
-                        <div class="flex flex-col">
+                    <div class="asset-row hover:bg-red-50 cursor-pointer" onclick="const cb=this.querySelector('input'); cb.checked=!cb.checked;">
+                        <div class="flex flex-col pointer-events-none">
                             <span class="text-[11px] font-bold text-slate-700">${i+1}. ${a.n}</span>
-                            <span class="text-[9px] font-black text-red-600 uppercase">Số lượng: ${qty}</span>
+                            <span class="text-[9px] font-black text-slate-400 uppercase mt-0.5">Quy định: ${qty}</span>
                         </div>
-                        <input type="checkbox" checked class="accent-green-600 rounded-md">
+                        <input type="checkbox" value="${a.n}" class="asset-checkbox accent-red-600 rounded-md w-5 h-5 cursor-pointer" onclick="event.stopPropagation()">
                     </div>`;
             });
         }
 
-        async function handleIn() {
+        function handleIn() {
             const name = document.getElementById('inName').value.trim().toUpperCase();
             const room = document.getElementById('inRoom').value;
             const note = document.getElementById('inNote').value || "Không";
             
             if(!name || !room) return showInfo("Thiếu thông tin", "Vui lòng nhập Tên và Số phòng!");
             
+            const brokenBoxes = document.querySelectorAll('.asset-checkbox:checked');
+            const brokenAssets = Array.from(brokenBoxes).map(cb => cb.value).join(', ');
+            const finalBrokenText = brokenAssets ? brokenAssets : "";
+
             setLoading(true);
-            const msg = `🟢 NHẬN PHÒNG: ${room}\n👤 Khách: ${name}\n🏢 Loại: ${document.getElementById('roomBadge').innerText}\n📝 Ghi chú: ${note}\n⏰ Thời gian: ${new Date().toLocaleString('vi-VN')}`;
+            const telegramBrokenInfo = brokenAssets ? `\n⚠️ TÀI SẢN LỖI: ${brokenAssets}` : "";
+            const msg = `🟢 NHẬN PHÒNG: ${room}\n👤 Khách: ${name}\n🏢 Loại: ${document.getElementById('roomBadge').innerText}${telegramBrokenInfo}\n📝 Ghi chú: ${note}\n⏰ Thời gian: ${new Date().toLocaleString('vi-VN')}`;
             
-            try {
-                await fetch(cfg.sheet, { method: "POST", mode: "no-cors", body: JSON.stringify({ type: "NHẬN PHÒNG", room: room, name: name, note: note }) });
-                await fetch(`https://api.telegram.org/bot${cfg.token}/sendMessage?chat_id=${cfg.chat}&text=${encodeURIComponent(msg)}`);
+            fetch(cfg.sheet, { 
+                method: "POST", 
+                mode: "no-cors", 
+                body: JSON.stringify({ 
+                    type: "NHẬN PHÒNG", 
+                    room: room, 
+                    name: name, 
+                    note: note,
+                    brokenAssets: finalBrokenText
+                }) 
+            }).catch(e => console.log("Bg sync task"));
+
+            fetch(`https://api.telegram.org/bot${cfg.token}/sendMessage?chat_id=${cfg.chat}&text=${encodeURIComponent(msg)}`)
+              .catch(e => console.log("Bg tg task"));
+
+            setTimeout(() => {
                 setLoading(false);
                 showInfo("Thành công", "Bạn đã hoàn tất thủ tục nhận phòng.", 'success');
-                setTimeout(() => location.reload(), 2000);
-            } catch (e) {
-                setLoading(false);
-                showInfo("Lỗi", "Không thể kết nối máy chủ. Vui lòng thử lại.");
-            }
+                
+                setTimeout(() => {
+                    document.getElementById('infoModal').classList.add('hidden');
+                    resetApp();
+                }, 1500);
+
+            }, 400); 
         }
 
-        async function handleOut() {
+        function handleOut() {
             const name = document.getElementById('outName').value.trim().toUpperCase();
             const room = document.getElementById('outRoom').value;
             
@@ -501,19 +520,27 @@
             setLoading(true);
             const msg = `🔴 TRẢ PHÒNG: ${room}\n👤 Người thực hiện: ${name}\n⏰ Thời gian: ${new Date().toLocaleString('vi-VN')}`;
             
-            try {
-                await fetch(cfg.sheet, { method: "POST", mode: "no-cors", body: JSON.stringify({ type: "TRẢ PHÒNG", room: room, name: name }) });
-                await fetch(`https://api.telegram.org/bot${cfg.token}/sendMessage?chat_id=${cfg.chat}&text=${encodeURIComponent(msg)}`);
+            fetch(cfg.sheet, { 
+                method: "POST", 
+                mode: "no-cors", 
+                body: JSON.stringify({ type: "TRẢ PHÒNG", room: room, name: name }) 
+            }).catch(e => console.log("Bg sync"));
+
+            fetch(`https://api.telegram.org/bot${cfg.token}/sendMessage?chat_id=${cfg.chat}&text=${encodeURIComponent(msg)}`)
+              .catch(e => console.log("Bg tg task"));
+
+            setTimeout(() => {
                 setLoading(false);
                 showInfo("Thành công", "Cảm ơn bạn. Yêu cầu trả phòng đã được gửi đi.", 'success');
-                setTimeout(() => location.reload(), 2000);
-            } catch (e) {
-                setLoading(false);
-                showInfo("Lỗi", "Đã có lỗi xảy ra. Vui lòng báo quản lý.");
-            }
+                
+                setTimeout(() => {
+                    document.getElementById('infoModal').classList.add('hidden');
+                    resetApp();
+                }, 1500);
+
+            }, 400);
         }
 
-        // ======================= QUẢN LÝ (ADMIN) =======================
         function authAdmin() { 
             const modal = document.getElementById('pinModal');
             modal.classList.remove('hidden');
@@ -542,11 +569,9 @@
 
         async function fetchRoomStatus() {
             try {
-                // Tương lai Apps Script của bạn sẽ trả về trạng thái phòng ở đây
                 const res = await fetch(`${cfg.sheet}?type=status`);
                 occupiedRooms = await res.json(); 
             } catch (e) {
-                // Nếu chưa có API, giả lập rỗng
                 occupiedRooms = {};
             }
             document.getElementById('statusTime').innerText = `Cập nhật: ${new Date().toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit'})}`;
