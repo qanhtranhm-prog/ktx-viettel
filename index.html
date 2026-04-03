@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>QLTS Viettel - Smart KTX 2026</title>
+    <!-- Thư viện TailwindCSS (Thiết kế giao diện) -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Thư viện Icon -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <!-- THƯ VIỆN QUÉT MÃ QR CAMERA -->
+    <!-- Thư viện Quét mã QR Camera -->
     <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
@@ -18,15 +20,6 @@
         }
 
         .card-shadow { box-shadow: 0 10px 30px -5px rgba(0,0,0,0.05); }
-
-        .noiquy-box { 
-            height: 320px; 
-            overflow-y: auto; 
-            scrollbar-width: thin;
-        }
-        
-        .noiquy-box::-webkit-scrollbar { width: 4px; }
-        .noiquy-box::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
 
         .asset-row { 
             display: flex; 
@@ -93,6 +86,7 @@
 </head>
 <body class="text-slate-800 antialiased">
 
+    <!-- MÀN HÌNH LOADING -->
     <div id="loading" class="loading-overlay">
         <div class="flex flex-col items-center">
             <div class="w-12 h-12 border-4 border-red-600 border-t-transparent rounded-full animate-spin"></div>
@@ -102,24 +96,25 @@
 
     <div class="max-w-md mx-auto min-h-screen flex flex-col bg-slate-50 relative shadow-2xl overflow-hidden">
         
-        <!-- FIX: Dùng bg-red-600 thay vì viettel-gradient -->
-        <header class="bg-red-600 bg-gradient-to-br from-red-600 to-red-800 text-white p-6 sticky top-0 z-40 shadow-lg flex justify-between items-center rounded-b-[32px]">
+        <!-- HEADER (Đã sửa dụng class gốc bg-red-600 để đảm bảo hiển thị đúng 100%) -->
+        <header class="bg-red-600 text-white p-6 sticky top-0 z-40 shadow-lg flex justify-between items-center rounded-b-[32px]">
             <div class="flex items-center space-x-3 cursor-pointer" onclick="resetApp()">
                 <div class="bg-white p-2 rounded-2xl shadow-inner text-red-600">
                     <i class="fas fa-hotel text-lg"></i>
                 </div>
                 <div>
-                    <h1 class="font-extrabold text-sm uppercase tracking-tight leading-none">QLTS Viettel</h1>
-                    <p class="text-[10px] font-medium opacity-90 uppercase mt-1">Smart KTX System 2026</p>
+                    <h1 class="font-extrabold text-sm uppercase tracking-tight leading-none text-white">QLTS Viettel</h1>
+                    <p class="text-[10px] font-medium opacity-90 uppercase mt-1 text-white">Smart KTX System 2026</p>
                 </div>
             </div>
-            <button onclick="authAdmin()" class="bg-white/20 hover:bg-white/30 backdrop-blur-md px-4 py-2 rounded-xl text-[10px] font-black uppercase border border-white/30 transition-all active:scale-95">
+            <button onclick="authAdmin()" class="bg-white/20 hover:bg-white/30 backdrop-blur-md px-4 py-2 rounded-xl text-[10px] font-black uppercase border border-white/30 transition-all active:scale-95 text-white">
                 Quản lý
             </button>
         </header>
 
         <main class="flex-grow p-4 space-y-6">
             
+            <!-- VIEW: TRANG CHỦ -->
             <section id="homeView" class="space-y-6 animate-fade">
                 <div class="bg-white rounded-[2.5rem] p-6 card-shadow border border-white relative overflow-hidden">
                     <div class="absolute top-0 right-0 p-4 opacity-5"><i class="fas fa-shield-alt text-6xl"></i></div>
@@ -156,17 +151,18 @@
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
-                    <button onclick="showView('lookupView')" class="bg-red-600 text-white p-8 rounded-[2.5rem] font-black text-xs uppercase shadow-xl shadow-red-200 flex flex-col items-center justify-center space-y-3 active:scale-95 transition-all hover:bg-red-700">
+                    <button onclick="showView('lookupView')" class="bg-red-600 text-white p-8 rounded-[2.5rem] font-black text-xs uppercase shadow-xl shadow-red-200 flex flex-col items-center justify-center space-y-3 active:scale-95 transition-all">
                         <i class="fas fa-search-location text-3xl"></i>
                         <span>Tìm phòng</span>
                     </button>
-                    <button onclick="showView('checkOutView')" class="bg-slate-800 text-white p-8 rounded-[2.5rem] font-black text-xs uppercase shadow-xl shadow-slate-200 flex flex-col items-center justify-center space-y-3 active:scale-95 transition-all hover:bg-slate-900">
+                    <button onclick="showView('checkOutView')" class="bg-slate-800 text-white p-8 rounded-[2.5rem] font-black text-xs uppercase shadow-xl shadow-slate-200 flex flex-col items-center justify-center space-y-3 active:scale-95 transition-all">
                         <i class="fas fa-sign-out-alt text-3xl"></i>
                         <span>Trả phòng</span>
                     </button>
                 </div>
             </section>
 
+            <!-- VIEW: TÌM PHÒNG -->
             <section id="lookupView" class="hidden space-y-4 animate-fade">
                 <div class="bg-white p-6 rounded-[2.5rem] card-shadow border border-white space-y-5">
                     <div class="text-center space-y-2 mb-6">
@@ -184,8 +180,7 @@
                                 <i class="fas fa-qrcode text-xl"></i>
                             </button>
                         </div>
-                        <!-- FIX: Dùng bg-red-600 cho nút -->
-                        <button onclick="searchRoom()" class="w-full bg-red-600 hover:bg-red-700 text-white py-4 rounded-2xl font-black shadow-lg shadow-red-200 uppercase text-xs active:scale-95 transition-all mt-3">
+                        <button onclick="searchRoom()" class="w-full bg-red-600 text-white py-4 rounded-2xl font-black shadow-lg shadow-red-200 uppercase text-xs active:scale-95 transition-all mt-3">
                             <i class="fas fa-search mr-2"></i> Kiểm tra hệ thống
                         </button>
                     </div>
@@ -208,14 +203,15 @@
                         </button>
                     </div>
 
-                    <button onclick="resetApp()" class="w-full text-slate-400 font-bold text-[10px] uppercase py-2 mt-2 hover:text-slate-600">Quay lại trang chủ</button>
+                    <button onclick="resetApp()" class="w-full text-slate-400 font-bold text-[10px] uppercase py-2 mt-2">Quay lại trang chủ</button>
                 </div>
                 
                 <div class="text-center">
-                    <button onclick="showManualCheckIn()" class="text-[10px] font-bold text-slate-400 underline decoration-slate-300 underline-offset-4 hover:text-slate-600">Nhận phòng thủ công (Không có trong DS)</button>
+                    <button onclick="showManualCheckIn()" class="text-[10px] font-bold text-slate-400 underline decoration-slate-300 underline-offset-4">Nhận phòng thủ công (Không có trong DS)</button>
                 </div>
             </section>
 
+            <!-- VIEW: ĐIỀN FORM NHẬN PHÒNG -->
             <section id="checkInView" class="hidden space-y-4 animate-fade">
                 <div class="bg-white p-6 rounded-[2.5rem] card-shadow space-y-5 border border-white">
                     <div class="space-y-1">
@@ -240,12 +236,12 @@
 
                     <textarea id="inNote" placeholder="Ghi chú thêm về tình trạng phòng (nếu có)..." class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl text-xs outline-none focus:border-red-500" rows="2"></textarea>
                     
-                    <!-- FIX: Dùng bg-red-600 cho nút -->
-                    <button id="btnIn" onclick="handleIn()" class="w-full bg-red-600 hover:bg-red-700 text-white py-5 rounded-2xl font-black shadow-xl uppercase text-xs tracking-widest active:scale-[0.98] transition-all">Xác nhận nhận phòng</button>
+                    <button id="btnIn" onclick="handleIn()" class="w-full bg-red-600 text-white py-5 rounded-2xl font-black shadow-xl uppercase text-xs tracking-widest active:scale-[0.98] transition-all">Xác nhận nhận phòng</button>
                     <button onclick="resetApp()" class="w-full text-slate-400 font-bold text-[10px] uppercase py-2 hover:text-slate-600">Hủy bỏ & Quay lại</button>
                 </div>
             </section>
 
+            <!-- VIEW: TRẢ PHÒNG -->
             <section id="checkOutView" class="hidden space-y-4 animate-fade">
                 <div class="bg-white p-8 rounded-[3rem] card-shadow text-center space-y-6 border border-white">
                     <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto text-slate-400">
@@ -256,12 +252,12 @@
                         <input type="number" id="outRoom" placeholder="SỐ PHÒNG" class="w-full p-5 bg-slate-50 border border-slate-100 rounded-2xl font-black text-5xl text-center outline-none focus:border-red-500 text-red-600">
                     </div>
                     <p class="text-[11px] text-slate-400 font-medium px-4 leading-relaxed">Đảm bảo tắt các thiết bị điện và gửi lại chìa khóa cho quản lý.</p>
-                    <!-- FIX: Dùng bg-red-600 cho nút -->
-                    <button id="btnOut" onclick="handleOut()" class="w-full bg-red-600 hover:bg-red-700 text-white py-5 rounded-2xl font-black shadow-xl uppercase text-xs tracking-widest active:scale-[0.98] transition-all">Xác nhận trả phòng</button>
-                    <button onclick="resetApp()" class="w-full text-slate-400 font-bold text-[10px] uppercase py-2 hover:text-slate-600">Quay lại</button>
+                    <button id="btnOut" onclick="handleOut()" class="w-full bg-red-600 text-white py-5 rounded-2xl font-black shadow-xl uppercase text-xs tracking-widest active:scale-[0.98] transition-all">Xác nhận trả phòng</button>
+                    <button onclick="resetApp()" class="w-full text-slate-400 font-bold text-[10px] uppercase py-2">Quay lại</button>
                 </div>
             </section>
 
+            <!-- VIEW: ADMIN SƠ ĐỒ PHÒNG -->
             <section id="adminView" class="hidden space-y-6 pb-24 animate-fade">
                 <div class="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 flex justify-between items-center">
                     <div>
@@ -298,8 +294,7 @@
                 <input type="password" id="pinInput" maxlength="6" placeholder="••••••" class="w-full text-center tracking-[0.8em] font-black text-3xl p-5 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-2 focus:ring-red-500/20 transition-all">
                 <div class="flex gap-3">
                     <button onclick="closePinModal()" class="flex-1 p-4 bg-slate-100 text-slate-500 font-black text-xs rounded-2xl hover:bg-slate-200 transition-all">HỦY</button>
-                    <!-- FIX: Dùng bg-red-600 cho nút -->
-                    <button onclick="verifyPin()" class="flex-1 p-4 bg-red-600 hover:bg-red-700 text-white font-black text-xs rounded-2xl shadow-lg shadow-red-200 active:scale-95 transition-all">XÁC NHẬN</button>
+                    <button onclick="verifyPin()" class="flex-1 p-4 bg-red-600 text-white font-black text-xs rounded-2xl shadow-lg shadow-red-200 active:scale-95 transition-all">XÁC NHẬN</button>
                 </div>
             </div>
         </div>
@@ -314,7 +309,7 @@
             </div>
         </div>
 
-        <!-- POPUP CAMERA MỚI THÊM ĐỂ QUÉT QR -->
+        <!-- POPUP QUÉT MÃ QR (HỖ TRỢ CẢ CAMERA VÀ TẢI ẢNH CHO ZALO) -->
         <div id="qrModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[120] hidden flex-col items-center justify-center p-6">
             <div class="bg-white p-6 rounded-[2rem] shadow-2xl w-full max-w-sm text-center space-y-4 animate-fade">
                 <div class="bg-red-50 w-16 h-16 mx-auto rounded-full flex items-center justify-center text-red-600">
@@ -335,6 +330,7 @@
         </div>
     </div>
 
+    <!-- CODE JAVASCRIPT ĐIỀU KHIỂN LOGIC -->
     <script>
         const cfg = {
             sheet: "https://script.google.com/macros/s/AKfycbyCFrostOu5bPgjxOOTCoMrR8XF1GQnn05x_7lymeQYP113Tsgm9vqa7Olzi04bfBRW/exec",
@@ -362,81 +358,31 @@
             { n: "Đèn học", q: "P" } 
         ];
 
+        // Hàm gọi mạng có trang bị Timeout (Chống lỗi treo quay vòng vòng)
+        async function fetchWithTimeout(resource, options = {}) {
+            const { timeout = 8000 } = options; // Tối đa 8 giây
+            const controller = new AbortController();
+            const id = setTimeout(() => controller.abort(), timeout);
+            const response = await fetch(resource, {
+                ...options,
+                signal: controller.signal
+            });
+            clearTimeout(id);
+            return response;
+        }
+
+        // Tải trước danh sách khách
         async function preloadGuestList() {
             try {
-                const res = await fetch(`${cfg.sheet}?type=getGuests`);
+                const res = await fetchWithTimeout(`${cfg.sheet}?type=getGuests`);
                 guestList = await res.json();
                 isGuestListLoaded = true;
             } catch (e) {
-                console.log("Lỗi tải ngầm danh sách");
+                console.log("Lỗi tải ngầm danh sách. Vui lòng kiểm tra kết nối.");
+                isGuestListLoaded = false;
             }
         }
         document.addEventListener('DOMContentLoaded', preloadGuestList);
-
-        function openQRScanner() {
-            document.getElementById('qrModal').classList.remove('hidden');
-            document.getElementById('qrModal').classList.add('flex');
-            document.getElementById('qr-upload').value = ""; // Reset file
-
-            if (!html5QrCode) {
-                html5QrCode = new Html5Qrcode("qr-reader");
-            }
-
-            html5QrCode.start(
-                { facingMode: "environment" },
-                { fps: 10, qrbox: { width: 250, height: 250 } },
-                onScanSuccess
-            ).catch((err) => {
-                // Zalo chặn camera -> Hiển thị hướng dẫn dùng tải ảnh
-                document.getElementById('qr-reader').innerHTML = '<div class="p-4 text-[11px] text-red-500 font-medium leading-relaxed text-center">Trình duyệt này chặn Camera trực tiếp.<br><br><span class="font-black text-red-600">Vui lòng bấm TẢI ẢNH LÊN ở bên dưới để chọn ảnh mã QR!</span></div>';
-            });
-        }
-
-        function scanImage(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            if (!html5QrCode) {
-                html5QrCode = new Html5Qrcode("qr-reader");
-            }
-            
-            if (html5QrCode.isScanning) {
-                html5QrCode.stop().then(() => processFile(file)).catch(() => processFile(file));
-            } else {
-                processFile(file);
-            }
-        }
-
-        function processFile(file) {
-            setLoading(true);
-            html5QrCode.scanFile(file, true)
-                .then(decodedText => {
-                    setLoading(false);
-                    onScanSuccess(decodedText);
-                })
-                .catch(err => {
-                    setLoading(false);
-                    showInfo("Lỗi đọc mã", "Không tìm thấy mã QR trong ảnh. Vui lòng chụp rõ nét hơn.", "error");
-                    document.getElementById('qr-upload').value = "";
-                });
-        }
-
-        function closeQRScanner() {
-            document.getElementById('qrModal').classList.add('hidden');
-            document.getElementById('qrModal').classList.remove('flex');
-            
-            if (html5QrCode && html5QrCode.isScanning) {
-                html5QrCode.stop().catch((err) => {
-                    console.log("Không thể tắt camera", err);
-                });
-            }
-        }
-
-        function onScanSuccess(decodedText) {
-            document.getElementById('searchEmpId').value = decodedText;
-            closeQRScanner();
-            searchRoom();
-        }
 
         function setLoading(state) {
             const overlay = document.getElementById('loading');
@@ -469,21 +415,31 @@
             document.getElementById('outName').value = '';
             document.getElementById('outRoom').value = '';
             document.getElementById('lookupResult').classList.add('hidden');
-            
             document.querySelectorAll('.asset-checkbox').forEach(cb => cb.checked = false);
-            
             autoCheckRoom('');
             showView('homeView');
         }
 
+        // HÀM TÌM PHÒNG (Đã tích hợp xử lý chống treo)
         async function searchRoom() {
             const empId = document.getElementById('searchEmpId').value.trim().toUpperCase();
             if(!empId) return showInfo("Thiếu thông tin", "Vui lòng nhập Mã Nhân Viên");
             
+            setLoading(true);
+
             if (!isGuestListLoaded) {
-                setLoading(true);
-                await preloadGuestList(); 
-                setLoading(false);
+                try {
+                    await preloadGuestList(); 
+                } catch (e) {
+                    setLoading(false);
+                    return showInfo("Lỗi kết nối", "Quá thời gian tải dữ liệu. Vui lòng kiểm tra mạng hoặc thử mở lại bằng Safari/Chrome.", "error");
+                }
+            }
+
+            setLoading(false);
+
+            if (!isGuestListLoaded || guestList.length === 0) {
+                return showInfo("Lỗi hệ thống", "Không thể lấy dữ liệu từ máy chủ lúc này.", "error");
             }
 
             const guest = guestList.find(g => g.id === empId);
@@ -568,6 +524,7 @@
             });
         }
 
+        // HÀM NHẬN PHÒNG
         function handleIn() {
             const name = document.getElementById('inName').value.trim().toUpperCase();
             const room = document.getElementById('inRoom').value;
@@ -590,23 +547,17 @@
                 const telegramBrokenInfo = brokenAssets ? `\n⚠️ TÀI SẢN LỖI: ${brokenAssets}` : "";
                 const msg = `🟢 NHẬN PHÒNG: ${room}\n👤 Khách: ${name}\n🏢 Loại: ${document.getElementById('roomBadge').innerText}${telegramBrokenInfo}\n📝 Ghi chú: ${note}\n⏰ Thời gian: ${new Date().toLocaleString('vi-VN')}`;
                 
-                Promise.all([
-                    fetch(cfg.sheet, { 
-                        method: "POST", 
-                        mode: "no-cors", 
-                        body: JSON.stringify({ 
-                            type: "NHẬN PHÒNG", 
-                            room: room, 
-                            name: name, 
-                            note: note,
-                            brokenAssets: finalBrokenText
-                        }) 
-                    }),
-                    fetch(`https://api.telegram.org/bot${cfg.token}/sendMessage?chat_id=${cfg.chat}&text=${encodeURIComponent(msg)}`)
-                ]).catch(e => console.log("Lỗi đồng bộ ngầm (Nhận phòng):", e));
+                fetch(cfg.sheet, { 
+                    method: "POST", mode: "no-cors", 
+                    body: JSON.stringify({ type: "NHẬN PHÒNG", room: room, name: name, note: note, brokenAssets: finalBrokenText}) 
+                }).catch(e => console.log(e));
+
+                fetch(`https://api.telegram.org/bot${cfg.token}/sendMessage?chat_id=${cfg.chat}&text=${encodeURIComponent(msg)}`)
+                  .catch(e => console.log(e));
             }, 50);
         }
 
+        // HÀM TRẢ PHÒNG
         function handleOut() {
             const name = document.getElementById('outName').value.trim().toUpperCase();
             const room = document.getElementById('outRoom').value;
@@ -623,17 +574,17 @@
             setTimeout(() => {
                 const msg = `🔴 TRẢ PHÒNG: ${room}\n👤 Người thực hiện: ${name}\n⏰ Thời gian: ${new Date().toLocaleString('vi-VN')}`;
                 
-                Promise.all([
-                    fetch(cfg.sheet, { 
-                        method: "POST", 
-                        mode: "no-cors", 
-                        body: JSON.stringify({ type: "TRẢ PHÒNG", room: room, name: name }) 
-                    }),
-                    fetch(`https://api.telegram.org/bot${cfg.token}/sendMessage?chat_id=${cfg.chat}&text=${encodeURIComponent(msg)}`)
-                ]).catch(e => console.log("Lỗi đồng bộ ngầm (Trả phòng):", e));
+                fetch(cfg.sheet, { 
+                    method: "POST", mode: "no-cors", 
+                    body: JSON.stringify({ type: "TRẢ PHÒNG", room: room, name: name }) 
+                }).catch(e => console.log(e));
+
+                fetch(`https://api.telegram.org/bot${cfg.token}/sendMessage?chat_id=${cfg.chat}&text=${encodeURIComponent(msg)}`)
+                  .catch(e => console.log(e));
             }, 50);
         }
 
+        // CÁC HÀM ADMIN
         function authAdmin() { 
             const modal = document.getElementById('pinModal');
             modal.classList.remove('hidden');
@@ -662,7 +613,7 @@
 
         async function fetchRoomStatus() {
             try {
-                const res = await fetch(`${cfg.sheet}?type=status`);
+                const res = await fetchWithTimeout(`${cfg.sheet}?type=status`);
                 occupiedRooms = await res.json(); 
             } catch (e) {
                 occupiedRooms = {};
@@ -710,6 +661,71 @@
             } else {
                 showInfo(`Phòng ${roomNo}`, `Phòng hiện đang trống.`, 'success');
             }
+        }
+
+        // CÁC HÀM QUÉT QR CAMERA
+        function openQRScanner() {
+            document.getElementById('qrModal').classList.remove('hidden');
+            document.getElementById('qrModal').classList.add('flex');
+            document.getElementById('qr-upload').value = ""; // Reset file input
+
+            if (!html5QrCode) {
+                html5QrCode = new Html5Qrcode("qr-reader");
+            }
+
+            html5QrCode.start(
+                { facingMode: "environment" },
+                { fps: 10, qrbox: { width: 250, height: 250 } },
+                onScanSuccess
+            ).catch((err) => {
+                document.getElementById('qr-reader').innerHTML = '<div class="p-4 text-[11px] text-red-500 font-medium leading-relaxed text-center">Trình duyệt này chặn Camera trực tiếp.<br><br><span class="font-black text-red-600">Vui lòng bấm TẢI ẢNH LÊN ở bên dưới để chọn ảnh mã QR!</span></div>';
+            });
+        }
+
+        function closeQRScanner() {
+            document.getElementById('qrModal').classList.add('hidden');
+            document.getElementById('qrModal').classList.remove('flex');
+            
+            if (html5QrCode && html5QrCode.isScanning) {
+                html5QrCode.stop().catch((err) => {
+                    console.log("Không thể tắt camera", err);
+                });
+            }
+        }
+
+        function scanImage(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            if (!html5QrCode) {
+                html5QrCode = new Html5Qrcode("qr-reader");
+            }
+            
+            if (html5QrCode.isScanning) {
+                html5QrCode.stop().then(() => processFile(file)).catch(() => processFile(file));
+            } else {
+                processFile(file);
+            }
+        }
+
+        function processFile(file) {
+            setLoading(true);
+            html5QrCode.scanFile(file, true)
+                .then(decodedText => {
+                    setLoading(false);
+                    onScanSuccess(decodedText);
+                })
+                .catch(err => {
+                    setLoading(false);
+                    showInfo("Lỗi đọc mã", "Không tìm thấy mã QR trong ảnh. Vui lòng chụp rõ nét hơn.", "error");
+                    document.getElementById('qr-upload').value = "";
+                });
+        }
+
+        function onScanSuccess(decodedText) {
+            document.getElementById('searchEmpId').value = decodedText;
+            closeQRScanner();
+            searchRoom();
         }
 
     </script>
