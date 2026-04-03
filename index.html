@@ -179,7 +179,7 @@
                         <div class="w-16 h-16 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto mb-2">
                             <i class="fas fa-id-card text-2xl"></i>
                         </div>
-                        <h3 class="font-black text-slate-800 uppercase tracking-tight">Tra cứu thông tin</h3>
+                        <h3 class="font-black text-slate-800 uppercase tracking-tight">Tra cứu thôngர்த்து tin</h3>
                         <p class="text-[10px] text-slate-500 font-medium">Nhập Mã Nhân Viên để xem phòng được phân công.</p>
                     </div>
 
@@ -320,6 +320,7 @@
 
         let occupiedRooms = {}; 
         let guestList = []; 
+        let isGuestListLoaded = false;
 
         const assetsTemplate = [
             { n: "Chìa khóa phòng", q: 1 }, { n: "Tivi", q: 1 }, { n: "Điều khiển Tivi", q: 1 },
@@ -334,6 +335,18 @@
             { n: "Ghế", q: "P" }, { n: "Móc áo", q: "P" }, { n: "Tủ quần áo", q: "P" },
             { n: "Đèn học", q: "P" } 
         ];
+
+        // Tải trước danh sách khách
+        async function preloadGuestList() {
+            try {
+                const res = await fetch(`${cfg.sheet}?type=getGuests`);
+                guestList = await res.json();
+                isGuestListLoaded = true;
+            } catch (e) {
+                console.log("Lỗi tải ngầm danh sách");
+            }
+        }
+        document.addEventListener('DOMContentLoaded', preloadGuestList);
 
         function setLoading(state) {
             const overlay = document.getElementById('loading');
@@ -377,26 +390,23 @@
             const empId = document.getElementById('searchEmpId').value.trim().toUpperCase();
             if(!empId) return showInfo("Thiếu thông tin", "Vui lòng nhập Mã Nhân Viên");
             
-            setLoading(true);
-            try {
-                const res = await fetch(`${cfg.sheet}?type=getGuests`);
-                guestList = await res.json();
-
-                const guest = guestList.find(g => g.id === empId);
+            // Nếu danh sách chưa tải xong từ lúc mở app, bật loading chờ chút
+            if (!isGuestListLoaded) {
+                setLoading(true);
+                await preloadGuestList(); 
                 setLoading(false);
+            }
 
-                if(guest) {
-                    document.getElementById('resName').innerText = guest.name;
-                    document.getElementById('resRoom').innerText = guest.room;
-                    document.getElementById('resDates').innerText = `${guest.in} - ${guest.out}`;
-                    document.getElementById('lookupResult').classList.remove('hidden');
-                } else {
-                    document.getElementById('lookupResult').classList.add('hidden');
-                    showInfo("Không tìm thấy", "Mã nhân viên này chưa có trong danh sách phân phòng hôm nay.");
-                }
-            } catch (e) {
-                setLoading(false);
-                showInfo("Lỗi hệ thống", "Đang có quá đông người truy cập. Vui lòng thử lại!");
+            const guest = guestList.find(g => g.id === empId);
+
+            if(guest) {
+                document.getElementById('resName').innerText = guest.name;
+                document.getElementById('resRoom').innerText = guest.room;
+                document.getElementById('resDates').innerText = `${guest.in} - ${guest.out}`;
+                document.getElementById('lookupResult').classList.remove('hidden');
+            } else {
+                document.getElementById('lookupResult').classList.add('hidden');
+                showInfo("Không tìm thấy", "Mã nhân viên này chưa có trong danh sách phân phòng hôm nay.");
             }
         }
 
@@ -480,35 +490,34 @@
             const brokenAssets = Array.from(brokenBoxes).map(cb => cb.value).join(', ');
             const finalBrokenText = brokenAssets ? brokenAssets : "";
 
-            setLoading(true);
-            const telegramBrokenInfo = brokenAssets ? `\n⚠️ TÀI SẢN LỖI: ${brokenAssets}` : "";
-            const msg = `🟢 NHẬN PHÒNG: ${room}\n👤 Khách: ${name}\n🏢 Loại: ${document.getElementById('roomBadge').innerText}${telegramBrokenInfo}\n📝 Ghi chú: ${note}\n⏰ Thời gian: ${new Date().toLocaleString('vi-VN')}`;
+            // --- BƯỚC 1: PHẢN HỒI GIAO DIỆN NGAY LẬP TỨC ---
+            showInfo("Thành công", "Đã ghi nhận! Bạn có thể về phòng, hệ thống sẽ tự đồng bộ.", 'success');
             
-            fetch(cfg.sheet, { 
-                method: "POST", 
-                mode: "no-cors", 
-                body: JSON.stringify({ 
-                    type: "NHẬN PHÒNG", 
-                    room: room, 
-                    name: name, 
-                    note: note,
-                    brokenAssets: finalBrokenText
-                }) 
-            }).catch(e => console.log("Bg sync task"));
-
-            fetch(`https://api.telegram.org/bot${cfg.token}/sendMessage?chat_id=${cfg.chat}&text=${encodeURIComponent(msg)}`)
-              .catch(e => console.log("Bg tg task"));
-
             setTimeout(() => {
-                setLoading(false);
-                showInfo("Thành công", "Bạn đã hoàn tất thủ tục nhận phòng.", 'success');
-                
-                setTimeout(() => {
-                    document.getElementById('infoModal').classList.add('hidden');
-                    resetApp();
-                }, 1500);
+                document.getElementById('infoModal').classList.add('hidden');
+                resetApp();
+            }, 2000);
 
-            }, 400); 
+            // --- BƯỚC 2: CHẠY NỀN XỬ LÝ DỮ LIỆU ---
+            setTimeout(() => {
+                const telegramBrokenInfo = brokenAssets ? `\n⚠️ TÀI SẢN LỖI: ${brokenAssets}` : "";
+                const msg = `🟢 NHẬN PHÒNG: ${room}\n👤 Khách: ${name}\n🏢 Loại: ${document.getElementById('roomBadge').innerText}${telegramBrokenInfo}\n📝 Ghi chú: ${note}\n⏰ Thời gian: ${new Date().toLocaleString('vi-VN')}`;
+                
+                Promise.all([
+                    fetch(cfg.sheet, { 
+                        method: "POST", 
+                        mode: "no-cors", 
+                        body: JSON.stringify({ 
+                            type: "NHẬN PHÒNG", 
+                            room: room, 
+                            name: name, 
+                            note: note,
+                            brokenAssets: finalBrokenText
+                        }) 
+                    }),
+                    fetch(`https://api.telegram.org/bot${cfg.token}/sendMessage?chat_id=${cfg.chat}&text=${encodeURIComponent(msg)}`)
+                ]).catch(e => console.log("Lỗi đồng bộ ngầm (Nhận phòng):", e));
+            }, 50);
         }
 
         function handleOut() {
@@ -517,28 +526,27 @@
             
             if(!name || !room) return showInfo("Thiếu thông tin", "Vui lòng nhập Tên và Số phòng!");
             
-            setLoading(true);
-            const msg = `🔴 TRẢ PHÒNG: ${room}\n👤 Người thực hiện: ${name}\n⏰ Thời gian: ${new Date().toLocaleString('vi-VN')}`;
+            // --- BƯỚC 1: PHẢN HỒI GIAO DIỆN NGAY LẬP TỨC ---
+            showInfo("Thành công", "Cảm ơn bạn. Yêu cầu trả phòng đã được ghi nhận.", 'success');
             
-            fetch(cfg.sheet, { 
-                method: "POST", 
-                mode: "no-cors", 
-                body: JSON.stringify({ type: "TRẢ PHÒNG", room: room, name: name }) 
-            }).catch(e => console.log("Bg sync"));
-
-            fetch(`https://api.telegram.org/bot${cfg.token}/sendMessage?chat_id=${cfg.chat}&text=${encodeURIComponent(msg)}`)
-              .catch(e => console.log("Bg tg task"));
-
             setTimeout(() => {
-                setLoading(false);
-                showInfo("Thành công", "Cảm ơn bạn. Yêu cầu trả phòng đã được gửi đi.", 'success');
-                
-                setTimeout(() => {
-                    document.getElementById('infoModal').classList.add('hidden');
-                    resetApp();
-                }, 1500);
+                document.getElementById('infoModal').classList.add('hidden');
+                resetApp();
+            }, 2000);
 
-            }, 400);
+            // --- BƯỚC 2: CHẠY NỀN ---
+            setTimeout(() => {
+                const msg = `🔴 TRẢ PHÒNG: ${room}\n👤 Người thực hiện: ${name}\n⏰ Thời gian: ${new Date().toLocaleString('vi-VN')}`;
+                
+                Promise.all([
+                    fetch(cfg.sheet, { 
+                        method: "POST", 
+                        mode: "no-cors", 
+                        body: JSON.stringify({ type: "TRẢ PHÒNG", room: room, name: name }) 
+                    }),
+                    fetch(`https://api.telegram.org/bot${cfg.token}/sendMessage?chat_id=${cfg.chat}&text=${encodeURIComponent(msg)}`)
+                ]).catch(e => console.log("Lỗi đồng bộ ngầm (Trả phòng):", e));
+            }, 50);
         }
 
         function authAdmin() { 
