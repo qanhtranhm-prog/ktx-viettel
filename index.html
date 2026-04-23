@@ -3,10 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>QLTS Viettel - Smart KTX 2026 (Hybrid Mode)</title>
+    <title>QLTS Viettel - Smart KTX 2026 (Bản Sửa Lỗi)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://unpkg.com/html5-qrcode"></script>
+    
+    <!-- Tải thư viện Firebase trực tiếp -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
         
@@ -122,7 +128,8 @@
         </div>
     </div>
 
-    <div class="max-w-md mx-auto min-h-screen flex flex-col bg-slate-50 relative shadow-2xl overflow-hidden">
+    <!-- ĐÃ XÓA overflow-hidden ĐỂ CHO PHÉP CUỘN MÀN HÌNH -->
+    <div class="max-w-md mx-auto min-h-[100dvh] flex flex-col bg-slate-50 relative shadow-2xl overflow-x-hidden pb-10">
         
         <header class="bg-viettel p-6 sticky top-0 z-40 shadow-lg flex justify-between items-center rounded-b-[32px]">
             <div class="flex items-center space-x-3 cursor-pointer" onclick="resetApp()">
@@ -131,7 +138,7 @@
                 </div>
                 <div>
                     <h1 class="font-extrabold text-sm uppercase tracking-tight leading-none text-white">QLTS Viettel</h1>
-                    <p class="text-[10px] font-medium opacity-90 uppercase mt-1 text-white">Smart KTX (Hybrid Mode)</p>
+                    <p class="text-[10px] font-medium opacity-90 uppercase mt-1 text-white">Smart KTX (Sửa lỗi)</p>
                 </div>
             </div>
             <button onclick="authAdmin()" style="background-color: rgba(255,255,255,0.25);" class="px-4 py-2 rounded-xl text-[10px] font-black uppercase border border-white/30 transition-all active:scale-95 text-white">
@@ -169,7 +176,7 @@
                                 <p class="text-[10px] font-bold uppercase text-slate-400 mb-1 tracking-widest">Hotline hỗ trợ KTX</p>
                                 <p class="text-xl font-black tracking-wider text-white">0983.863.380</p>
                             </div>
-                            <a href="tel:0983863380" class="w-12 h-12 bg-viettel rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-all">
+                            <a href="tel:0983863380" class="w-12 h-12 bg-viettel rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-all cursor-pointer">
                                 <i class="fas fa-phone-alt text-lg"></i>
                             </a>
                         </div>
@@ -177,11 +184,11 @@
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
-                    <button onclick="showView('lookupView')" class="bg-viettel p-8 rounded-[2.5rem] font-black text-xs uppercase shadow-xl shadow-red-200 flex flex-col items-center justify-center space-y-3 active:scale-95 transition-all">
+                    <button onclick="showView('lookupView')" class="bg-viettel p-8 rounded-[2.5rem] font-black text-xs uppercase shadow-xl shadow-red-200 flex flex-col items-center justify-center space-y-3 active:scale-95 transition-all cursor-pointer">
                         <i class="fas fa-search-location text-3xl"></i>
                         <span>Tìm phòng</span>
                     </button>
-                    <button onclick="showView('checkOutView')" class="bg-slate-800 text-white p-8 rounded-[2.5rem] font-black text-xs uppercase shadow-xl shadow-slate-200 flex flex-col items-center justify-center space-y-3 active:scale-95 transition-all hover:bg-slate-900">
+                    <button onclick="showView('checkOutView')" class="bg-slate-800 text-white p-8 rounded-[2.5rem] font-black text-xs uppercase shadow-xl shadow-slate-200 flex flex-col items-center justify-center space-y-3 active:scale-95 transition-all hover:bg-slate-900 cursor-pointer">
                         <i class="fas fa-sign-out-alt text-3xl"></i>
                         <span>Trả phòng</span>
                     </button>
@@ -383,34 +390,13 @@
         </div>
     </div>
 
-    <!-- Firebase & Google Sheets Hybrid Script -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, getDocs, onSnapshot, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-
-        // MÔ HÌNH LAI: KẾT HỢP CẢ FIREBASE VÀ GOOGLE SHEETS
-        const cfg = {
-            // LINK GOOGLE SHEETS CỦA BẠN (Dùng để lấy DS xếp phòng và ghi báo cáo lịch sử)
-            sheet: "https://script.google.com/macros/s/AKfycbyCFrostOu5bPgjxOOTCoMrR8XF1GQnn05x_7lymeQYP113Tsgm9vqa7Olzi04bfBRW/exec",
-            token: "8628522316:AAEEZavf7qnnENTEzGTb2dmmYDHhunZ9qT4",
-            chat: "-1003878344099",
-            pin: "271020"
-        };
-
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { projectId: "demo-project" };
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'ktx-smart-demo';
-        
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        let currentUser = null;
-        let guestList = [];
-        let isGuestListLoaded = false;
-        let occupiedRooms = {}; 
-        let unsubscribeAdmin = null;
-        let html5QrCode = null;
+    <!-- SCRIPT 1: GIAO DIỆN (Đảm bảo luôn bấm được dù lỗi mạng) -->
+    <script>
+        var guestList = [];
+        var isGuestListLoaded = false;
+        var occupiedRooms = {}; 
+        var unsubscribeAdmin = null;
+        var html5QrCode = null;
 
         const assetsTemplate = [
             { n: "Chìa khóa phòng", q: 1 }, { n: "Tivi", q: 1 }, { n: "Điều khiển Tivi", q: 1 },
@@ -426,56 +412,13 @@
             { n: "Đèn học", q: "P" } 
         ];
 
-        const initAuth = async () => {
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-            } catch (error) { console.error("Lỗi xác thực:", error); }
-        };
-        initAuth();
-
-        onAuthStateChanged(auth, user => { currentUser = user; });
-
-        // Hàm gọi mạng chống treo
-        async function fetchWithTimeout(resource, options = {}) {
-            const { timeout = 8000 } = options;
-            const controller = new AbortController();
-            const id = setTimeout(() => controller.abort(), timeout);
-            const response = await fetch(resource, { ...options, signal: controller.signal });
-            clearTimeout(id);
-            return response;
-        }
-
-        // TẢI DANH SÁCH TỪ GOOGLE SHEETS (Dùng cho Đầu vào)
-        async function preloadGuestList() {
-            try {
-                const res = await fetchWithTimeout(`${cfg.sheet}?type=getGuests`);
-                guestList = await res.json();
-                isGuestListLoaded = true;
-                console.log("Đã tải danh sách từ Google Sheets thành công.");
-            } catch (e) {
-                console.log("Lỗi tải danh sách từ Sheets:", e);
-                // Dữ liệu dự phòng nếu mạng lỗi
-                guestList = [
-                    { id: "V123", name: "NGUYỄN VĂN A", room: "201", in: "Hôm nay", out: "Ngày mai" }
-                ];
-                isGuestListLoaded = true;
-            }
-        }
-        document.addEventListener('DOMContentLoaded', preloadGuestList);
-
-        // ================= GIAO DIỆN & TIỆN ÍCH =================
-
-        window.setLoading = (state) => {
+        function setLoading(state) {
             const overlay = document.getElementById('loading');
             if (state) overlay.classList.add('active');
             else overlay.classList.remove('active');
         }
 
-        window.showInfo = (title, desc, type='info') => {
+        function showInfo(title, desc, type='info') {
             const modal = document.getElementById('infoModal');
             const icon = document.getElementById('infoIcon');
             icon.className = `w-16 h-16 rounded-full mx-auto flex items-center justify-center text-2xl ${type === 'success' ? 'bg-green-50 text-green-500' : 'bg-red-50 text-red-500'}`;
@@ -486,13 +429,13 @@
             modal.classList.add('flex');
         }
 
-        window.showView = (id) => {
-            document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
+        function showView(id) {
+            document.querySelectorAll('main > section').forEach(function(s) { s.classList.add('hidden'); });
             document.getElementById(id).classList.remove('hidden');
             window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
-        window.resetApp = () => {
+        function resetApp() {
             document.getElementById('searchEmpId').value = '';
             document.getElementById('inName').value = '';
             document.getElementById('inRoom').value = '';
@@ -500,42 +443,12 @@
             document.getElementById('outName').value = '';
             document.getElementById('outRoom').value = '';
             document.getElementById('lookupResult').classList.add('hidden');
-            document.querySelectorAll('.asset-checkbox').forEach(cb => cb.checked = false);
-            window.autoCheckRoom('');
-            window.showView('homeView');
+            document.querySelectorAll('.asset-checkbox').forEach(function(cb) { cb.checked = false; });
+            autoCheckRoom('');
+            showView('homeView');
         }
 
-        // ================= XỬ LÝ KHÁCH HÀNG (TÌM TRONG SHEETS) =================
-
-        window.searchRoom = async () => {
-            const searchInput = document.getElementById('searchEmpId').value.trim().toUpperCase();
-            if(!searchInput) return window.showInfo("Thiếu thông tin", "Vui lòng nhập Mã Nhân Viên hoặc Tên!");
-            
-            window.setLoading(true);
-
-            if (!isGuestListLoaded) {
-                try { await preloadGuestList(); } 
-                catch (e) {
-                    window.setLoading(false);
-                    return window.showInfo("Lỗi kết nối", "Quá thời gian tải dữ liệu. Vui lòng thử lại.", "error");
-                }
-            }
-            window.setLoading(false);
-
-            const guest = guestList.find(g => g.id === searchInput || g.name.includes(searchInput));
-
-            if(guest) {
-                document.getElementById('resName').innerText = guest.name;
-                document.getElementById('resRoom').innerText = guest.room;
-                document.getElementById('resDates').innerText = `${guest.in} - ${guest.out}`;
-                document.getElementById('lookupResult').classList.remove('hidden');
-            } else {
-                document.getElementById('lookupResult').classList.add('hidden');
-                window.showInfo("Không tìm thấy", "Không tìm thấy dữ liệu trong danh sách phân phòng (Google Sheets) hôm nay.");
-            }
-        }
-
-        window.proceedToCheckIn = () => {
+        function proceedToCheckIn() {
             const name = document.getElementById('resName').innerText;
             const room = document.getElementById('resRoom').innerText;
             
@@ -550,11 +463,11 @@
             roomInput.readOnly = true;
             roomInput.classList.add('bg-slate-200', 'text-slate-500');
             
-            window.autoCheckRoom(room);
-            window.showView('checkInView');
+            autoCheckRoom(room);
+            showView('checkInView');
         }
 
-        window.showManualCheckIn = () => {
+        function showManualCheckIn() {
             document.getElementById('inName').readOnly = false;
             document.getElementById('inRoom').readOnly = false;
             document.getElementById('inName').value = '';
@@ -562,11 +475,11 @@
             document.getElementById('inName').classList.remove('bg-slate-200', 'text-slate-500');
             document.getElementById('inRoom').classList.remove('bg-slate-200', 'text-slate-500');
             
-            window.autoCheckRoom(''); 
-            window.showView('checkInView');
+            autoCheckRoom(''); 
+            showView('checkInView');
         }
 
-        window.autoCheckRoom = (room) => {
+        function autoCheckRoom(room) {
             const r = parseInt(room);
             const badge = document.getElementById('roomBadge');
             const container = document.getElementById('assetContainer');
@@ -591,7 +504,7 @@
             
             const list = document.getElementById('assetList');
             list.innerHTML = "";
-            assetsTemplate.forEach((a, i) => {
+            assetsTemplate.forEach(function(a, i) {
                 const qty = a.q === "P" ? p : a.q;
                 list.innerHTML += `
                     <div class="asset-row hover:bg-red-50 cursor-pointer" onclick="const cb=this.querySelector('input'); cb.checked=!cb.checked;">
@@ -604,130 +517,214 @@
             });
         }
 
-        // ================= NHẬN/TRẢ PHÒNG (GHI CÙNG LÚC 2 NƠI) =================
-
-        window.handleIn = async () => {
-            if(!currentUser) return;
-            const name = document.getElementById('inName').value.trim().toUpperCase();
-            const room = document.getElementById('inRoom').value;
-            const note = document.getElementById('inNote').value || "Không";
-            
-            if(!name || !room) return window.showInfo("Thiếu thông tin", "Vui lòng nhập Tên và Số phòng!");
-            
-            const brokenBoxes = document.querySelectorAll('.asset-checkbox:checked');
-            const brokenAssets = Array.from(brokenBoxes).map(cb => cb.value).join(', ');
-            const finalBrokenText = brokenAssets ? brokenAssets : "Không";
-
-            window.setLoading(true);
-            try {
-                // 1. Ghi lên Firebase (Để UI Real-time cập nhật chấm đỏ ngay)
-                const roomDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', room.toString());
-                await setDoc(roomDocRef, { occupant: name, note: note, status: 'occupied', timeIn: Date.now() });
-
-                window.setLoading(false);
-                window.showInfo("Thành công", "Đã ghi nhận! Bạn có thể về phòng.", 'success');
-                setTimeout(() => { document.getElementById('infoModal').classList.add('hidden'); window.resetApp(); }, 2000);
-
-                // 2. CHẠY NGẦM: Ghi vào Google Sheets để xếp thành danh sách Báo cáo cho Sếp
-                setTimeout(() => {
-                    const telegramBrokenInfo = brokenAssets ? `\n⚠️ TÀI SẢN LỖI: ${brokenAssets}` : "";
-                    const msg = `🟢 NHẬN PHÒNG: ${room}\n👤 Khách: ${name}\n🏢 Loại: ${document.getElementById('roomBadge').innerText}${telegramBrokenInfo}\n📝 Lớp/Sự kiện: ${note}\n⏰ Thời gian: ${new Date().toLocaleString('vi-VN')}`;
-                    
-                    fetch(cfg.sheet, { 
-                        method: "POST", mode: "no-cors", 
-                        body: JSON.stringify({ type: "NHẬN PHÒNG", room: room, name: name, note: note, brokenAssets: finalBrokenText}) 
-                    }).catch(e => console.log(e));
-
-                    fetch(`https://api.telegram.org/bot${cfg.token}/sendMessage?chat_id=${cfg.chat}&text=${encodeURIComponent(msg)}`).catch(e => console.log(e));
-                }, 50);
-
-            } catch (error) {
-                window.setLoading(false);
-                window.showInfo("Lỗi hệ thống", "Lỗi mạng Firebase: " + error.message, 'error');
-            }
-        }
-
-        window.handleOut = async () => {
-            if(!currentUser) return;
-            const name = document.getElementById('outName').value.trim().toUpperCase();
-            const room = document.getElementById('outRoom').value;
-            
-            if(!name || !room) return window.showInfo("Thiếu thông tin", "Vui lòng nhập Tên và Số phòng!");
-            
-            window.setLoading(true);
-            try {
-                // 1. Xóa trên Firebase (Để UI Real-time chuyển thành phòng Trống)
-                const roomDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', room.toString());
-                await deleteDoc(roomDocRef);
-
-                window.setLoading(false);
-                window.showInfo("Thành công", "Yêu cầu trả phòng đã được ghi nhận.", 'success');
-                setTimeout(() => { document.getElementById('infoModal').classList.add('hidden'); window.resetApp(); }, 2000);
-
-                // 2. CHẠY NGẦM: Ghi vào Google Sheets (Báo cáo lịch sử Trả phòng)
-                setTimeout(() => {
-                    const msg = `🔴 TRẢ PHÒNG: ${room}\n👤 Người thực hiện: ${name}\n⏰ Thời gian: ${new Date().toLocaleString('vi-VN')}`;
-                    
-                    fetch(cfg.sheet, { 
-                        method: "POST", mode: "no-cors", 
-                        body: JSON.stringify({ type: "TRẢ PHÒNG", room: room, name: name }) 
-                    }).catch(e => console.log(e));
-
-                    fetch(`https://api.telegram.org/bot${cfg.token}/sendMessage?chat_id=${cfg.chat}&text=${encodeURIComponent(msg)}`).catch(e => console.log(e));
-                }, 50);
-
-            } catch (error) {
-                window.setLoading(false);
-                window.showInfo("Lỗi", "Không thể thực hiện. Lỗi: " + error.message, 'error');
-            }
-        }
-
-        // ================= ADMIN & REAL-TIME (Giữ nguyên của Firebase) =================
-        window.authAdmin = () => { 
+        // Quyền quản lý (Mở bảng nhập PIN)
+        function authAdmin() { 
             const modal = document.getElementById('pinModal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
             document.getElementById('pinInput').value = '';
-            setTimeout(() => document.getElementById('pinInput').focus(), 300);
+            setTimeout(function() { document.getElementById('pinInput').focus(); }, 300);
+        }
+        function closePinModal() { document.getElementById('pinModal').classList.add('hidden'); }
+    </script>
+
+    <!-- SCRIPT 2: XỬ LÝ DỮ LIỆU & API (Chạy ngầm độc lập) -->
+    <script>
+        const cfg = {
+            sheet: "https://script.google.com/macros/s/AKfycbyCFrostOu5bPgjxOOTCoMrR8XF1GQnn05x_7lymeQYP113Tsgm9vqa7Olzi04bfBRW/exec",
+            token: "8628522316:AAEEZavf7qnnENTEzGTb2dmmYDHhunZ9qT4",
+            chat: "-1003878344099",
+            pin: "271020"
+        };
+
+        let db = null;
+        let currentUser = null;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'ktx-smart-demo';
+
+        // Khởi tạo Firebase cực kỳ an toàn
+        try {
+            if (typeof firebase !== 'undefined') {
+                const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { projectId: "demo-project" };
+                firebase.initializeApp(firebaseConfig);
+                db = firebase.firestore();
+                
+                firebase.auth().onAuthStateChanged(function(user) { currentUser = user; });
+                
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    firebase.auth().signInWithCustomToken(__initial_auth_token).catch(function(e){console.log(e)});
+                } else {
+                    firebase.auth().signInAnonymously().catch(function(e){console.log(e)});
+                }
+            }
+        } catch (e) {
+            console.warn("Chạy ở chế độ Offline vì chặn Firebase:", e);
         }
 
-        window.closePinModal = () => { document.getElementById('pinModal').classList.add('hidden'); }
+        async function fetchWithTimeout(resource, options = {}) {
+            const timeout = 5000;
+            const controller = new AbortController();
+            const id = setTimeout(function() { controller.abort(); }, timeout);
+            const response = await fetch(resource, { ...options, signal: controller.signal });
+            clearTimeout(id);
+            return response;
+        }
 
-        window.verifyPin = () => {
-            if(document.getElementById('pinInput').value === cfg.pin) {
-                window.closePinModal();
-                window.setLoading(true);
-                setupAdminListener();
-                window.showView('adminView');
-                window.setLoading(false);
+        async function preloadGuestList() {
+            try {
+                const res = await fetchWithTimeout(`${cfg.sheet}?type=getGuests`);
+                guestList = await res.json();
+                isGuestListLoaded = true;
+            } catch (e) {
+                console.log("Lỗi tải danh sách từ Sheets:", e);
+                guestList = [{ id: "V123", name: "NGUYỄN VĂN A", room: "201", in: "Hôm nay", out: "Ngày mai" }];
+                isGuestListLoaded = true;
+            }
+        }
+        document.addEventListener('DOMContentLoaded', preloadGuestList);
+
+        async function searchRoom() {
+            const searchInput = document.getElementById('searchEmpId').value.trim().toUpperCase();
+            if(!searchInput) return showInfo("Thiếu thông tin", "Vui lòng nhập Mã Nhân Viên hoặc Tên!");
+            
+            setLoading(true);
+
+            if (!isGuestListLoaded) {
+                try { await preloadGuestList(); } 
+                catch (e) {
+                    setLoading(false);
+                    return showInfo("Lỗi kết nối", "Quá thời gian tải dữ liệu. Vui lòng thử lại.", "error");
+                }
+            }
+            setLoading(false);
+
+            const guest = guestList.find(function(g) { return g.id === searchInput || g.name.includes(searchInput); });
+
+            if(guest) {
+                document.getElementById('resName').innerText = guest.name;
+                document.getElementById('resRoom').innerText = guest.room;
+                document.getElementById('resDates').innerText = `${guest.in} - ${guest.out}`;
+                document.getElementById('lookupResult').classList.remove('hidden');
             } else {
-                window.showInfo("Lỗi bảo mật", "Mã PIN không đúng.");
+                document.getElementById('lookupResult').classList.add('hidden');
+                showInfo("Không tìm thấy", "Không tìm thấy dữ liệu trong danh sách phân phòng (Google Sheets) hôm nay.");
+            }
+        }
+
+        function handleIn() {
+            const name = document.getElementById('inName').value.trim().toUpperCase();
+            const room = document.getElementById('inRoom').value;
+            const note = document.getElementById('inNote').value || "Không";
+            
+            if(!name || !room) return showInfo("Thiếu thông tin", "Vui lòng nhập Tên và Số phòng!");
+            
+            const brokenBoxes = document.querySelectorAll('.asset-checkbox:checked');
+            const brokenAssets = Array.from(brokenBoxes).map(function(cb) { return cb.value; }).join(', ');
+            const finalBrokenText = brokenAssets ? brokenAssets : "Không";
+
+            setLoading(true);
+
+            if (db) {
+                db.collection('artifacts').doc(appId).collection('public').doc('data')
+                  .collection('rooms').doc(room.toString())
+                  .set({ occupant: name, note: note, status: 'occupied', timeIn: Date.now() })
+                  .catch(function(e) { console.log("Lỗi Firebase ngầm", e); });
+            }
+
+            setTimeout(function() {
+                const telegramBrokenInfo = brokenAssets ? `\n⚠️ TÀI SẢN LỖI: ${brokenAssets}` : "";
+                const msg = `🟢 NHẬN PHÒNG: ${room}\n👤 Khách: ${name}\n🏢 Loại: ${document.getElementById('roomBadge').innerText}${telegramBrokenInfo}\n📝 Lớp/Sự kiện: ${note}\n⏰ Thời gian: ${new Date().toLocaleString('vi-VN')}`;
+                
+                fetch(cfg.sheet, { 
+                    method: "POST", mode: "no-cors", 
+                    body: JSON.stringify({ type: "NHẬN PHÒNG", room: room, name: name, note: note, brokenAssets: finalBrokenText}) 
+                }).catch(function(e) { console.log(e); });
+
+                fetch(`https://api.telegram.org/bot${cfg.token}/sendMessage?chat_id=${cfg.chat}&text=${encodeURIComponent(msg)}`).catch(function(e) { console.log(e); });
+            }, 50);
+
+            setTimeout(function() {
+                setLoading(false);
+                showInfo("Thành công", "Đã ghi nhận! Bạn có thể về phòng.", 'success');
+                setTimeout(function() { document.getElementById('infoModal').classList.add('hidden'); resetApp(); }, 2000);
+            }, 300);
+        }
+
+        function handleOut() {
+            const name = document.getElementById('outName').value.trim().toUpperCase();
+            const room = document.getElementById('outRoom').value;
+            
+            if(!name || !room) return showInfo("Thiếu thông tin", "Vui lòng nhập Tên và Số phòng!");
+            
+            setLoading(true);
+
+            if (db) {
+                db.collection('artifacts').doc(appId).collection('public').doc('data')
+                  .collection('rooms').doc(room.toString())
+                  .delete().catch(function(e) { console.log(e); });
+            }
+
+            setTimeout(function() {
+                const msg = `🔴 TRẢ PHÒNG: ${room}\n👤 Người thực hiện: ${name}\n⏰ Thời gian: ${new Date().toLocaleString('vi-VN')}`;
+                
+                fetch(cfg.sheet, { 
+                    method: "POST", mode: "no-cors", 
+                    body: JSON.stringify({ type: "TRẢ PHÒNG", room: room, name: name }) 
+                }).catch(function(e) { console.log(e); });
+
+                fetch(`https://api.telegram.org/bot${cfg.token}/sendMessage?chat_id=${cfg.chat}&text=${encodeURIComponent(msg)}`).catch(function(e) { console.log(e); });
+            }, 50);
+
+            setTimeout(function() {
+                setLoading(false);
+                showInfo("Thành công", "Yêu cầu trả phòng đã được ghi nhận.", 'success');
+                setTimeout(function() { document.getElementById('infoModal').classList.add('hidden'); resetApp(); }, 2000);
+            }, 300);
+        }
+
+        // ================= ADMIN & REAL-TIME =================
+        function verifyPin() {
+            if(document.getElementById('pinInput').value === cfg.pin) {
+                closePinModal();
+                setLoading(true);
+                setupAdminListener();
+                showView('adminView');
+                setLoading(false);
+            } else {
+                showInfo("Lỗi bảo mật", "Mã PIN không đúng.");
                 document.getElementById('pinInput').value = '';
             }
         }
 
-        window.exitAdmin = () => {
-            if (unsubscribeAdmin) unsubscribeAdmin();
-            window.resetApp();
+        function exitAdmin() {
+            if (unsubscribeAdmin) {
+                unsubscribeAdmin();
+                unsubscribeAdmin = null;
+            }
+            resetApp();
         }
 
-        const setupAdminListener = () => {
-            if(!currentUser) return;
+        function setupAdminListener() {
+            if(!db) {
+                document.getElementById('statusTime').innerHTML = `<span class="text-slate-400">Đang chạy Offline</span>`;
+                renderAdmin();
+                updateStats();
+                return;
+            }
             if(unsubscribeAdmin) unsubscribeAdmin();
 
-            const roomsCol = collection(db, 'artifacts', appId, 'public', 'data', 'rooms');
+            const roomsCol = db.collection('artifacts').doc(appId).collection('public').doc('data').collection('rooms');
             
-            unsubscribeAdmin = onSnapshot(roomsCol, (snapshot) => {
+            unsubscribeAdmin = roomsCol.onSnapshot(function(snapshot) {
                 occupiedRooms = {};
-                snapshot.forEach(doc => { occupiedRooms[doc.id] = doc.data().occupant; });
+                snapshot.forEach(function(doc) { occupiedRooms[doc.id] = doc.data().occupant; });
                 
                 document.getElementById('statusTime').innerHTML = `<span class="realtime-indicator"></span> Trực tuyến: ${new Date().toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit', second:'2-digit'})}`;
-                window.renderAdmin();
-                window.updateStats(); 
-            }, (error) => { console.error("Lỗi nghe real-time:", error); });
+                renderAdmin();
+                updateStats(); 
+            }, function(error) { console.error("Lỗi nghe real-time:", error); });
         }
 
-        window.updateStats = () => {
+        function updateStats() {
             const totalRooms = 159; 
             let occupiedCount = Object.keys(occupiedRooms).length;
             let emptyCount = totalRooms - occupiedCount;
@@ -737,17 +734,19 @@
             document.getElementById('statEmpty').innerText = emptyCount;
             document.getElementById('guestCountText').innerText = `${occupiedCount} khách đang lưu trú`;
             
-            if(!document.getElementById('guestListModal').classList.contains('hidden')) { window.showGuestList(); }
+            if(!document.getElementById('guestListModal').classList.contains('hidden')) { showGuestList(); }
         }
 
-        window.showGuestList = () => {
+        function showGuestList() {
             const container = document.getElementById('guestListContent');
             container.innerHTML = '';
             const entries = Object.entries(occupiedRooms);
             if(entries.length === 0) {
                 container.innerHTML = '<div class="h-full flex flex-col items-center justify-center text-slate-400 opacity-70"><i class="fas fa-box-open text-4xl mb-3"></i><p class="text-xs font-bold uppercase tracking-wider">Chưa có khách lưu trú</p></div>';
             } else {
-                entries.sort((a,b) => parseInt(a[0]) - parseInt(b[0])).forEach(([roomNo, name]) => {
+                entries.sort(function(a,b) { return parseInt(a[0]) - parseInt(b[0]); }).forEach(function(entry) {
+                    const roomNo = entry[0];
+                    const name = entry[1];
                     container.innerHTML += `
                         <div class="bg-slate-50 border border-slate-200 p-4 rounded-2xl flex justify-between items-center shadow-sm">
                             <div class="flex items-center gap-3">
@@ -762,12 +761,12 @@
             document.getElementById('guestListModal').classList.add('flex');
         }
 
-        window.closeGuestList = () => {
+        function closeGuestList() {
             document.getElementById('guestListModal').classList.add('hidden');
             document.getElementById('guestListModal').classList.remove('flex');
         }
 
-        window.renderAdmin = () => {
+        function renderAdmin() {
             const cont = document.getElementById('adminContent');
             cont.innerHTML = '';
             for(let f=1; f<=9; f++) {
@@ -780,7 +779,7 @@
                     const isOccupied = !!occupantName;
                     const statusClass = isOccupied ? 'room-occupied' : 'room-empty';
                     roomsHTML += `
-                        <div class="room-card ${statusClass}" onclick="window.showRoomDetails('${roomNo}', '${isOccupied ? occupantName : ''}')">
+                        <div class="room-card ${statusClass}" onclick="showRoomDetails('${roomNo}', '${isOccupied ? occupantName : ''}')">
                             <span class="opacity-50 text-[8px] mb-0.5">ROOM</span>${roomNo}
                             ${isOccupied ? '<div class="absolute -top-1 -right-1 w-3 h-3 bg-viettel rounded-full border-2 border-white"></div>' : ''}
                         </div>`;
@@ -796,13 +795,13 @@
             }
         }
 
-        window.showRoomDetails = (roomNo, occupantName) => {
-            if(occupantName && occupantName !== 'undefined') window.showInfo(`Phòng ${roomNo}`, `Đang ở: ${occupantName}`, 'info');
-            else window.showInfo(`Phòng ${roomNo}`, `Phòng hiện đang trống.`, 'success');
+        function showRoomDetails(roomNo, occupantName) {
+            if(occupantName && occupantName !== 'undefined') showInfo(`Phòng ${roomNo}`, `Đang ở: ${occupantName}`, 'info');
+            else showInfo(`Phòng ${roomNo}`, `Phòng hiện đang trống.`, 'success');
         }
 
-        // ================= QR SCANNER KHÔI PHỤC HOẠT ĐỘNG =================
-        window.openQRScanner = () => {
+        // ================= QR SCANNER =================
+        function openQRScanner() {
             document.getElementById('qrModal').classList.remove('hidden');
             document.getElementById('qrModal').classList.add('flex');
             document.getElementById('qr-upload').value = ""; 
@@ -812,49 +811,48 @@
             html5QrCode.start(
                 { facingMode: "environment" },
                 { fps: 10, qrbox: { width: 250, height: 250 } },
-                window.onScanSuccess
-            ).catch((err) => {
+                onScanSuccess
+            ).catch(function(err) {
                 document.getElementById('qr-reader').innerHTML = '<div class="p-4 text-[11px] text-red-500 font-medium leading-relaxed text-center">Trình duyệt chặn Camera.<br><br>Vui lòng TẢI ẢNH LÊN!</div>';
             });
         }
 
-        window.closeQRScanner = () => {
+        function closeQRScanner() {
             document.getElementById('qrModal').classList.add('hidden');
             document.getElementById('qrModal').classList.remove('flex');
             if (html5QrCode && html5QrCode.isScanning) {
-                html5QrCode.stop().catch((err) => console.log("Lỗi tắt cam", err));
+                html5QrCode.stop().catch(function(err) { console.log("Lỗi tắt cam", err); });
             }
         }
 
-        window.scanImage = (event) => {
+        function scanImage(event) {
             const file = event.target.files[0];
             if (!file) return;
             if (!html5QrCode) html5QrCode = new Html5Qrcode("qr-reader");
             if (html5QrCode.isScanning) {
-                html5QrCode.stop().then(() => window.processFile(file)).catch(() => window.processFile(file));
-            } else { window.processFile(file); }
+                html5QrCode.stop().then(function() { processFile(file); }).catch(function() { processFile(file); });
+            } else { processFile(file); }
         }
 
-        window.processFile = (file) => {
-            window.setLoading(true);
+        function processFile(file) {
+            setLoading(true);
             html5QrCode.scanFile(file, true)
-                .then(decodedText => {
-                    window.setLoading(false);
-                    window.onScanSuccess(decodedText);
+                .then(function(decodedText) {
+                    setLoading(false);
+                    onScanSuccess(decodedText);
                 })
-                .catch(err => {
-                    window.setLoading(false);
-                    window.showInfo("Lỗi đọc mã", "Không tìm thấy mã QR. Vui lòng chụp rõ nét hơn.", "error");
+                .catch(function(err) {
+                    setLoading(false);
+                    showInfo("Lỗi đọc mã", "Không tìm thấy mã QR. Vui lòng chụp rõ nét hơn.", "error");
                     document.getElementById('qr-upload').value = "";
                 });
         }
 
-        window.onScanSuccess = (decodedText) => {
+        function onScanSuccess(decodedText) {
             document.getElementById('searchEmpId').value = decodedText;
-            window.closeQRScanner();
-            window.searchRoom();
+            closeQRScanner();
+            searchRoom();
         }
-
     </script>
 </body>
 </html>
