@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>QLTS Viettel - Smart KTX 2026 (Bản Sửa Lỗi)</title>
+    <title>QLTS Viettel - Smart KTX 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://unpkg.com/html5-qrcode"></script>
@@ -22,18 +22,13 @@
             -webkit-tap-highlight-color: transparent; 
         }
 
-        .bg-viettel {
-            background-color: #ee0000 !important;
-            color: #ffffff !important;
-        }
-        .text-viettel {
-            color: #ee0000 !important;
-        }
+        .bg-viettel { background-color: #ee0000 !important; color: #ffffff !important; }
+        .text-viettel { color: #ee0000 !important; }
 
         .card-shadow { box-shadow: 0 10px 30px -5px rgba(0,0,0,0.05); }
 
         .noiquy-box { 
-            height: 320px; 
+            height: 380px; 
             overflow-y: auto; 
             scrollbar-width: thin;
         }
@@ -53,24 +48,12 @@
             transition: all 0.2s;
         }
 
-        .room-grid { 
-            display: grid; 
-            grid-template-columns: repeat(4, 1fr); 
-            gap: 10px; 
-        }
+        .room-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
 
         .room-card {
-            aspect-ratio: 1/1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border-radius: 16px;
-            font-weight: 800;
-            font-size: 12px;
-            transition: all 0.2s;
-            position: relative;
-            cursor: pointer;
+            aspect-ratio: 1/1; display: flex; flex-direction: column; align-items: center;
+            justify-content: center; border-radius: 16px; font-weight: 800; font-size: 12px;
+            transition: all 0.2s; position: relative; cursor: pointer;
         }
 
         .room-empty { background: #fff; border: 1px solid #e2e8f0; color: #64748b; }
@@ -82,26 +65,15 @@
         }
 
         .animate-fade { animation: fadeIn 0.3s ease-out forwards; }
-
         input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
 
         .loading-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(255,255,255,0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            backdrop-filter: blur(4px);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s;
+            position: fixed; inset: 0; background: rgba(255,255,255,0.8);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999; backdrop-filter: blur(4px); opacity: 0;
+            pointer-events: none; transition: opacity 0.2s;
         }
-        .loading-overlay.active {
-            opacity: 1;
-            pointer-events: all;
-        }
+        .loading-overlay.active { opacity: 1; pointer-events: all; }
 
         @keyframes pulse-red {
             0% { opacity: 1; transform: scale(1); }
@@ -109,17 +81,30 @@
             100% { opacity: 1; transform: scale(1); }
         }
         .realtime-indicator {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            background-color: #ef4444;
-            border-radius: 50%;
-            animation: pulse-red 1.5s infinite;
-            margin-right: 4px;
+            display: inline-block; width: 8px; height: 8px; background-color: #ef4444;
+            border-radius: 50%; animation: pulse-red 1.5s infinite; margin-right: 4px;
         }
+        
+        /* Styles cho Sổ tay */
+        .handbook-card { border: 1px solid #f1f5f9; border-radius: 1rem; overflow: hidden; margin-bottom: 1rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+        .handbook-header { background: #f8fafc; padding: 12px 16px; font-weight: 800; color: #1e293b; font-size: 13px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #f1f5f9;}
+        .handbook-body { padding: 16px; background: #fff; font-size: 12px; color: #475569; line-height: 1.6; }
+        .price-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed #e2e8f0; }
+        .price-row:last-child { border-bottom: none; }
+        .star-btn { transition: transform 0.2s; cursor: pointer; }
+        .star-btn:active { transform: scale(0.8); }
     </style>
 </head>
-<body class="text-slate-800 antialiased">
+<body class="text-slate-800 antialiased bg-slate-100 relative">
+
+    <!-- Hiệu ứng ánh sáng nền (Glowing Orbs) mang phong cách công nghệ mềm mại -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0 flex justify-center">
+        <div class="w-full max-w-md relative h-full">
+            <div class="absolute -top-20 -left-20 w-72 h-72 bg-red-400 rounded-full mix-blend-multiply filter blur-[80px] opacity-30 animate-pulse"></div>
+            <div class="absolute top-1/4 -right-20 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-[80px] opacity-30 animate-pulse" style="animation-delay: 2s;"></div>
+            <div class="absolute bottom-1/4 left-10 w-72 h-72 bg-rose-200 rounded-full mix-blend-multiply filter blur-[80px] opacity-30 animate-pulse" style="animation-delay: 4s;"></div>
+        </div>
+    </div>
 
     <div id="loading" class="loading-overlay">
         <div class="flex flex-col items-center">
@@ -128,83 +113,247 @@
         </div>
     </div>
 
-    <!-- ĐÃ XÓA overflow-hidden ĐỂ CHO PHÉP CUỘN MÀN HÌNH -->
-    <div class="max-w-md mx-auto min-h-[100dvh] flex flex-col bg-slate-50 relative shadow-2xl overflow-x-hidden pb-10">
+    <!-- Nền chính được làm mờ (Glassmorphism) để hiện hiệu ứng nền -->
+    <div class="max-w-md mx-auto min-h-[100dvh] flex flex-col bg-white/60 backdrop-blur-2xl relative shadow-2xl overflow-x-hidden pb-10 border-x border-white/50">
         
-        <header class="bg-viettel p-6 sticky top-0 z-40 shadow-lg flex justify-between items-center rounded-b-[32px]">
+        <header class="bg-gradient-to-r from-[#ee0000] to-[#ff4b4b] p-6 sticky top-0 z-40 shadow-[0_10px_30px_-10px_rgba(238,0,0,0.4)] flex justify-between items-center rounded-b-[40px] border-b border-red-400/50">
             <div class="flex items-center space-x-3 cursor-pointer" onclick="resetApp()">
                 <div class="bg-white p-2 rounded-2xl shadow-inner text-viettel">
                     <i class="fas fa-hotel text-lg"></i>
                 </div>
                 <div>
                     <h1 class="font-extrabold text-sm uppercase tracking-tight leading-none text-white">QLTS Viettel</h1>
-                    <p class="text-[10px] font-medium opacity-90 uppercase mt-1 text-white">Smart KTX (Sửa lỗi)</p>
+                    <p class="text-[9px] font-medium opacity-90 uppercase mt-1 text-white tracking-widest">Smart KTX Hệ sinh thái</p>
                 </div>
             </div>
-            <button onclick="authAdmin()" style="background-color: rgba(255,255,255,0.25);" class="px-4 py-2 rounded-xl text-[10px] font-black uppercase border border-white/30 transition-all active:scale-95 text-white">
+            <button onclick="authAdmin()" class="bg-white/20 backdrop-blur-md px-5 py-2.5 rounded-xl text-[10px] font-black uppercase border border-white/40 transition-all hover:bg-white/30 active:scale-95 text-white shadow-sm">
                 Quản lý
             </button>
         </header>
 
-        <main class="flex-grow p-4 space-y-6">
+        <main class="flex-grow p-4 space-y-6 relative z-10">
             
             <section id="homeView" class="space-y-6 animate-fade">
-                <div class="bg-white rounded-[2.5rem] p-6 card-shadow border border-white relative overflow-hidden">
-                    <div class="absolute top-0 right-0 p-4 opacity-5"><i class="fas fa-shield-alt text-6xl"></i></div>
-                    <h2 class="text-center font-black text-viettel uppercase tracking-widest text-[13px] mb-4 italic flex items-center justify-center gap-2">
-                        <span class="h-px w-8 bg-red-100"></span>Thông tin tiện ích<span class="h-px w-8 bg-red-100"></span>
-                    </h2>
-                    
-                    <div class="space-y-4 font-medium pr-2">
-                        <div class="bg-red-50/50 p-4 rounded-2xl border border-red-100">
-                            <p class="font-black text-viettel mb-3 text-[10px] uppercase tracking-wider flex items-center gap-2"><i class="fas fa-utensils"></i> Lịch phục vụ ăn uống:</p>
-                            <div class="grid grid-cols-1 gap-2 text-[11px] font-bold text-slate-700">
-                                <div class="flex justify-between items-center bg-white p-3 rounded-xl shadow-sm border border-red-50">
-                                    <span class="flex items-center gap-2"><i class="fas fa-sun text-orange-400"></i> Bữa sáng</span> <span class="text-red-600 bg-red-50 px-2 py-1 rounded-md">06h00 - 07h00</span>
-                                </div>
-                                <div class="flex justify-between items-center bg-white p-3 rounded-xl shadow-sm border border-red-50">
-                                    <span class="flex items-center gap-2"><i class="fas fa-cloud-sun text-blue-400"></i> Bữa trưa</span> <span class="text-red-600 bg-red-50 px-2 py-1 rounded-md">11h30 - 12h30</span>
-                                </div>
-                                <div class="flex justify-between items-center bg-white p-3 rounded-xl shadow-sm border border-red-50">
-                                    <span class="flex items-center gap-2"><i class="fas fa-moon text-indigo-400"></i> Bữa tối</span> <span class="text-red-600 bg-red-50 px-2 py-1 rounded-md">18h00 - 19h00</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="bg-slate-800 text-white p-5 rounded-2xl flex items-center justify-between shadow-lg shadow-slate-200">
-                            <div>
-                                <p class="text-[10px] font-bold uppercase text-slate-400 mb-1 tracking-widest">Hotline hỗ trợ KTX</p>
-                                <p class="text-xl font-black tracking-wider text-white">0983.863.380</p>
-                            </div>
-                            <a href="tel:0983863380" class="w-12 h-12 bg-viettel rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-all cursor-pointer">
-                                <i class="fas fa-phone-alt text-lg"></i>
-                            </a>
-                        </div>
+                <!-- KHỐI TIÊU ĐỀ LÀM MỀM MẠI, TINH TẾ -->
+                <div class="flex flex-col items-center justify-center mt-2 mb-6">
+                    <div class="bg-white/80 backdrop-blur-md text-viettel px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border border-white mb-2 shadow-sm flex items-center gap-2">
+                        <i class="fas fa-concierge-bell"></i> Dịch vụ Nội trú
                     </div>
+                    <p class="text-[11px] text-slate-500 font-medium">Lựa chọn tác vụ bên dưới để bắt đầu</p>
                 </div>
 
+                <!-- HOTLINE CARD - SANG TRỌNG, HIỆN ĐẠI -->
+                <div class="bg-white/90 backdrop-blur-xl border border-white p-5 rounded-[2rem] flex items-center justify-between shadow-xl shadow-slate-200/50">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-red-50 text-viettel flex items-center justify-center text-xl shadow-inner border border-red-100/50">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <div>
+                            <p class="text-[9px] font-bold uppercase text-slate-400 mb-0.5 tracking-widest">Hỗ trợ trực tuyến 24/7</p>
+                            <p class="text-xl font-black tracking-wider text-slate-800">0983.863.380</p>
+                        </div>
+                    </div>
+                    <a href="tel:0983863380" class="w-10 h-10 bg-gradient-to-br from-red-500 to-viettel rounded-full flex items-center justify-center shadow-lg shadow-red-500/40 active:scale-95 transition-all text-white">
+                        <i class="fas fa-phone-alt text-sm"></i>
+                    </a>
+                </div>
+
+                <!-- BỐ CỤC 4 NÚT KIỂU "GLASSMORPHISM" / "BENTO BOX" CÔNG NGHỆ CAO -->
                 <div class="grid grid-cols-2 gap-4">
-                    <button onclick="showView('lookupView')" class="bg-viettel p-8 rounded-[2.5rem] font-black text-xs uppercase shadow-xl shadow-red-200 flex flex-col items-center justify-center space-y-3 active:scale-95 transition-all cursor-pointer">
-                        <i class="fas fa-search-location text-3xl"></i>
-                        <span>Tìm phòng</span>
+                    <!-- Nhận phòng -->
+                    <button onclick="showView('lookupView')" class="relative overflow-hidden bg-white/90 backdrop-blur-xl border border-white p-6 rounded-[2rem] shadow-xl shadow-slate-200/50 flex flex-col items-start justify-center space-y-4 active:scale-95 transition-all group hover:border-red-100">
+                        <div class="absolute -right-4 -top-4 w-20 h-20 bg-red-50 rounded-full blur-2xl group-hover:bg-red-100 transition-all"></div>
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-red-500 to-viettel text-white flex items-center justify-center text-xl shadow-lg shadow-red-500/30">
+                            <i class="fas fa-qrcode"></i>
+                        </div>
+                        <div class="text-left relative z-10">
+                            <span class="block font-black text-sm text-slate-800 tracking-wide">Nhận phòng</span>
+                            <span class="block text-[9px] font-bold text-slate-400 mt-1 uppercase tracking-wider">Xác thực mã QR</span>
+                        </div>
                     </button>
-                    <button onclick="showView('checkOutView')" class="bg-slate-800 text-white p-8 rounded-[2.5rem] font-black text-xs uppercase shadow-xl shadow-slate-200 flex flex-col items-center justify-center space-y-3 active:scale-95 transition-all hover:bg-slate-900 cursor-pointer">
-                        <i class="fas fa-sign-out-alt text-3xl"></i>
-                        <span>Trả phòng</span>
+                    
+                    <!-- Trả phòng -->
+                    <button onclick="showView('checkOutView')" class="relative overflow-hidden bg-white/90 backdrop-blur-xl border border-white p-6 rounded-[2rem] shadow-xl shadow-slate-200/50 flex flex-col items-start justify-center space-y-4 active:scale-95 transition-all group hover:border-slate-300">
+                        <div class="absolute -right-4 -top-4 w-20 h-20 bg-slate-100 rounded-full blur-2xl group-hover:bg-slate-200 transition-all"></div>
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-700 to-slate-900 text-white flex items-center justify-center text-xl shadow-lg shadow-slate-800/30">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </div>
+                        <div class="text-left relative z-10">
+                            <span class="block font-black text-sm text-slate-800 tracking-wide">Trả phòng</span>
+                            <span class="block text-[9px] font-bold text-slate-400 mt-1 uppercase tracking-wider">Hoàn tất lưu trú</span>
+                        </div>
+                    </button>
+
+                    <!-- Thông tin KTX -->
+                    <button onclick="showView('handbookView')" class="relative overflow-hidden bg-white/90 backdrop-blur-xl border border-white p-6 rounded-[2rem] shadow-xl shadow-slate-200/50 flex flex-col items-start justify-center space-y-4 active:scale-95 transition-all group hover:border-blue-100">
+                        <div class="absolute -right-4 -top-4 w-20 h-20 bg-blue-50 rounded-full blur-2xl group-hover:bg-blue-100 transition-all"></div>
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-400 to-blue-600 text-white flex items-center justify-center text-xl shadow-lg shadow-blue-500/30">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div class="text-left relative z-10">
+                            <span class="block font-black text-sm text-slate-800 tracking-wide">Thông tin</span>
+                            <span class="block text-[9px] font-bold text-slate-400 mt-1 uppercase tracking-wider">Cẩm nang KTX</span>
+                        </div>
+                    </button>
+
+                    <!-- Đánh giá -->
+                    <button onclick="showView('feedbackView')" class="relative overflow-hidden bg-white/90 backdrop-blur-xl border border-white p-6 rounded-[2rem] shadow-xl shadow-slate-200/50 flex flex-col items-start justify-center space-y-4 active:scale-95 transition-all group hover:border-amber-100">
+                        <div class="absolute -right-4 -top-4 w-20 h-20 bg-amber-50 rounded-full blur-2xl group-hover:bg-amber-100 transition-all"></div>
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 text-white flex items-center justify-center text-xl shadow-lg shadow-amber-500/30">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="text-left relative z-10">
+                            <span class="block font-black text-sm text-slate-800 tracking-wide">Đánh giá</span>
+                            <span class="block text-[9px] font-bold text-slate-400 mt-1 uppercase tracking-wider">Chất lượng DV</span>
+                        </div>
                     </button>
                 </div>
             </section>
 
+            <!-- MODULE SỔ TAY KTX -->
+            <section id="handbookView" class="hidden space-y-4 animate-fade">
+                <div class="bg-white/95 backdrop-blur-xl p-6 rounded-[2.5rem] card-shadow border border-white space-y-4">
+                    <div class="text-center space-y-2 mb-4">
+                        <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                            <i class="fas fa-info-circle text-2xl"></i>
+                        </div>
+                        <h3 class="font-black text-slate-800 uppercase tracking-tight">Thông tin lưu trú hữu ích</h3>
+                        <!-- ĐÃ ĐỔI "HỌC VIỆN" THÀNH "KÝ TÚC XÁ" THEO YÊU CẦU -->
+                        <p class="text-[10px] text-slate-500 font-medium">Hướng dẫn, quy định và chế tài tại Ký túc xá Viettel</p>
+                    </div>
+
+                    <div class="noiquy-box px-1">
+                        <!-- Lịch ăn uống -->
+                        <div class="handbook-card">
+                            <div class="handbook-header"><i class="fas fa-utensils text-orange-500 text-lg"></i> Thời gian ăn</div>
+                            <div class="handbook-body">
+                                <ul class="space-y-3 font-medium">
+                                    <li class="flex justify-between items-center">
+                                        <span class="flex items-center gap-2"><div class="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center text-orange-400"><i class="fas fa-sun"></i></div> Bữa sáng</span> 
+                                        <b class="text-slate-800 bg-slate-100 px-3 py-1 rounded-lg">06:00</b>
+                                    </li>
+                                    <li class="flex justify-between items-center">
+                                        <span class="flex items-center gap-2"><div class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-400"><i class="fas fa-cloud-sun"></i></div> Bữa trưa</span> 
+                                        <b class="text-slate-800 bg-slate-100 px-3 py-1 rounded-lg">11:30</b>
+                                    </li>
+                                    <li class="flex justify-between items-center">
+                                        <span class="flex items-center gap-2"><div class="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-400"><i class="fas fa-moon"></i></div> Bữa tối</span> 
+                                        <b class="text-slate-800 bg-slate-100 px-3 py-1 rounded-lg">18:00</b>
+                                    </li>
+                                    <li class="mt-3 text-[10px] italic text-slate-400 border-t border-dashed pt-3">*Trang phục gọn gàng, không mặc quần short, áo ba lỗ tại nhà ăn.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Thể thao -->
+                        <div class="handbook-card">
+                            <div class="handbook-header"><i class="fas fa-swimmer text-cyan-500 text-lg"></i> Bể bơi & Thể thao</div>
+                            <div class="handbook-body">
+                                <p class="font-bold mb-2 text-slate-700">Giờ hoạt động:</p>
+                                <ul class="space-y-2 mb-3">
+                                    <li class="flex items-start gap-2"><i class="fas fa-calendar-alt text-slate-300 mt-1"></i> <span><b>T2 - CN, Lễ:</b> 05:30 - 07:45 & 17:00 - 18:30</span></li>
+                                </ul>
+                                <p class="text-[10px] italic text-slate-400 border-t border-dashed pt-3 leading-relaxed">
+                                    * Bể bơi: Bắt buộc mặc đồ bơi, <span class="font-bold text-cyan-600">tắm tráng trước khi xuống nước</span>. Không mang đồ ăn, thức uống.<br>
+                                    * Sân thể thao: Phải mặc <span class="font-bold text-emerald-600">trang phục phù hợp và đi giày thể thao chuyên dụng</span>.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Nội quy phòng -->
+                        <div class="handbook-card">
+                            <div class="handbook-header"><i class="fas fa-clipboard-list text-emerald-500 text-lg"></i> Nội quy Phòng nghỉ</div>
+                            <div class="handbook-body">
+                                <ul class="space-y-3 text-justify">
+                                    <li class="flex items-start gap-2"><i class="fas fa-check text-emerald-400 mt-1"></i> <span>Không tiếp khách trong phòng sau <b>22h00</b>.</span></li>
+                                    <li class="flex items-start gap-2"><i class="fas fa-ban text-red-400 mt-1"></i> <span>Tuyệt đối <b>không hút thuốc lá</b>, không đun nấu (bếp điện, gas) trong phòng.</span></li>
+                                    <li class="flex items-start gap-2"><i class="fas fa-ban text-red-400 mt-1"></i> <span>Nghiêm cấm cờ bạc, ma túy, vũ khí và tàng trữ văn hóa phẩm đồi trụy.</span></li>
+                                    <li class="flex items-start gap-2"><i class="fas fa-check text-emerald-400 mt-1"></i> <span>Phơi quần áo đúng nơi quy định (trong khu vực tấm chắn ban công).</span></li>
+                                    <li class="flex items-start gap-2"><i class="fas fa-check text-emerald-400 mt-1"></i> <span>Tự quản lý cá nhân và tiết kiệm điện nước.</span></li>
+                                    <li class="flex items-start gap-2"><i class="fas fa-exclamation-triangle text-orange-400 mt-1"></i> <span class="font-bold text-orange-600">Có trách nhiệm gìn giữ tài sản chung; trong trường hợp làm hỏng, thất thoát phải thanh toán đền bù theo đơn giá quy định.</span></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Bảng giá đền bù -->
+                        <div class="handbook-card">
+                            <div class="handbook-header"><i class="fas fa-money-bill-wave text-red-500 text-lg"></i> Bảng giá Đền bù Tài sản</div>
+                            <div class="handbook-body">
+                                <p class="text-[10px] text-slate-400 italic mb-3">Lưu ý: Báo giá tham khảo một số vật tư chính trị giá cao hoặc dễ thất thoát.</p>
+                                <div class="price-row"><span>Chìa khóa phòng</span><b class="text-red-600">200,000đ</b></div>
+                                <div class="price-row"><span>Tivi</span><b class="text-red-600">10,000,000đ</b></div>
+                                <div class="price-row"><span>Tủ lạnh Mini</span><b class="text-red-600">2,800,000đ</b></div>
+                                <div class="price-row"><span>Điều khiển (TV/ĐH)</span><b class="text-red-600">120k - 200k</b></div>
+                                <div class="price-row"><span>Ruột chăn/ Vỏ chăn</span><b class="text-red-600">800k - 1tr</b></div>
+                                <div class="price-row"><span>Ga giường nhỏ/to</span><b class="text-red-600">400k - 600k</b></div>
+                                <div class="price-row"><span>Cốc thủy tinh/trà</span><b class="text-red-600">20,000đ</b></div>
+                                <div class="price-row"><span>Dép đi trong nhà</span><b class="text-red-600">150,000đ</b></div>
+                                <div class="price-row"><span class="w-2/3">Lọ đựng sữa tắm / dầu gội / sữa rửa tay</span><b class="text-red-600">150,000đ</b></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button onclick="resetApp()" class="w-full bg-slate-100 text-slate-500 font-black text-[11px] uppercase py-4 rounded-xl hover:bg-slate-200 transition-all">Quay lại trang chủ</button>
+                </div>
+            </section>
+
+            <!-- MODULE ĐÁNH GIÁ CHẤT LƯỢNG -->
+            <section id="feedbackView" class="hidden space-y-4 animate-fade">
+                <div class="bg-white/95 backdrop-blur-xl p-6 rounded-[2.5rem] card-shadow border border-white space-y-5">
+                    <div class="text-center space-y-2 mb-2">
+                        <div class="w-16 h-16 bg-yellow-50 text-yellow-500 rounded-full flex items-center justify-center mx-auto mb-2 shadow-inner">
+                            <i class="fas fa-comment-dots text-2xl"></i>
+                        </div>
+                        <h3 class="font-black text-slate-800 uppercase tracking-tight">Đánh giá Dịch vụ</h3>
+                        <p class="text-[10px] text-slate-500 font-medium">Ý kiến của bạn giúp Viettel cải thiện mỗi ngày</p>
+                    </div>
+
+                    <!-- Khu vực đánh giá Sao -->
+                    <div class="py-4 text-center border-b border-t border-slate-50">
+                        <p class="text-[10px] font-black text-slate-400 uppercase mb-4">Mức độ hài lòng của bạn</p>
+                        <div class="flex justify-center gap-3 text-4xl mb-3">
+                            <i id="star-1" class="fas fa-star text-yellow-400 star-btn" onclick="setRating(1)"></i>
+                            <i id="star-2" class="fas fa-star text-yellow-400 star-btn" onclick="setRating(2)"></i>
+                            <i id="star-3" class="fas fa-star text-yellow-400 star-btn" onclick="setRating(3)"></i>
+                            <i id="star-4" class="fas fa-star text-yellow-400 star-btn" onclick="setRating(4)"></i>
+                            <i id="star-5" class="fas fa-star text-yellow-400 star-btn" onclick="setRating(5)"></i>
+                        </div>
+                        <p id="ratingText" class="font-black text-yellow-500 text-sm uppercase tracking-widest">Tuyệt vời</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="space-y-1">
+                                <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Số phòng <span class="text-red-500">*</span></label>
+                                <input type="number" id="fbRoom" placeholder="VD: 201" class="w-full p-4 bg-slate-50 border border-slate-100 rounded-xl font-bold outline-none focus:border-red-500 transition-all text-sm text-center">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Họ Tên (Tùy chọn)</label>
+                                <input type="text" id="fbName" placeholder="Tên khách" class="w-full p-4 bg-slate-50 border border-slate-100 rounded-xl font-bold outline-none focus:border-red-500 transition-all text-sm text-center">
+                            </div>
+                        </div>
+
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Góp ý chi tiết</label>
+                            <textarea id="fbNote" placeholder="Chia sẻ thêm về trải nghiệm của bạn (Buồng phòng, Lễ tân, Nhà ăn...)" class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl text-xs outline-none focus:border-red-500 transition-all" rows="4"></textarea>
+                        </div>
+                    </div>
+                    
+                    <button onclick="submitFeedback()" class="w-full bg-slate-800 text-white py-4 rounded-2xl font-black shadow-xl uppercase text-xs tracking-widest active:scale-[0.98] transition-all hover:bg-slate-900">Gửi Đánh Giá</button>
+                    <button onclick="resetApp()" class="w-full text-slate-400 font-bold text-[10px] uppercase py-2 hover:text-slate-600">Quay lại</button>
+                </div>
+            </section>
+
+            <!-- CÁC VIEW CŨ: CHECK IN / CHECK OUT / LOOKUP / ADMIN -->
             <section id="lookupView" class="hidden space-y-4 animate-fade">
-                <div class="bg-white p-6 rounded-[2.5rem] card-shadow border border-white space-y-5">
+                <div class="bg-white/95 backdrop-blur-xl p-6 rounded-[2.5rem] card-shadow border border-white space-y-5">
                     <div class="text-center space-y-2 mb-6">
-                        <div class="w-16 h-16 bg-red-50 text-viettel rounded-full flex items-center justify-center mx-auto mb-2">
+                        <div class="w-16 h-16 bg-gradient-to-br from-red-50 to-red-100 text-viettel rounded-full flex items-center justify-center mx-auto mb-3 shadow-inner border border-white">
                             <i class="fas fa-id-card text-2xl"></i>
                         </div>
                         <h3 class="font-black text-slate-800 uppercase tracking-tight">Tra cứu thông tin</h3>
-                        <p class="text-[10px] text-slate-500 font-medium">Hệ thống đang tải danh sách từ Google Sheets của bạn...</p>
+                        <p class="text-[10px] text-slate-500 font-medium px-4 leading-relaxed">Đề nghị khách hàng thực hiện xác nhận phòng nghỉ để xác thực thông tin lưu trú</p>
                     </div>
-
                     <div class="space-y-3">
                         <div class="relative">
                             <input type="text" id="searchEmpId" placeholder="NHẬP MNV HOẶC HỌ TÊN" class="w-full p-4 pr-14 bg-slate-50 border border-slate-100 rounded-2xl font-black text-center uppercase outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all tracking-widest text-sm">
@@ -234,8 +383,7 @@
                             Tiếp tục nhận phòng <i class="fas fa-arrow-right ml-1"></i>
                         </button>
                     </div>
-
-                    <button onclick="resetApp()" class="w-full text-slate-400 font-bold text-[10px] uppercase py-2 mt-2 hover:text-slate-600">Quay lại trang chủ</button>
+                    <button onclick="resetApp()" class="w-full bg-slate-100 text-slate-500 font-black text-[11px] uppercase py-4 rounded-xl hover:bg-slate-200 transition-all mt-2">Quay lại trang chủ</button>
                 </div>
                 
                 <div class="text-center">
@@ -244,12 +392,11 @@
             </section>
 
             <section id="checkInView" class="hidden space-y-4 animate-fade">
-                <div class="bg-white p-6 rounded-[2.5rem] card-shadow space-y-5 border border-white">
+                <div class="bg-white/95 backdrop-blur-xl p-6 rounded-[2.5rem] card-shadow space-y-5 border border-white">
                     <div class="space-y-1">
                         <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Thông tin khách hàng</label>
                         <input type="text" id="inName" placeholder="HỌ VÀ TÊN KHÁCH" class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl font-bold uppercase outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all text-sm">
                     </div>
-
                     <div class="space-y-1">
                         <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Số phòng</label>
                         <div class="relative">
@@ -265,7 +412,7 @@
                         <div id="assetList" class="max-h-[280px] overflow-y-auto pr-1 space-y-1 bg-slate-50 p-2 rounded-2xl border border-dashed border-slate-200"></div>
                     </div>
 
-                    <textarea id="inNote" placeholder="Lớp học/Sự kiện (nếu có)..." class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl text-xs outline-none focus:border-red-500" rows="2"></textarea>
+                    <textarea id="inNote" placeholder="Ghi chú (nếu có)..." class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl text-xs outline-none focus:border-red-500" rows="2"></textarea>
                     
                     <button id="btnIn" onclick="handleIn()" class="w-full bg-viettel py-5 rounded-2xl font-black shadow-xl uppercase text-xs tracking-widest active:scale-[0.98] transition-all">Xác nhận nhận phòng</button>
                     <button onclick="resetApp()" class="w-full text-slate-400 font-bold text-[10px] uppercase py-2 hover:text-slate-600">Hủy bỏ & Quay lại</button>
@@ -273,7 +420,7 @@
             </section>
 
             <section id="checkOutView" class="hidden space-y-4 animate-fade">
-                <div class="bg-white p-8 rounded-[3rem] card-shadow text-center space-y-6 border border-white">
+                <div class="bg-white/95 backdrop-blur-xl p-8 rounded-[3rem] card-shadow text-center space-y-6 border border-white">
                     <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto text-slate-400">
                         <i class="fas fa-door-open text-3xl"></i>
                     </div>
@@ -289,7 +436,7 @@
             </section>
 
             <section id="adminView" class="hidden space-y-6 pb-24 animate-fade">
-                <div class="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 flex justify-between items-center relative overflow-hidden">
+                <div class="bg-white/95 backdrop-blur-xl p-5 rounded-3xl shadow-sm border border-slate-100 flex justify-between items-center relative overflow-hidden">
                     <div class="absolute right-0 top-0 w-24 h-full bg-gradient-to-l from-red-50 to-transparent opacity-50"></div>
                     <div class="relative z-10">
                         <h2 class="font-black text-slate-800 uppercase tracking-tight text-sm">Sơ đồ phòng (Real-time)</h2>
@@ -304,7 +451,7 @@
                 </div>
 
                 <div class="grid grid-cols-3 gap-3">
-                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 text-center flex flex-col justify-center">
+                    <div class="bg-white/95 p-4 rounded-2xl shadow-sm border border-slate-100 text-center flex flex-col justify-center">
                         <p class="text-[9px] font-bold text-slate-400 uppercase mb-1">Tổng phòng</p>
                         <p class="text-xl font-black text-slate-700" id="statTotal">159</p>
                     </div>
@@ -324,7 +471,7 @@
                 
                 <div id="adminContent" class="space-y-8"></div>
 
-                <div class="fixed bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-slate-50 via-slate-50 to-transparent pointer-events-none z-50">
+                <div class="fixed bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-slate-50/90 via-slate-50/80 to-transparent pointer-events-none z-50">
                     <div class="max-w-md mx-auto pointer-events-auto">
                         <button onclick="exitAdmin()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black text-[11px] uppercase shadow-2xl tracking-widest border border-slate-700 hover:bg-slate-800">
                             Thoát chế độ quản lý
@@ -335,6 +482,7 @@
 
         </main>
 
+        <!-- MODAL DÙNG CHUNG -->
         <div id="pinModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[100] hidden flex-col items-center justify-center p-6">
             <div class="bg-white p-8 rounded-[3rem] shadow-2xl w-full max-w-xs text-center space-y-6 animate-fade">
                 <div class="bg-red-50 w-20 h-20 mx-auto rounded-3xl flex items-center justify-center text-viettel rotate-3"><i class="fas fa-user-shield text-3xl"></i></div>
@@ -361,9 +509,7 @@
 
         <div id="qrModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[120] hidden flex-col items-center justify-center p-6">
             <div class="bg-white p-6 rounded-[2rem] shadow-2xl w-full max-w-sm text-center space-y-4 animate-fade">
-                <div class="bg-red-50 w-16 h-16 mx-auto rounded-full flex items-center justify-center text-viettel">
-                    <i class="fas fa-qrcode text-2xl"></i>
-                </div>
+                <div class="bg-red-50 w-16 h-16 mx-auto rounded-full flex items-center justify-center text-viettel"><i class="fas fa-qrcode text-2xl"></i></div>
                 <h3 class="font-black uppercase text-slate-800 tracking-widest text-sm">Quét mã QR</h3>
                 <div id="qr-reader" class="w-full min-h-[200px] flex items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-slate-300 bg-slate-50"></div>
                 <div class="pt-2 border-t border-slate-100 text-left">
@@ -381,22 +527,33 @@
                         <h3 class="font-black uppercase text-slate-800 tracking-widest text-sm">Danh sách lưu trú</h3>
                         <p class="text-[10px] text-slate-400 font-bold mt-1 uppercase" id="guestCountText">Đang tải...</p>
                     </div>
-                    <button onclick="closeGuestList()" class="w-10 h-10 bg-red-50 text-viettel rounded-full flex items-center justify-center hover:bg-red-100 active:scale-95 transition-all">
-                        <i class="fas fa-times text-lg"></i>
-                    </button>
+                    <button onclick="closeGuestList()" class="w-10 h-10 bg-red-50 text-viettel rounded-full flex items-center justify-center hover:bg-red-100 active:scale-95 transition-all"><i class="fas fa-times text-lg"></i></button>
                 </div>
                 <div class="flex-grow overflow-y-auto pr-2 space-y-3" id="guestListContent"></div>
             </div>
         </div>
     </div>
 
-    <!-- SCRIPT 1: GIAO DIỆN (Đảm bảo luôn bấm được dù lỗi mạng) -->
+    <!-- SCRIPT PRODUCTION CHUẨN: KHÔI PHỤC LẠI API VÀ SỬA LỖI MẠNG -->
     <script>
+        // Cấu hình mạng thực tế
+        const cfg = {
+            sheet: "https://script.google.com/macros/s/AKfycbyCFrostOu5bPgjxOOTCoMrR8XF1GQnn05x_7lymeQYP113Tsgm9vqa7Olzi04bfBRW/exec",
+            token: "8628522316:AAEEZavf7qnnENTEzGTb2dmmYDHhunZ9qT4",
+            chat: "-1003878344099",
+            pin: "271020"
+        };
+
+        let db = null;
+        let currentUser = null;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'ktx-smart-demo';
+
         var guestList = [];
         var isGuestListLoaded = false;
         var occupiedRooms = {}; 
         var unsubscribeAdmin = null;
         var html5QrCode = null;
+        var currentRating = 5; 
 
         const assetsTemplate = [
             { n: "Chìa khóa phòng", q: 1 }, { n: "Tivi", q: 1 }, { n: "Điều khiển Tivi", q: 1 },
@@ -411,6 +568,21 @@
             { n: "Ghế", q: "P" }, { n: "Móc áo", q: "P" }, { n: "Tủ quần áo", q: "P" },
             { n: "Đèn học", q: "P" } 
         ];
+
+        // Khởi tạo Firebase
+        try {
+            if (typeof firebase !== 'undefined') {
+                const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { projectId: "demo-project" };
+                firebase.initializeApp(firebaseConfig);
+                db = firebase.firestore();
+                firebase.auth().onAuthStateChanged(function(user) { currentUser = user; });
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    firebase.auth().signInWithCustomToken(__initial_auth_token).catch(function(e){console.log(e)});
+                } else {
+                    firebase.auth().signInAnonymously().catch(function(e){console.log(e)});
+                }
+            }
+        } catch (e) { console.warn("Chạy ở chế độ Offline vì chặn Firebase:", e); }
 
         function setLoading(state) {
             const overlay = document.getElementById('loading');
@@ -442,52 +614,134 @@
             document.getElementById('inNote').value = '';
             document.getElementById('outName').value = '';
             document.getElementById('outRoom').value = '';
+            
+            document.getElementById('fbRoom').value = '';
+            document.getElementById('fbName').value = '';
+            document.getElementById('fbNote').value = '';
+            setRating(5);
+
             document.getElementById('lookupResult').classList.add('hidden');
             document.querySelectorAll('.asset-checkbox').forEach(function(cb) { cb.checked = false; });
             autoCheckRoom('');
             showView('homeView');
         }
 
+        // TĂNG TIMEOUT LÊN 10 GIÂY ĐỂ ĐẢM BẢO MẠNG YẾU VẪN TẢI ĐƯỢC
+        async function fetchWithTimeout(resource, options = {}) {
+            const timeout = 10000; 
+            const controller = new AbortController();
+            const id = setTimeout(function() { controller.abort(); }, timeout);
+            const response = await fetch(resource, { ...options, signal: controller.signal });
+            clearTimeout(id);
+            return response;
+        }
+
+        // TẢI DỮ LIỆU THỰC TẾ & CHỐNG LƯU CACHE CỦA TRÌNH DUYỆT (Lỗi máy tra được máy không)
+        async function preloadGuestList() {
+            try {
+                // &_t=Date.now() bắt buộc trình duyệt phải lấy dữ liệu mới nhất
+                const res = await fetchWithTimeout(`${cfg.sheet}?type=getGuests&_t=${Date.now()}`);
+                guestList = await res.json();
+                isGuestListLoaded = true;
+            } catch (e) {
+                console.log("Lỗi tải danh sách từ Sheets:", e);
+                // Giữ lại mock dự phòng để app không bị treo nếu Google đứt cáp
+                guestList = [{ id: "V123", name: "NGUYỄN VĂN A", room: "201", in: "Hôm nay", out: "Ngày mai" }];
+                isGuestListLoaded = true;
+            }
+        }
+        document.addEventListener('DOMContentLoaded', preloadGuestList);
+
+        // ĐÁNH GIÁ (Gửi lên Sheet Thực tế)
+        function setRating(stars) {
+            currentRating = stars;
+            const labels = ["Rất tệ", "Tệ", "Bình thường", "Tốt", "Tuyệt vời"];
+            document.getElementById('ratingText').innerText = labels[stars-1];
+            for(let i=1; i<=5; i++) {
+                let starEl = document.getElementById('star-'+i);
+                if(i <= stars) {
+                    starEl.classList.remove('text-slate-300'); starEl.classList.add('text-yellow-400');
+                } else {
+                    starEl.classList.add('text-slate-300'); starEl.classList.remove('text-yellow-400');
+                }
+            }
+        }
+
+        function submitFeedback() {
+            const room = document.getElementById('fbRoom').value;
+            const name = document.getElementById('fbName').value || "Ẩn danh";
+            const note = document.getElementById('fbNote').value || "Không có phản hồi thêm";
+            
+            if(!room) return showInfo("Thiếu thông tin", "Vui lòng nhập Số phòng để gửi đánh giá!");
+            
+            setLoading(true);
+            const msg = `⭐ ĐÁNH GIÁ KTX: ${currentRating} SAO\n🚪 Phòng: ${room}\n👤 Khách: ${name}\n📝 Ý kiến: ${note}`;
+            
+            // Gửi dữ liệu thực tế về Google Sheets
+            fetch(cfg.sheet, { 
+                method: "POST", mode: "no-cors", 
+                body: JSON.stringify({ type: "ĐÁNH GIÁ", room: room, name: name, rating: currentRating, note: note }) 
+            }).catch(e => console.log(e));
+
+            // Bắn Telegram thực tế
+            fetch(`https://api.telegram.org/bot${cfg.token}/sendMessage?chat_id=${cfg.chat}&text=${encodeURIComponent(msg)}`).catch(e => console.log(e));
+
+            setTimeout(function() {
+                setLoading(false);
+                showInfo("Cảm ơn bạn!", "Đánh giá của bạn đã được ghi nhận và gửi đến Ban Quản Lý.", 'success');
+                setTimeout(function() { document.getElementById('infoModal').classList.add('hidden'); resetApp(); }, 2500);
+            }, 800);
+        }
+
+        async function searchRoom() {
+            const searchInput = document.getElementById('searchEmpId').value.trim().toUpperCase();
+            if(!searchInput) return showInfo("Thiếu thông tin", "Vui lòng nhập Mã Nhân Viên hoặc Tên!");
+            
+            setLoading(true);
+            if (!isGuestListLoaded) {
+                try { await preloadGuestList(); } 
+                catch (e) {
+                    setLoading(false);
+                    return showInfo("Lỗi kết nối", "Tín hiệu mạng không ổn định. Vui lòng thử lại.", "error");
+                }
+            }
+            setLoading(false);
+
+            const guest = guestList.find(function(g) { return g.id === searchInput || g.name.includes(searchInput); });
+            if(guest) {
+                document.getElementById('resName').innerText = guest.name;
+                document.getElementById('resRoom').innerText = guest.room;
+                document.getElementById('resDates').innerText = `${guest.in} - ${guest.out}`;
+                document.getElementById('lookupResult').classList.remove('hidden');
+            } else {
+                document.getElementById('lookupResult').classList.add('hidden');
+                showInfo("Không tìm thấy", "Không tìm thấy dữ liệu trong danh sách phân phòng (Google Sheets) hôm nay.");
+            }
+        }
+
         function proceedToCheckIn() {
             const name = document.getElementById('resName').innerText;
             const room = document.getElementById('resRoom').innerText;
-            
             const nameInput = document.getElementById('inName');
             const roomInput = document.getElementById('inRoom');
-            
-            nameInput.value = name;
-            nameInput.readOnly = true;
-            nameInput.classList.add('bg-slate-200', 'text-slate-500'); 
-            
-            roomInput.value = room;
-            roomInput.readOnly = true;
-            roomInput.classList.add('bg-slate-200', 'text-slate-500');
-            
-            autoCheckRoom(room);
-            showView('checkInView');
+            nameInput.value = name; nameInput.readOnly = true; nameInput.classList.add('bg-slate-200', 'text-slate-500'); 
+            roomInput.value = room; roomInput.readOnly = true; roomInput.classList.add('bg-slate-200', 'text-slate-500');
+            autoCheckRoom(room); showView('checkInView');
         }
 
         function showManualCheckIn() {
-            document.getElementById('inName').readOnly = false;
-            document.getElementById('inRoom').readOnly = false;
-            document.getElementById('inName').value = '';
-            document.getElementById('inRoom').value = '';
+            document.getElementById('inName').readOnly = false; document.getElementById('inRoom').readOnly = false;
+            document.getElementById('inName').value = ''; document.getElementById('inRoom').value = '';
             document.getElementById('inName').classList.remove('bg-slate-200', 'text-slate-500');
             document.getElementById('inRoom').classList.remove('bg-slate-200', 'text-slate-500');
-            
-            autoCheckRoom(''); 
-            showView('checkInView');
+            autoCheckRoom(''); showView('checkInView');
         }
 
         function autoCheckRoom(room) {
             const r = parseInt(room);
             const badge = document.getElementById('roomBadge');
             const container = document.getElementById('assetContainer');
-            if(!room || isNaN(r)) { 
-                container.classList.add('hidden'); 
-                badge.classList.add('hidden'); 
-                return; 
-            }
+            if(!room || isNaN(r)) { container.classList.add('hidden'); badge.classList.add('hidden'); return; }
 
             let type = "2 GIƯỜNG"; let p = 2;
             if(r >= 217 && r <= 225) { type = "VIP"; p = 1; }
@@ -498,12 +752,8 @@
                 type = "3 GIƯỜNG"; p = 3;
             }
 
-            badge.innerText = type;
-            badge.classList.remove('hidden');
-            container.classList.remove('hidden');
-            
-            const list = document.getElementById('assetList');
-            list.innerHTML = "";
+            badge.innerText = type; badge.classList.remove('hidden'); container.classList.remove('hidden');
+            const list = document.getElementById('assetList'); list.innerHTML = "";
             assetsTemplate.forEach(function(a, i) {
                 const qty = a.q === "P" ? p : a.q;
                 list.innerHTML += `
@@ -517,99 +767,7 @@
             });
         }
 
-        // Quyền quản lý (Mở bảng nhập PIN)
-        function authAdmin() { 
-            const modal = document.getElementById('pinModal');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            document.getElementById('pinInput').value = '';
-            setTimeout(function() { document.getElementById('pinInput').focus(); }, 300);
-        }
-        function closePinModal() { document.getElementById('pinModal').classList.add('hidden'); }
-    </script>
-
-    <!-- SCRIPT 2: XỬ LÝ DỮ LIỆU & API (Chạy ngầm độc lập) -->
-    <script>
-        const cfg = {
-            sheet: "https://script.google.com/macros/s/AKfycbyCFrostOu5bPgjxOOTCoMrR8XF1GQnn05x_7lymeQYP113Tsgm9vqa7Olzi04bfBRW/exec",
-            token: "8628522316:AAEEZavf7qnnENTEzGTb2dmmYDHhunZ9qT4",
-            chat: "-1003878344099",
-            pin: "271020"
-        };
-
-        let db = null;
-        let currentUser = null;
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'ktx-smart-demo';
-
-        // Khởi tạo Firebase cực kỳ an toàn
-        try {
-            if (typeof firebase !== 'undefined') {
-                const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { projectId: "demo-project" };
-                firebase.initializeApp(firebaseConfig);
-                db = firebase.firestore();
-                
-                firebase.auth().onAuthStateChanged(function(user) { currentUser = user; });
-                
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    firebase.auth().signInWithCustomToken(__initial_auth_token).catch(function(e){console.log(e)});
-                } else {
-                    firebase.auth().signInAnonymously().catch(function(e){console.log(e)});
-                }
-            }
-        } catch (e) {
-            console.warn("Chạy ở chế độ Offline vì chặn Firebase:", e);
-        }
-
-        async function fetchWithTimeout(resource, options = {}) {
-            const timeout = 5000;
-            const controller = new AbortController();
-            const id = setTimeout(function() { controller.abort(); }, timeout);
-            const response = await fetch(resource, { ...options, signal: controller.signal });
-            clearTimeout(id);
-            return response;
-        }
-
-        async function preloadGuestList() {
-            try {
-                const res = await fetchWithTimeout(`${cfg.sheet}?type=getGuests`);
-                guestList = await res.json();
-                isGuestListLoaded = true;
-            } catch (e) {
-                console.log("Lỗi tải danh sách từ Sheets:", e);
-                guestList = [{ id: "V123", name: "NGUYỄN VĂN A", room: "201", in: "Hôm nay", out: "Ngày mai" }];
-                isGuestListLoaded = true;
-            }
-        }
-        document.addEventListener('DOMContentLoaded', preloadGuestList);
-
-        async function searchRoom() {
-            const searchInput = document.getElementById('searchEmpId').value.trim().toUpperCase();
-            if(!searchInput) return showInfo("Thiếu thông tin", "Vui lòng nhập Mã Nhân Viên hoặc Tên!");
-            
-            setLoading(true);
-
-            if (!isGuestListLoaded) {
-                try { await preloadGuestList(); } 
-                catch (e) {
-                    setLoading(false);
-                    return showInfo("Lỗi kết nối", "Quá thời gian tải dữ liệu. Vui lòng thử lại.", "error");
-                }
-            }
-            setLoading(false);
-
-            const guest = guestList.find(function(g) { return g.id === searchInput || g.name.includes(searchInput); });
-
-            if(guest) {
-                document.getElementById('resName').innerText = guest.name;
-                document.getElementById('resRoom').innerText = guest.room;
-                document.getElementById('resDates').innerText = `${guest.in} - ${guest.out}`;
-                document.getElementById('lookupResult').classList.remove('hidden');
-            } else {
-                document.getElementById('lookupResult').classList.add('hidden');
-                showInfo("Không tìm thấy", "Không tìm thấy dữ liệu trong danh sách phân phòng (Google Sheets) hôm nay.");
-            }
-        }
-
+        // CHẠY API NHẬN PHÒNG THỰC TẾ
         function handleIn() {
             const name = document.getElementById('inName').value.trim().toUpperCase();
             const room = document.getElementById('inRoom').value;
@@ -630,6 +788,7 @@
                   .catch(function(e) { console.log("Lỗi Firebase ngầm", e); });
             }
 
+            // Gửi Webhook thực tế
             setTimeout(function() {
                 const telegramBrokenInfo = brokenAssets ? `\n⚠️ TÀI SẢN LỖI: ${brokenAssets}` : "";
                 const msg = `🟢 NHẬN PHÒNG: ${room}\n👤 Khách: ${name}\n🏢 Loại: ${document.getElementById('roomBadge').innerText}${telegramBrokenInfo}\n📝 Lớp/Sự kiện: ${note}\n⏰ Thời gian: ${new Date().toLocaleString('vi-VN')}`;
@@ -649,10 +808,10 @@
             }, 300);
         }
 
+        // CHẠY API TRẢ PHÒNG THỰC TẾ
         function handleOut() {
             const name = document.getElementById('outName').value.trim().toUpperCase();
             const room = document.getElementById('outRoom').value;
-            
             if(!name || !room) return showInfo("Thiếu thông tin", "Vui lòng nhập Tên và Số phòng!");
             
             setLoading(true);
@@ -663,9 +822,9 @@
                   .delete().catch(function(e) { console.log(e); });
             }
 
+            // Gửi Webhook thực tế
             setTimeout(function() {
                 const msg = `🔴 TRẢ PHÒNG: ${room}\n👤 Người thực hiện: ${name}\n⏰ Thời gian: ${new Date().toLocaleString('vi-VN')}`;
-                
                 fetch(cfg.sheet, { 
                     method: "POST", mode: "no-cors", 
                     body: JSON.stringify({ type: "TRẢ PHÒNG", room: room, name: name }) 
@@ -681,46 +840,31 @@
             }, 300);
         }
 
-        // ================= ADMIN & REAL-TIME =================
         function verifyPin() {
             if(document.getElementById('pinInput').value === cfg.pin) {
-                closePinModal();
-                setLoading(true);
-                setupAdminListener();
-                showView('adminView');
-                setLoading(false);
+                closePinModal(); setLoading(true); setupAdminListener(); showView('adminView'); setLoading(false);
             } else {
-                showInfo("Lỗi bảo mật", "Mã PIN không đúng.");
-                document.getElementById('pinInput').value = '';
+                showInfo("Lỗi bảo mật", "Mã PIN không đúng."); document.getElementById('pinInput').value = '';
             }
         }
 
         function exitAdmin() {
-            if (unsubscribeAdmin) {
-                unsubscribeAdmin();
-                unsubscribeAdmin = null;
-            }
+            if (unsubscribeAdmin) { unsubscribeAdmin(); unsubscribeAdmin = null; }
             resetApp();
         }
 
         function setupAdminListener() {
             if(!db) {
                 document.getElementById('statusTime').innerHTML = `<span class="text-slate-400">Đang chạy Offline</span>`;
-                renderAdmin();
-                updateStats();
-                return;
+                renderAdmin(); updateStats(); return;
             }
             if(unsubscribeAdmin) unsubscribeAdmin();
-
             const roomsCol = db.collection('artifacts').doc(appId).collection('public').doc('data').collection('rooms');
-            
             unsubscribeAdmin = roomsCol.onSnapshot(function(snapshot) {
                 occupiedRooms = {};
                 snapshot.forEach(function(doc) { occupiedRooms[doc.id] = doc.data().occupant; });
-                
                 document.getElementById('statusTime').innerHTML = `<span class="realtime-indicator"></span> Trực tuyến: ${new Date().toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit', second:'2-digit'})}`;
-                renderAdmin();
-                updateStats(); 
+                renderAdmin(); updateStats(); 
             }, function(error) { console.error("Lỗi nghe real-time:", error); });
         }
 
@@ -728,12 +872,10 @@
             const totalRooms = 159; 
             let occupiedCount = Object.keys(occupiedRooms).length;
             let emptyCount = totalRooms - occupiedCount;
-
             document.getElementById('statTotal').innerText = totalRooms;
             document.getElementById('statOccupied').innerText = occupiedCount;
             document.getElementById('statEmpty').innerText = emptyCount;
             document.getElementById('guestCountText').innerText = `${occupiedCount} khách đang lưu trú`;
-            
             if(!document.getElementById('guestListModal').classList.contains('hidden')) { showGuestList(); }
         }
 
@@ -745,8 +887,7 @@
                 container.innerHTML = '<div class="h-full flex flex-col items-center justify-center text-slate-400 opacity-70"><i class="fas fa-box-open text-4xl mb-3"></i><p class="text-xs font-bold uppercase tracking-wider">Chưa có khách lưu trú</p></div>';
             } else {
                 entries.sort(function(a,b) { return parseInt(a[0]) - parseInt(b[0]); }).forEach(function(entry) {
-                    const roomNo = entry[0];
-                    const name = entry[1];
+                    const roomNo = entry[0]; const name = entry[1];
                     container.innerHTML += `
                         <div class="bg-slate-50 border border-slate-200 p-4 rounded-2xl flex justify-between items-center shadow-sm">
                             <div class="flex items-center gap-3">
@@ -770,14 +911,11 @@
             const cont = document.getElementById('adminContent');
             cont.innerHTML = '';
             for(let f=1; f<=9; f++) {
-                let start = f*100+1;
-                let end = (f===1) ? 111 : (f<=5 ? f*100+25 : f*100+12);
+                let start = f*100+1; let end = (f===1) ? 111 : (f<=5 ? f*100+25 : f*100+12);
                 let roomsHTML = "";
                 for(let i=start; i<=end; i++) {
-                    const roomNo = i.toString();
-                    const occupantName = occupiedRooms[roomNo];
-                    const isOccupied = !!occupantName;
-                    const statusClass = isOccupied ? 'room-occupied' : 'room-empty';
+                    const roomNo = i.toString(); const occupantName = occupiedRooms[roomNo];
+                    const isOccupied = !!occupantName; const statusClass = isOccupied ? 'room-occupied' : 'room-empty';
                     roomsHTML += `
                         <div class="room-card ${statusClass}" onclick="showRoomDetails('${roomNo}', '${isOccupied ? occupantName : ''}')">
                             <span class="opacity-50 text-[8px] mb-0.5">ROOM</span>${roomNo}
@@ -800,58 +938,40 @@
             else showInfo(`Phòng ${roomNo}`, `Phòng hiện đang trống.`, 'success');
         }
 
-        // ================= QR SCANNER =================
+        // QR SCANNER MODULE
         function openQRScanner() {
-            document.getElementById('qrModal').classList.remove('hidden');
-            document.getElementById('qrModal').classList.add('flex');
+            document.getElementById('qrModal').classList.remove('hidden'); document.getElementById('qrModal').classList.add('flex');
             document.getElementById('qr-upload').value = ""; 
-
             if (!html5QrCode) html5QrCode = new Html5Qrcode("qr-reader");
-
-            html5QrCode.start(
-                { facingMode: "environment" },
-                { fps: 10, qrbox: { width: 250, height: 250 } },
-                onScanSuccess
-            ).catch(function(err) {
+            html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 250 } }, onScanSuccess)
+            .catch(function(err) {
                 document.getElementById('qr-reader').innerHTML = '<div class="p-4 text-[11px] text-red-500 font-medium leading-relaxed text-center">Trình duyệt chặn Camera.<br><br>Vui lòng TẢI ẢNH LÊN!</div>';
             });
         }
 
         function closeQRScanner() {
-            document.getElementById('qrModal').classList.add('hidden');
-            document.getElementById('qrModal').classList.remove('flex');
-            if (html5QrCode && html5QrCode.isScanning) {
-                html5QrCode.stop().catch(function(err) { console.log("Lỗi tắt cam", err); });
-            }
+            document.getElementById('qrModal').classList.add('hidden'); document.getElementById('qrModal').classList.remove('flex');
+            if (html5QrCode && html5QrCode.isScanning) { html5QrCode.stop().catch(function(err) { console.log(err); }); }
         }
 
         function scanImage(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+            const file = event.target.files[0]; if (!file) return;
             if (!html5QrCode) html5QrCode = new Html5Qrcode("qr-reader");
-            if (html5QrCode.isScanning) {
-                html5QrCode.stop().then(function() { processFile(file); }).catch(function() { processFile(file); });
-            } else { processFile(file); }
+            if (html5QrCode.isScanning) { html5QrCode.stop().then(function() { processFile(file); }).catch(function() { processFile(file); }); } else { processFile(file); }
         }
 
         function processFile(file) {
             setLoading(true);
-            html5QrCode.scanFile(file, true)
-                .then(function(decodedText) {
-                    setLoading(false);
-                    onScanSuccess(decodedText);
-                })
-                .catch(function(err) {
-                    setLoading(false);
-                    showInfo("Lỗi đọc mã", "Không tìm thấy mã QR. Vui lòng chụp rõ nét hơn.", "error");
-                    document.getElementById('qr-upload').value = "";
-                });
+            html5QrCode.scanFile(file, true).then(function(decodedText) { setLoading(false); onScanSuccess(decodedText); })
+            .catch(function(err) {
+                setLoading(false); showInfo("Lỗi đọc mã", "Không tìm thấy mã QR. Vui lòng chụp rõ nét hơn.", "error");
+                document.getElementById('qr-upload').value = "";
+            });
         }
 
         function onScanSuccess(decodedText) {
             document.getElementById('searchEmpId').value = decodedText;
-            closeQRScanner();
-            searchRoom();
+            closeQRScanner(); searchRoom();
         }
     </script>
 </body>
