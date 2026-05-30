@@ -3,14 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>QLTS Viettel - Smart KTX 2026</title>
+    <title>QLTS Viettel - Smart KTX V5 Production</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://unpkg.com/html5-qrcode"></script>
     
-    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
@@ -92,6 +89,17 @@
         .price-row:last-child { border-bottom: none; }
         .star-btn { transition: transform 0.2s; cursor: pointer; }
         .star-btn:active { transform: scale(0.8); }
+
+
+        /* FIX/UPGRADE: modal danh sách khách + trạng thái hệ thống */
+        .ktx-tab { flex: 1; padding: 10px 8px; border-radius: 14px; font-size: 10px; font-weight: 900; text-transform: uppercase; color: #64748b; background: #f1f5f9; }
+        .ktx-tab.active { background: #ee0000; color: white; box-shadow: 0 8px 18px rgba(238,0,0,.18); }
+        .guest-card { background: #fff; border: 1px solid #e2e8f0; padding: 14px; border-radius: 18px; box-shadow: 0 6px 16px rgba(15,23,42,.04); }
+        .guest-meta { font-size: 10px; font-weight: 700; color: #94a3b8; line-height: 1.5; }
+        .status-pill { display: inline-flex; align-items: center; gap: 5px; padding: 6px 9px; border-radius: 999px; font-size: 9px; font-weight: 900; text-transform: uppercase; white-space: nowrap; }
+        .status-in { background:#fee2e2; color:#dc2626; }
+        .status-out { background:#dcfce7; color:#16a34a; }
+        .room-card small { max-width: 92%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     </style>
 </head>
 <body class="text-slate-800 antialiased bg-slate-100 relative">
@@ -393,7 +401,7 @@
                         <div id="assetList" class="max-h-[280px] overflow-y-auto pr-1 space-y-1 bg-slate-50 p-2 rounded-2xl border border-dashed border-slate-200"></div>
                     </div>
 
-                    <textarea id="inNote" placeholder="Ghi chú (nếu có)..." class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl text-xs outline-none focus:border-red-500" rows="2"></textarea>
+                    <textarea id="inNote" placeholder="Lớp/Sự kiện (VD: Đào tạo Viettel T5)..." class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl text-xs outline-none focus:border-red-500" rows="2"></textarea>
                     
                     <button id="btnIn" onclick="handleIn()" class="w-full bg-viettel py-5 rounded-2xl font-black shadow-xl uppercase text-xs tracking-widest active:scale-[0.98] transition-all">Xác nhận nhận phòng</button>
                     <button onclick="resetApp()" class="w-full text-slate-400 font-bold text-[10px] uppercase py-2 hover:text-slate-600">Hủy bỏ & Quay lại</button>
@@ -422,7 +430,7 @@
                     <div class="relative z-10">
                         <h2 class="font-black text-slate-800 uppercase tracking-tight text-sm">Sơ đồ phòng (Real-time)</h2>
                         <p class="text-[9px] text-slate-400 font-bold uppercase mt-0.5 flex items-center" id="statusTime">
-                            <span class="realtime-indicator"></span> Đang kết nối Firebase...
+                            <span class="realtime-indicator"></span> Demo Offline sẵn sàng
                         </p>
                     </div>
                     <div class="flex flex-col items-end space-y-1 text-[9px] font-bold relative z-10">
@@ -447,7 +455,7 @@
                 </div>
                 
                 <button onclick="showGuestList()" class="w-full bg-slate-800 text-white py-3.5 rounded-xl font-black uppercase text-[10px] shadow-md hover:bg-slate-700 transition-all flex justify-center items-center gap-2">
-                    <i class="fas fa-list-ul text-sm"></i> Xem danh sách khách đang lưu trú
+                    <i class="fas fa-list-ul text-sm"></i> Xem khách lưu trú & lịch sử
                 </button>
                 
                 <div id="adminContent" class="space-y-8"></div>
@@ -517,9 +525,9 @@
     <script>
         // Cấu hình mạng thực tế
         const cfg = {
-            sheet: "https://script.google.com/macros/s/AKfycbyNN0qE_0zQe3LRhXcgoS0qn3vOBpFfJv82rCOJB1Ocm0XfixcDdA8v5nwRPxS3U0Yb/exec",
-            token: "8628522316:AAEEZavf7qnnENTEzGTb2dmmYDHhunZ9qT4",
-            chat: "-1003878344099",
+            sheet: "https://script.google.com/macros/s/AKfycbzPUqs_IeQPj__RSQSTstfc1F5F1mMLpq9hlH_2saIKiKrxxRVp_eughMS0-EEDjvDC/exec",
+            token: "",
+            chat: "",
             pin: "271020"
         };
 
@@ -548,20 +556,9 @@
             { n: "Đèn học", q: "P" } 
         ];
 
-        // Khởi tạo Firebase
-        try {
-            if (typeof firebase !== 'undefined') {
-                const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { projectId: "demo-project" };
-                firebase.initializeApp(firebaseConfig);
-                db = firebase.firestore();
-                firebase.auth().onAuthStateChanged(function(user) { currentUser = user; });
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    firebase.auth().signInWithCustomToken(__initial_auth_token).catch(function(e){console.log(e)});
-                } else {
-                    firebase.auth().signInAnonymously().catch(function(e){console.log(e)});
-                }
-            }
-        } catch (e) { console.warn("Chạy ở chế độ Offline vì chặn Firebase:", e); }
+        // DEMO OFFLINE: không khởi tạo Firebase để tránh lỗi đỏ Console khi chạy GitHub/demo.
+        // Khi triển khai thật, nên đưa Firebase/Google Sheet API qua backend hoặc Apps Script bảo mật.
+        db = null;
 
         function setLoading(state) {
             const overlay = document.getElementById('loading');
@@ -966,6 +963,572 @@
             document.getElementById('searchEmpId').value = decodedText;
             closeQRScanner(); searchRoom();
         }
+
+
+        /* =========================================================
+           FIX/UPGRADE V4 DEMO OFFLINE - LƯU LỊCH SỬ + HIỂN THỊ LỚP/SỰ KIỆN
+           ========================================================= */
+        const KTX_ROOMS_KEY = 'ktx_rooms_v2';
+        const KTX_HISTORY_KEY = 'ktx_history_v2';
+        let guestListTab = 'current';
+
+        function safeText(v) { return (v ?? '').toString(); }
+        function escapeHTML(v) {
+            return safeText(v).replace(/[&<>'"]/g, function(c) {
+                return ({'&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;'}[c]);
+            });
+        }
+        function formatDateTime(ts) {
+            if(!ts) return 'Chưa có';
+            try { return new Date(ts).toLocaleString('vi-VN'); } catch(e) { return 'Chưa có'; }
+        }
+        function readJSON(key, fallback) {
+            try { return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback)); }
+            catch(e) { return fallback; }
+        }
+        function writeJSON(key, value) { localStorage.setItem(key, JSON.stringify(value)); }
+        function getLocalRooms() { return readJSON(KTX_ROOMS_KEY, {}); }
+        function setLocalRooms(rooms) { writeJSON(KTX_ROOMS_KEY, rooms); }
+        function getLocalHistory() { return readJSON(KTX_HISTORY_KEY, []); }
+        function addLocalHistory(item) {
+            const history = getLocalHistory();
+            history.unshift({ id: 'H' + Date.now(), ...item });
+            writeJSON(KTX_HISTORY_KEY, history.slice(0, 500));
+        }
+        function normalizeRoomData(roomNo, raw) {
+            if(typeof raw === 'string') return { room: roomNo, occupant: raw, name: raw, status: 'occupied' };
+            return { room: roomNo, occupant: raw?.occupant || raw?.name || '', ...raw };
+        }
+        function refreshAdminFromLocal() {
+            occupiedRooms = getLocalRooms();
+            document.getElementById('statusTime').innerHTML = `<span class="realtime-indicator"></span> Offline an toàn: ${new Date().toLocaleTimeString('vi-VN')}`;
+            renderAdmin();
+            updateStats();
+        }
+        function persistFirestoreHistory(type, payload) {
+            if(!db) return;
+            try {
+                db.collection('artifacts').doc(appId).collection('public').doc('data')
+                  .collection('history').add({ type, ...payload, createdAt: Date.now() })
+                  .catch(function(e){ console.log('Không ghi được Firestore history:', e); });
+            } catch(e) { console.log('Bỏ qua Firestore history:', e); }
+        }
+
+        function handleIn() {
+            const name = document.getElementById('inName').value.trim().toUpperCase();
+            const room = document.getElementById('inRoom').value.trim();
+            const note = document.getElementById('inNote').value || 'Không';
+            if(!name || !room) return showInfo('Thiếu thông tin', 'Vui lòng nhập Tên và Số phòng!');
+
+            const brokenBoxes = document.querySelectorAll('.asset-checkbox:checked');
+            const brokenAssets = Array.from(brokenBoxes).map(function(cb) { return cb.value; }).join(', ');
+            const finalBrokenText = brokenAssets || 'Không';
+            const roomType = document.getElementById('roomBadge').innerText || 'Thường';
+            const timeIn = Date.now();
+            const payload = { room, occupant: name, name, note, status: 'occupied', roomType, brokenAssets: finalBrokenText, timeIn };
+
+            setLoading(true);
+            const localRooms = getLocalRooms();
+            localRooms[room] = payload;
+            setLocalRooms(localRooms);
+            addLocalHistory({ action: 'NHẬN PHÒNG', ...payload });
+            occupiedRooms = localRooms;
+
+            if (db) {
+                db.collection('artifacts').doc(appId).collection('public').doc('data')
+                  .collection('rooms').doc(room.toString()).set(payload, { merge: true })
+                  .catch(function(e) { console.log('Lỗi Firebase rooms:', e); });
+                persistFirestoreHistory('NHẬN PHÒNG', payload);
+            }
+
+            setTimeout(function() {
+                const telegramBrokenInfo = brokenAssets ? `\n⚠️ TÀI SẢN LỖI: ${brokenAssets}` : '';
+                const msg = `🟢 NHẬN PHÒNG: ${room}\n👤 Khách: ${name}\n🏢 Loại: ${roomType}${telegramBrokenInfo}\n📝 Lớp/Sự kiện: ${note}\n⏰ Thời gian: ${formatDateTime(timeIn)}`;
+                fetch(cfg.sheet, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ type: 'NHẬN PHÒNG', room, name, note, brokenAssets: finalBrokenText, timeIn }) }).catch(function(e) { console.log(e); });
+                fetch(`https://api.telegram.org/bot${cfg.token}/sendMessage?chat_id=${cfg.chat}&text=${encodeURIComponent(msg)}`).catch(function(e) { console.log(e); });
+            }, 50);
+
+            setTimeout(function() {
+                setLoading(false);
+                renderAdmin(); updateStats();
+                showInfo('Thành công', 'Đã ghi nhận nhận phòng và lưu lịch sử.', 'success');
+                setTimeout(function() { document.getElementById('infoModal').classList.add('hidden'); resetApp(); }, 1800);
+            }, 300);
+        }
+
+        function handleOut() {
+            const name = document.getElementById('outName').value.trim().toUpperCase();
+            const room = document.getElementById('outRoom').value.trim();
+            if(!name || !room) return showInfo('Thiếu thông tin', 'Vui lòng nhập Tên và Số phòng!');
+
+            setLoading(true);
+            const localRooms = getLocalRooms();
+            const existing = normalizeRoomData(room, localRooms[room] || occupiedRooms[room] || {});
+            const timeOut = Date.now();
+            const historyPayload = {
+                action: 'TRẢ PHÒNG', room, occupant: existing.occupant || name, name: existing.occupant || name,
+                performedBy: name, note: existing.note || '', roomType: existing.roomType || '', brokenAssets: existing.brokenAssets || 'Không',
+                timeIn: existing.timeIn || null, timeOut, status: 'checked_out'
+            };
+            delete localRooms[room];
+            setLocalRooms(localRooms);
+            addLocalHistory(historyPayload);
+            occupiedRooms = localRooms;
+
+            if (db) {
+                db.collection('artifacts').doc(appId).collection('public').doc('data')
+                  .collection('rooms').doc(room.toString()).delete().catch(function(e) { console.log('Lỗi xóa Firebase room:', e); });
+                persistFirestoreHistory('TRẢ PHÒNG', historyPayload);
+            }
+
+            setTimeout(function() {
+                const msg = `🔴 TRẢ PHÒNG: ${room}\n👤 Người thực hiện: ${name}\n⏰ Thời gian: ${formatDateTime(timeOut)}`;
+                fetch(cfg.sheet, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ type: 'TRẢ PHÒNG', room, name, timeOut }) }).catch(function(e) { console.log(e); });
+                fetch(`https://api.telegram.org/bot${cfg.token}/sendMessage?chat_id=${cfg.chat}&text=${encodeURIComponent(msg)}`).catch(function(e) { console.log(e); });
+            }, 50);
+
+            setTimeout(function() {
+                setLoading(false);
+                renderAdmin(); updateStats();
+                showInfo('Thành công', 'Đã ghi nhận trả phòng và lưu vào lịch sử.', 'success');
+                setTimeout(function() { document.getElementById('infoModal').classList.add('hidden'); resetApp(); }, 1800);
+            }, 300);
+        }
+
+        function setupAdminListener() {
+            if(!db) { refreshAdminFromLocal(); return; }
+            if(unsubscribeAdmin) unsubscribeAdmin();
+            const roomsCol = db.collection('artifacts').doc(appId).collection('public').doc('data').collection('rooms');
+            unsubscribeAdmin = roomsCol.onSnapshot(function(snapshot) {
+                const fbRooms = {};
+                snapshot.forEach(function(doc) { fbRooms[doc.id] = normalizeRoomData(doc.id, doc.data()); });
+                occupiedRooms = fbRooms;
+                setLocalRooms(fbRooms);
+                document.getElementById('statusTime').innerHTML = `<span class="realtime-indicator"></span> Trực tuyến: ${new Date().toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit', second:'2-digit'})}`;
+                renderAdmin(); updateStats();
+            }, function(error) {
+                console.error('Lỗi nghe real-time:', error);
+                refreshAdminFromLocal();
+                showInfo('Firebase chưa sẵn sàng', 'Ứng dụng đang chạy chế độ lưu an toàn trên máy. Cần cấu hình Firebase thật để đồng bộ nhiều thiết bị.', 'error');
+            });
+        }
+
+        function updateStats() {
+            const totalRooms = 159;
+            const occupiedCount = Object.keys(occupiedRooms || {}).length;
+            document.getElementById('statTotal').innerText = totalRooms;
+            document.getElementById('statOccupied').innerText = occupiedCount;
+            document.getElementById('statEmpty').innerText = totalRooms - occupiedCount;
+            document.getElementById('guestCountText').innerText = `${occupiedCount} khách đang lưu trú`;
+            const modal = document.getElementById('guestListModal');
+            if(modal && !modal.classList.contains('hidden')) renderGuestListContent();
+        }
+
+        function openGuestListModal() {
+            const modal = document.getElementById('guestListModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            modal.style.display = 'flex';
+        }
+        function showGuestList(tab) {
+            guestListTab = tab || guestListTab || 'current';
+            openGuestListModal();
+            renderGuestListContent();
+        }
+        function closeGuestList() {
+            const modal = document.getElementById('guestListModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            modal.style.display = '';
+        }
+        function renderGuestListContent() {
+            const container = document.getElementById('guestListContent');
+            if(!container) return;
+            const currentEntries = Object.entries(occupiedRooms || {}).map(function(entry){ return [entry[0], normalizeRoomData(entry[0], entry[1])]; })
+                .sort(function(a,b) { return parseInt(a[0]) - parseInt(b[0]); });
+            const history = getLocalHistory();
+            document.getElementById('guestCountText').innerText = guestListTab === 'current' ? `${currentEntries.length} khách đang lưu trú` : `${history.length} dòng lịch sử gần nhất`;
+            let html = `<div class="flex gap-2 sticky top-0 bg-white pb-3 z-10"><button class="ktx-tab ${guestListTab === 'current' ? 'active' : ''}" onclick="showGuestList('current')">Đang lưu trú</button><button class="ktx-tab ${guestListTab === 'history' ? 'active' : ''}" onclick="showGuestList('history')">Lịch sử</button></div>`;
+            if(guestListTab === 'current') {
+                if(currentEntries.length === 0) html += '<div class="h-full flex flex-col items-center justify-center text-slate-400 opacity-80 py-16"><i class="fas fa-box-open text-4xl mb-3"></i><p class="text-xs font-bold uppercase tracking-wider">Chưa có khách lưu trú</p><p class="text-[10px] mt-2 text-center">Khi nhận phòng thành công, dữ liệu sẽ hiện ở đây.</p></div>';
+                else currentEntries.forEach(function(entry) { const roomNo = escapeHTML(entry[0]); const g = entry[1]; html += `<div class="guest-card"><div class="flex justify-between gap-3 items-start"><div class="min-w-0"><p class="text-xs font-black text-slate-800 truncate">${escapeHTML(g.note && g.note !== 'Không' ? g.note : (g.occupant || g.name))}</p><p class="guest-meta">Phòng ${roomNo} • Khách: ${escapeHTML(g.occupant || g.name)} • ${escapeHTML(g.roomType || 'Thường')}</p><p class="guest-meta">Nhận: ${escapeHTML(formatDateTime(g.timeIn))}</p>${g.note ? `<p class="guest-meta">Ghi chú: ${escapeHTML(g.note)}</p>` : ''}</div><span class="status-pill status-in"><i class="fas fa-bed"></i> Đang ở</span></div></div>`; });
+            } else {
+                if(history.length === 0) html += '<div class="h-full flex flex-col items-center justify-center text-slate-400 opacity-80 py-16"><i class="fas fa-clock-rotate-left text-4xl mb-3"></i><p class="text-xs font-bold uppercase tracking-wider">Chưa có lịch sử</p></div>';
+                else history.forEach(function(h) { const isIn = h.action === 'NHẬN PHÒNG'; html += `<div class="guest-card"><div class="flex justify-between gap-3 items-start"><div class="min-w-0"><p class="text-xs font-black text-slate-800 truncate">${escapeHTML(h.note && h.note !== 'Không' ? h.note : (h.occupant || h.name || h.performedBy))}</p><p class="guest-meta">Phòng ${escapeHTML(h.room)} • Khách: ${escapeHTML(h.occupant || h.name || h.performedBy)} • ${escapeHTML(h.roomType || 'Thường')}</p><p class="guest-meta">Nhận: ${escapeHTML(formatDateTime(h.timeIn))}</p>${h.timeOut ? `<p class="guest-meta">Trả: ${escapeHTML(formatDateTime(h.timeOut))}</p>` : ''}${h.performedBy ? `<p class="guest-meta">Người thực hiện: ${escapeHTML(h.performedBy)}</p>` : ''}</div><span class="status-pill ${isIn ? 'status-in' : 'status-out'}">${isIn ? 'Nhận phòng' : 'Trả phòng'}</span></div></div>`; });
+            }
+            container.innerHTML = html;
+        }
+
+        function renderAdmin() {
+            const cont = document.getElementById('adminContent');
+            cont.innerHTML = '';
+            for(let f=1; f<=9; f++) {
+                let start = f*100+1; let end = (f===1) ? 111 : (f<=5 ? f*100+25 : f*100+12);
+                let roomsHTML = '';
+                for(let i=start; i<=end; i++) {
+                    const roomNo = i.toString();
+                    const data = normalizeRoomData(roomNo, (occupiedRooms || {})[roomNo]);
+                    const isOccupied = !!data.occupant;
+                    const statusClass = isOccupied ? 'room-occupied' : 'room-empty';
+                    roomsHTML += `<div class="room-card ${statusClass}" onclick="showRoomDetailsByRoom('${roomNo}')"><span class="opacity-50 text-[8px] mb-0.5">ROOM</span>${roomNo}${isOccupied ? `<small class="text-[8px] mt-1 font-black opacity-80">${escapeHTML(data.note && data.note !== 'Không' ? data.note : data.occupant)}</small><div class="absolute -top-1 -right-1 w-3 h-3 bg-viettel rounded-full border-2 border-white"></div>` : ''}</div>`;
+                }
+                cont.innerHTML += `<div class="animate-fade" style="animation-delay: 0s"><div class="flex items-center gap-3 mb-4 ml-2"><h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Tầng ${f}</h3><div class="h-px flex-grow bg-slate-200"></div></div><div class="room-grid">${roomsHTML}</div></div>`;
+            }
+        }
+        function showRoomDetailsByRoom(roomNo) {
+            const g = normalizeRoomData(roomNo, (occupiedRooms || {})[roomNo]);
+            if(g.occupant) showInfo(`Phòng ${roomNo}`, `Lớp/Sự kiện: ${g.note || 'Không'}\nKhách đại diện: ${g.occupant}\nNhận phòng: ${formatDateTime(g.timeIn)}`, 'info');
+            else showInfo(`Phòng ${roomNo}`, 'Phòng hiện đang trống.', 'success');
+        }
+
+
+        /* =========================================================
+           HOTFIX V3 - KHÔNG ĐỂ FIREBASE DEMO GHI ĐÈ DỮ LIỆU LOCAL
+           Lý do: khi chạy trên GitHub Pages không có __firebase_config thật,
+           Firebase fallback demo-project có thể làm snapshot rỗng và kéo phòng vừa nhận về 0.
+           ========================================================= */
+        function hasRealFirebaseConfig() {
+            try {
+                if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+                    const parsed = JSON.parse(__firebase_config);
+                    return !!(parsed && parsed.apiKey && parsed.projectId && parsed.projectId !== 'demo-project');
+                }
+                if (window.KTX_FIREBASE_CONFIG && window.KTX_FIREBASE_CONFIG.apiKey && window.KTX_FIREBASE_CONFIG.projectId) return true;
+            } catch(e) {}
+            return false;
+        }
+
+        // Nếu không có config Firebase thật, ép chạy chế độ lưu bền trên trình duyệt.
+        // Không dùng demo-project để tránh vào Quản lý bị snapshot rỗng làm mất phòng.
+        if (!hasRealFirebaseConfig()) {
+            db = null;
+        }
+
+        function setupAdminListener() {
+            const localRoomsBeforeListen = getLocalRooms();
+            const hasLocalData = Object.keys(localRoomsBeforeListen || {}).length > 0;
+
+            if(!db || !hasRealFirebaseConfig()) {
+                refreshAdminFromLocal();
+                document.getElementById('statusTime').innerHTML = `<span class="realtime-indicator"></span> Lưu trên máy: ${new Date().toLocaleTimeString('vi-VN')}`;
+                return;
+            }
+
+            if(unsubscribeAdmin) unsubscribeAdmin();
+            const roomsCol = db.collection('artifacts').doc(appId).collection('public').doc('data').collection('rooms');
+            unsubscribeAdmin = roomsCol.onSnapshot(function(snapshot) {
+                const fbRooms = {};
+                snapshot.forEach(function(doc) { fbRooms[doc.id] = normalizeRoomData(doc.id, doc.data()); });
+
+                // Chống tình huống Firebase trả snapshot rỗng trong khi local vừa có nhận phòng.
+                if (snapshot.empty && hasLocalData) {
+                    occupiedRooms = localRoomsBeforeListen;
+                    document.getElementById('statusTime').innerHTML = `<span class="realtime-indicator"></span> Lưu dự phòng trên máy: ${new Date().toLocaleTimeString('vi-VN')}`;
+                    renderAdmin(); updateStats();
+                    return;
+                }
+
+                occupiedRooms = fbRooms;
+                setLocalRooms(fbRooms);
+                document.getElementById('statusTime').innerHTML = `<span class="realtime-indicator"></span> Trực tuyến: ${new Date().toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit', second:'2-digit'})}`;
+                renderAdmin(); updateStats();
+            }, function(error) {
+                console.error('Lỗi nghe real-time:', error);
+                refreshAdminFromLocal();
+                showInfo('Đang dùng dữ liệu trên máy', 'Firebase chưa cấu hình thật hoặc chưa cho phép ghi/đọc. Phòng vừa nhận vẫn được giữ trên trình duyệt này.', 'error');
+            });
+        }
+
+        // Nút kiểm tra nhanh cho quản lý: mở console chạy ktxDebugState()
+        window.ktxDebugState = function() {
+            return {
+                hasRealFirebaseConfig: hasRealFirebaseConfig(),
+                localRooms: getLocalRooms(),
+                history: getLocalHistory(),
+                occupiedRooms: occupiedRooms
+            };
+        };
+
+
+        /* =========================================================
+           V5 PRODUCTION - GOOGLE SHEET API LÀ NGUỒN DỮ LIỆU CHÍNH
+           - Admin đọc PhongDangO từ Sheet, không phụ thuộc localStorage.
+           - Nhận/trả phòng ghi Sheet trước, localStorage chỉ là dự phòng.
+           - Phù hợp dùng hằng ngày trên nhiều thiết bị nếu Apps Script V5 được triển khai.
+           ========================================================= */
+        const KTX_API_MODE = 'GOOGLE_SHEET_V5_PRODUCTION';
+        let lastCloudSyncAt = 0;
+        let cloudHistoryCache = [];
+        let adminAutoRefreshTimer = null;
+
+        function buildApiUrl(params) {
+            const url = new URL(cfg.sheet);
+            Object.entries(params || {}).forEach(function(entry) {
+                const k = entry[0]; const v = entry[1];
+                if(v !== undefined && v !== null) url.searchParams.set(k, v);
+            });
+            url.searchParams.set('_t', Date.now());
+            return url.toString();
+        }
+
+        async function apiGet(params) {
+            const res = await fetchWithTimeout(buildApiUrl(params), { method: 'GET', cache: 'no-store' });
+            const text = await res.text();
+            try { return JSON.parse(text); }
+            catch(e) { throw new Error('API không trả JSON hợp lệ: ' + text.slice(0, 120)); }
+        }
+
+        function apiOk(payload) {
+            return payload && (payload.ok === true || payload.status === 'ok' || Array.isArray(payload));
+        }
+
+        function arrayToRoomMap(rows) {
+            const map = {};
+            if(!rows) return map;
+            if(!Array.isArray(rows) && typeof rows === 'object') rows = Object.values(rows);
+            rows.forEach(function(r) {
+                const room = safeText(r.room || r.phong || r['Phòng'] || r.soPhong || r['Số phòng']).trim();
+                if(!room) return;
+                const name = r.name || r.occupant || r.hoTen || r['Họ tên'] || r['Khách'] || r.khach || '';
+                const note = r.note || r.event || r.lopSuKien || r['Lớp/Sự kiện'] || r['Lớp'] || r['Sự kiện'] || '';
+                map[room] = normalizeRoomData(room, {
+                    room: room,
+                    occupant: name,
+                    name: name,
+                    note: note || 'Không',
+                    roomType: r.roomType || r.loaiPhong || r['Loại phòng'] || 'Thường',
+                    brokenAssets: r.brokenAssets || r.taiSanLoi || r['Tài sản lỗi'] || 'Không',
+                    timeIn: r.timeIn || r['Thời gian nhận'] || r.createdAt || r['Ngày nhận'] || null,
+                    status: 'occupied'
+                });
+            });
+            return map;
+        }
+
+        function normalizeGuestRows(data) {
+            const rows = Array.isArray(data) ? data : (data && Array.isArray(data.guests) ? data.guests : []);
+            return rows.map(function(g) {
+                return {
+                    id: safeText(g.id || g.mnv || g.maNhanVien || g['Mã nhân viên'] || g['MNV']).trim().toUpperCase(),
+                    name: safeText(g.name || g.hoTen || g['Họ tên'] || g['Tên khách']).trim().toUpperCase(),
+                    room: safeText(g.room || g.phong || g['Phòng'] || g.soPhong || g['Số phòng']).trim(),
+                    in: safeText(g.in || g.ngayDen || g['Ngày đến'] || g['Từ ngày'] || ''),
+                    out: safeText(g.out || g.ngayDi || g['Ngày đi'] || g['Đến ngày'] || ''),
+                    note: safeText(g.note || g.event || g.lopSuKien || g['Lớp/Sự kiện'] || g['Lớp'] || g['Sự kiện'] || '')
+                };
+            }).filter(function(g){ return g.id || g.name || g.room; });
+        }
+
+        async function preloadGuestList() {
+            try {
+                const data = await apiGet({ type: 'getGuests' });
+                guestList = normalizeGuestRows(data);
+                isGuestListLoaded = true;
+            } catch (e) {
+                console.error('Không tải được DanhSachPhanPhong:', e);
+                guestList = [];
+                isGuestListLoaded = true;
+            }
+        }
+
+        async function loadOccupiedFromCloud(silent) {
+            try {
+                const data = await apiGet({ type: 'getOccupied' });
+                const rows = Array.isArray(data) ? data : (data.rooms || data.data || data.occupied || []);
+                occupiedRooms = arrayToRoomMap(rows);
+                setLocalRooms(occupiedRooms);
+                lastCloudSyncAt = Date.now();
+                const st = document.getElementById('statusTime');
+                if(st) st.innerHTML = `<span class="realtime-indicator"></span> Sheet online: ${new Date(lastCloudSyncAt).toLocaleTimeString('vi-VN')}`;
+                renderAdmin(); updateStats();
+                return occupiedRooms;
+            } catch(e) {
+                console.error('Không tải được PhongDangO từ Sheet:', e);
+                occupiedRooms = getLocalRooms();
+                const st = document.getElementById('statusTime');
+                if(st) st.innerHTML = `<span class="text-red-500 font-black">Mất kết nối Sheet - đang xem bản lưu tạm</span>`;
+                renderAdmin(); updateStats();
+                if(!silent) showInfo('Chưa kết nối được dữ liệu thật', 'Không đọc được sheet PhongDangO. Ứng dụng đang hiển thị dữ liệu lưu tạm trên máy này. Cần kiểm tra Apps Script Web App.', 'error');
+                return occupiedRooms;
+            }
+        }
+
+        async function loadHistoryFromCloud() {
+            try {
+                const data = await apiGet({ type: 'getHistory' });
+                const rows = Array.isArray(data) ? data : (data.history || data.data || []);
+                cloudHistoryCache = rows.map(function(h) {
+                    return {
+                        action: h.action || h.type || h['Hành động'] || '',
+                        room: h.room || h.phong || h['Phòng'] || '',
+                        occupant: h.occupant || h.name || h.hoTen || h['Họ tên'] || '',
+                        name: h.name || h.occupant || h.hoTen || h['Họ tên'] || '',
+                        note: h.note || h.event || h.lopSuKien || h['Lớp/Sự kiện'] || '',
+                        roomType: h.roomType || h.loaiPhong || h['Loại phòng'] || '',
+                        brokenAssets: h.brokenAssets || h.taiSanLoi || h['Tài sản lỗi'] || 'Không',
+                        timeIn: h.timeIn || h['Thời gian nhận'] || '',
+                        timeOut: h.timeOut || h['Thời gian trả'] || '',
+                        performedBy: h.performedBy || h['Người thực hiện'] || ''
+                    };
+                });
+                return cloudHistoryCache;
+            } catch(e) {
+                console.error('Không tải được lịch sử từ Sheet:', e);
+                cloudHistoryCache = getLocalHistory();
+                return cloudHistoryCache;
+            }
+        }
+
+        async function searchRoom() {
+            const searchInput = document.getElementById('searchEmpId').value.trim().toUpperCase();
+            if(!searchInput) return showInfo('Thiếu thông tin', 'Vui lòng nhập Mã Nhân Viên hoặc Tên!');
+            setLoading(true);
+            if (!isGuestListLoaded || guestList.length === 0) await preloadGuestList();
+            setLoading(false);
+            const guest = guestList.find(function(g) {
+                return (g.id && g.id === searchInput) || (g.name && g.name.includes(searchInput));
+            });
+            if(guest) {
+                document.getElementById('resName').innerText = guest.name;
+                document.getElementById('resRoom').innerText = guest.room;
+                document.getElementById('resDates').innerText = `${guest.in || 'Chưa có ngày'} - ${guest.out || 'Chưa có ngày'}`;
+                document.getElementById('lookupResult').dataset.note = guest.note || '';
+                document.getElementById('lookupResult').classList.remove('hidden');
+            } else {
+                document.getElementById('lookupResult').classList.add('hidden');
+                showInfo('Không tìm thấy', 'Không tìm thấy dữ liệu trong danh sách phân phòng trên Google Sheet hôm nay.');
+            }
+        }
+
+        function proceedToCheckIn() {
+            const name = document.getElementById('resName').innerText;
+            const room = document.getElementById('resRoom').innerText;
+            const note = document.getElementById('lookupResult').dataset.note || '';
+            const nameInput = document.getElementById('inName');
+            const roomInput = document.getElementById('inRoom');
+            nameInput.value = name;
+            roomInput.value = room;
+            document.getElementById('inNote').value = note;
+            nameInput.readOnly = true; nameInput.classList.add('bg-slate-200', 'text-slate-500');
+            roomInput.readOnly = true; roomInput.classList.add('bg-slate-200', 'text-slate-500');
+            autoCheckRoom(room); showView('checkInView');
+        }
+
+        async function handleIn() {
+            const name = document.getElementById('inName').value.trim().toUpperCase();
+            const room = document.getElementById('inRoom').value.trim();
+            const note = document.getElementById('inNote').value || 'Không';
+            if(!name || !room) return showInfo('Thiếu thông tin', 'Vui lòng nhập Tên và Số phòng!');
+            const brokenBoxes = document.querySelectorAll('.asset-checkbox:checked');
+            const brokenAssets = Array.from(brokenBoxes).map(function(cb) { return cb.value; }).join(', ') || 'Không';
+            const roomType = document.getElementById('roomBadge').innerText || 'Thường';
+            const timeIn = Date.now();
+            const payload = { room, name, occupant: name, note, roomType, brokenAssets, timeIn, status: 'occupied' };
+            setLoading(true);
+            try {
+                const result = await apiGet({ type: 'checkIn', room, name, note, roomType, brokenAssets, timeIn });
+                if(!apiOk(result)) throw new Error(result && result.message ? result.message : 'Sheet không xác nhận lưu');
+                const localRooms = getLocalRooms(); localRooms[room] = payload; setLocalRooms(localRooms); addLocalHistory({ action: 'NHẬN PHÒNG', ...payload });
+                await loadOccupiedFromCloud(true);
+                setLoading(false);
+                showInfo('Thành công', 'Đã ghi nhận nhận phòng lên Google Sheet và cập nhật sơ đồ quản lý.', 'success');
+                setTimeout(function(){ document.getElementById('infoModal').classList.add('hidden'); resetApp(); }, 1600);
+            } catch(e) {
+                console.error('Lỗi check-in Sheet:', e);
+                const localRooms = getLocalRooms(); localRooms[room] = payload; setLocalRooms(localRooms); addLocalHistory({ action: 'NHẬN PHÒNG - LƯU TẠM', ...payload }); occupiedRooms = localRooms;
+                setLoading(false); renderAdmin(); updateStats();
+                showInfo('Chưa lưu được lên Sheet', 'Đã lưu tạm trên máy này. Cần kiểm tra Apps Script/API trước khi dùng vận hành nhiều thiết bị.', 'error');
+            }
+        }
+
+        async function handleOut() {
+            const name = document.getElementById('outName').value.trim().toUpperCase();
+            const room = document.getElementById('outRoom').value.trim();
+            if(!name || !room) return showInfo('Thiếu thông tin', 'Vui lòng nhập Tên và Số phòng!');
+            setLoading(true);
+            const localRooms = getLocalRooms();
+            const existing = normalizeRoomData(room, localRooms[room] || occupiedRooms[room] || {});
+            const timeOut = Date.now();
+            try {
+                const result = await apiGet({ type: 'checkOut', room, name, timeOut });
+                if(!apiOk(result)) throw new Error(result && result.message ? result.message : 'Sheet không xác nhận trả phòng');
+                delete localRooms[room]; setLocalRooms(localRooms);
+                addLocalHistory({ action: 'TRẢ PHÒNG', room, occupant: existing.occupant || name, name: existing.occupant || name, note: existing.note || '', roomType: existing.roomType || '', brokenAssets: existing.brokenAssets || 'Không', timeIn: existing.timeIn || '', timeOut, performedBy: name });
+                await loadOccupiedFromCloud(true);
+                setLoading(false);
+                showInfo('Thành công', 'Đã ghi nhận trả phòng lên Google Sheet và cập nhật sơ đồ quản lý.', 'success');
+                setTimeout(function(){ document.getElementById('infoModal').classList.add('hidden'); resetApp(); }, 1600);
+            } catch(e) {
+                console.error('Lỗi check-out Sheet:', e);
+                delete localRooms[room]; setLocalRooms(localRooms); occupiedRooms = localRooms;
+                addLocalHistory({ action: 'TRẢ PHÒNG - LƯU TẠM', room, occupant: existing.occupant || name, performedBy: name, timeIn: existing.timeIn || '', timeOut });
+                setLoading(false); renderAdmin(); updateStats();
+                showInfo('Chưa lưu được lên Sheet', 'Đã lưu tạm thao tác trả phòng trên máy này. Cần kiểm tra Apps Script/API.', 'error');
+            }
+        }
+
+        function setupAdminListener() {
+            if(adminAutoRefreshTimer) clearInterval(adminAutoRefreshTimer);
+            loadOccupiedFromCloud(false);
+            adminAutoRefreshTimer = setInterval(function(){
+                const admin = document.getElementById('adminView');
+                if(admin && !admin.classList.contains('hidden')) loadOccupiedFromCloud(true);
+            }, 15000);
+        }
+
+        function exitAdmin() {
+            if(adminAutoRefreshTimer) { clearInterval(adminAutoRefreshTimer); adminAutoRefreshTimer = null; }
+            if (unsubscribeAdmin) { unsubscribeAdmin(); unsubscribeAdmin = null; }
+            resetApp();
+        }
+
+        function showGuestList(tab) {
+            guestListTab = tab || guestListTab || 'current';
+            openGuestListModal();
+            if(guestListTab === 'history') loadHistoryFromCloud().then(renderGuestListContent);
+            else { loadOccupiedFromCloud(true).then(renderGuestListContent); }
+        }
+
+        function renderGuestListContent() {
+            const container = document.getElementById('guestListContent');
+            if(!container) return;
+            const currentEntries = Object.entries(occupiedRooms || {}).map(function(entry){ return [entry[0], normalizeRoomData(entry[0], entry[1])]; })
+                .sort(function(a,b) { return parseInt(a[0]) - parseInt(b[0]); });
+            const history = cloudHistoryCache.length ? cloudHistoryCache : getLocalHistory();
+            document.getElementById('guestCountText').innerText = guestListTab === 'current' ? `${currentEntries.length} khách đang lưu trú` : `${history.length} dòng lịch sử gần nhất`;
+            let html = `<div class="flex gap-2 sticky top-0 bg-white pb-3 z-10"><button class="ktx-tab ${guestListTab === 'current' ? 'active' : ''}" onclick="showGuestList('current')">Đang lưu trú</button><button class="ktx-tab ${guestListTab === 'history' ? 'active' : ''}" onclick="showGuestList('history')">Lịch sử</button></div>`;
+            if(guestListTab === 'current') {
+                if(currentEntries.length === 0) html += '<div class="h-full flex flex-col items-center justify-center text-slate-400 opacity-80 py-16"><i class="fas fa-box-open text-4xl mb-3"></i><p class="text-xs font-bold uppercase tracking-wider">Chưa có khách lưu trú</p><p class="text-[10px] mt-2 text-center">Dữ liệu được đọc từ sheet PhongDangO.</p></div>';
+                else currentEntries.forEach(function(entry) { const roomNo = escapeHTML(entry[0]); const g = entry[1]; html += `<div class="guest-card"><div class="flex justify-between gap-3 items-start"><div class="min-w-0"><p class="text-xs font-black text-slate-800 truncate">${escapeHTML(g.note && g.note !== 'Không' ? g.note : (g.occupant || g.name))}</p><p class="guest-meta">Phòng ${roomNo} • Khách: ${escapeHTML(g.occupant || g.name)} • ${escapeHTML(g.roomType || 'Thường')}</p><p class="guest-meta">Nhận: ${escapeHTML(formatDateTime(g.timeIn))}</p>${g.brokenAssets && g.brokenAssets !== 'Không' ? `<p class="guest-meta text-red-500">Tài sản lỗi: ${escapeHTML(g.brokenAssets)}</p>` : ''}</div><span class="status-pill status-in"><i class="fas fa-bed"></i> Đang ở</span></div></div>`; });
+            } else {
+                if(history.length === 0) html += '<div class="h-full flex flex-col items-center justify-center text-slate-400 opacity-80 py-16"><i class="fas fa-clock-rotate-left text-4xl mb-3"></i><p class="text-xs font-bold uppercase tracking-wider">Chưa có lịch sử</p></div>';
+                else history.forEach(function(h) { const isIn = safeText(h.action).includes('NHẬN'); html += `<div class="guest-card"><div class="flex justify-between gap-3 items-start"><div class="min-w-0"><p class="text-xs font-black text-slate-800 truncate">${escapeHTML(h.note && h.note !== 'Không' ? h.note : (h.occupant || h.name || h.performedBy))}</p><p class="guest-meta">Phòng ${escapeHTML(h.room)} • Khách: ${escapeHTML(h.occupant || h.name || h.performedBy)} • ${escapeHTML(h.roomType || 'Thường')}</p><p class="guest-meta">Nhận: ${escapeHTML(formatDateTime(h.timeIn))}</p>${h.timeOut ? `<p class="guest-meta">Trả: ${escapeHTML(formatDateTime(h.timeOut))}</p>` : ''}${h.performedBy ? `<p class="guest-meta">Người thực hiện: ${escapeHTML(h.performedBy)}</p>` : ''}</div><span class="status-pill ${isIn ? 'status-in' : 'status-out'}">${isIn ? 'Nhận phòng' : 'Trả phòng'}</span></div></div>`; });
+            }
+            container.innerHTML = html;
+        }
+
+        async function submitFeedback() {
+            const room = document.getElementById('fbRoom').value;
+            const name = document.getElementById('fbName').value || 'Ẩn danh';
+            const note = document.getElementById('fbNote').value || 'Không có phản hồi thêm';
+            if(!room) return showInfo('Thiếu thông tin', 'Vui lòng nhập Số phòng để gửi đánh giá!');
+            setLoading(true);
+            try {
+                await apiGet({ type: 'feedback', room, name, rating: currentRating, note, createdAt: Date.now() });
+                setLoading(false);
+                showInfo('Cảm ơn bạn!', 'Đánh giá đã được ghi nhận vào Google Sheet.', 'success');
+                setTimeout(function(){ document.getElementById('infoModal').classList.add('hidden'); resetApp(); }, 2200);
+            } catch(e) {
+                setLoading(false);
+                showInfo('Chưa gửi được', 'Không kết nối được Google Sheet. Vui lòng thử lại.', 'error');
+            }
+        }
+
+        window.ktxDebugState = function() {
+            return { mode: KTX_API_MODE, sheet: cfg.sheet, lastCloudSyncAt, occupiedRooms, cloudHistoryCache, localRooms: getLocalRooms(), localHistory: getLocalHistory() };
+        };
+
+
     </script>
 </body>
 </html>
