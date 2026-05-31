@@ -727,16 +727,16 @@
             setLoading(false);
 
             const guest = guestList.find(function(g) { return g.id === searchInput || g.name.includes(searchInput); });
-            if(guest) {
-                document.getElementById('resName').innerText = guest.name;
-                document.getElementById('resRoom').innerText = guest.room;
-                document.getElementById('resDates').innerText = `${guest.in} - ${guest.out}`;
-                document.getElementById('lookupResult').classList.remove('hidden');
-            } else {
-                document.getElementById('lookupResult').classList.add('hidden');
-                showInfo("Không tìm thấy", "Không tìm thấy dữ liệu trong danh sách phân phòng (Google Sheets) hôm nay.");
-            }
-        }
+    if(guest) {
+    currentUser = guest;
+
+    document.getElementById('resName').innerText = guest.name;
+    document.getElementById('resRoom').innerText = guest.room;
+    document.getElementById('resDates').innerText = `${guest.in} - ${guest.out}`;
+
+    document.getElementById('lookupResult').classList.remove('hidden');
+}
+    
 
         function proceedToCheckIn() {
             const name = document.getElementById('resName').innerText;
