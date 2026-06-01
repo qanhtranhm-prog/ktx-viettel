@@ -531,7 +531,7 @@
     <script>
         // Cấu hình mạng thực tế
         const cfg = {
-            sheet: "https://script.google.com/macros/s/AKfycby1aEf9e1_OgSR6OIcSuZ1CBdlqNDJ0Dv9GA9Von0e34II7UZDmpPt68M4c0iSF4NJJ/exec",
+            sheet: "https://script.google.com/macros/s/AKfycbxlDH-D7CuLX8fiZJFrf6KAAyShxD5w0wXC0LgKd1qFdIIwUJ1ncxs7ME6TR-YvT-ZZ/exec",
             token: "",
             chat: "",
             pin: "271020"
@@ -727,25 +727,47 @@
             setLoading(false);
 
             const guest = guestList.find(function(g) { return g.id === searchInput || g.name.includes(searchInput); });
-    if(guest) {
-    currentUser = guest;
-
-    document.getElementById('resName').innerText = guest.name;
-    document.getElementById('resRoom').innerText = guest.room;
-    document.getElementById('resDates').innerText = `${guest.in} - ${guest.out}`;
-
-    document.getElementById('lookupResult').classList.remove('hidden');
-}
-    
+            if(guest) {
+                currentUser = guest;
+                document.getElementById('resName').innerText = guest.name || '';
+                document.getElementById('resRoom').innerText = guest.room || '';
+                document.getElementById('resDates').innerText = `${guest.in || ''} - ${guest.out || ''}`;
+                document.getElementById('lookupResult').classList.remove('hidden');
+            } else {
+                document.getElementById('lookupResult').classList.add('hidden');
+                showInfo("Không tìm thấy", "Không tìm thấy dữ liệu trong danh sách phân phòng (Google Sheets) hôm nay.");
+            }
+        }
 
         function proceedToCheckIn() {
             const name = document.getElementById('resName').innerText;
             const room = document.getElementById('resRoom').innerText;
+
             const nameInput = document.getElementById('inName');
             const roomInput = document.getElementById('inRoom');
-            nameInput.value = name; nameInput.readOnly = true; nameInput.classList.add('bg-slate-200', 'text-slate-500'); 
-            roomInput.value = room; roomInput.readOnly = true; roomInput.classList.add('bg-slate-200', 'text-slate-500');
-            autoCheckRoom(room); showView('checkInView');
+            const noteInput = document.getElementById('inNote');
+
+            nameInput.value = name;
+            nameInput.readOnly = true;
+            nameInput.classList.add('bg-slate-200', 'text-slate-500');
+
+            roomInput.value = room;
+            roomInput.readOnly = true;
+            roomInput.classList.add('bg-slate-200', 'text-slate-500');
+
+            // Mang theo Lớp học/Sự kiện từ dữ liệu khách đã tra cứu sang form nhận phòng.
+            const eventText =
+                (currentUser && currentUser.event) ||
+                (currentUser && currentUser.note) ||
+                (currentUser && currentUser.lopSuKien) ||
+                (currentUser && currentUser["Lớp học/Sự kiện"]) ||
+                (currentUser && currentUser["LỚP HỌC/SỰ KIỆN"]) ||
+                "";
+
+            noteInput.value = eventText || "";
+
+            autoCheckRoom(room);
+            showView('checkInView');
         }
 
         function showManualCheckIn() {
@@ -794,7 +816,7 @@
 
             const name = document.getElementById('inName').value.trim().toUpperCase();
             const room = document.getElementById('inRoom').value;
-            const note = document.getElementById('inNote').value || "Không";
+            const note = document.getElementById('inNote').value.trim() || "";
 
             if(!name || !room) {
                 if (btn) { btn.dataset.busy = "0"; btn.disabled = false; btn.innerText = "XÁC NHẬN NHẬN PHÒNG"; }
