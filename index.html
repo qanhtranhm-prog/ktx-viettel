@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>QLTS Viettel - Viettel Stayhub</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -104,12 +104,152 @@
         .status-in { background:#fee2e2; color:#dc2626; }
         .status-out { background:#dcfce7; color:#16a34a; }
         .room-card small { max-width: 92%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* ===== VIETTEL MONEY STYLE MOBILE FIX ===== */
+        html, body {
+            width: 100%;
+            min-height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            background: #f6f7fb;
+        }
+
+        body {
+            touch-action: manipulation;
+        }
+
+        .app-shell {
+            width: 100vw !important;
+            max-width: none !important;
+            margin: 0 !important;
+            background:
+                radial-gradient(circle at 50% -10%, rgba(238,0,0,.10), transparent 34%),
+                linear-gradient(180deg, #fff7f7 0%, #f6f7fb 36%, #f7f8fb 100%);
+        }
+
+        .app-header {
+            padding: calc(14px + env(safe-area-inset-top)) 18px 18px !important;
+            border-bottom-left-radius: 28px !important;
+            border-bottom-right-radius: 28px !important;
+            box-shadow: 0 14px 28px -18px rgba(238,0,0,.65) !important;
+        }
+
+        .app-main {
+            width: 100% !important;
+            max-width: none !important;
+            margin: 0 !important;
+            padding: 16px 16px calc(28px + env(safe-area-inset-bottom)) !important;
+        }
+
+        .mobile-card {
+            border-radius: 24px !important;
+            box-shadow: 0 10px 28px -18px rgba(15, 23, 42, .32) !important;
+            border: 1px solid rgba(255,255,255,.92) !important;
+        }
+
+        .mobile-tile {
+            min-height: 132px;
+            border-radius: 24px !important;
+            box-shadow: 0 10px 24px -18px rgba(15,23,42,.28) !important;
+        }
+
+        .mobile-input {
+            min-height: 56px;
+            border-radius: 18px !important;
+            font-size: 16px !important;
+        }
+
+        .mobile-primary-btn {
+            min-height: 54px;
+            border-radius: 18px !important;
+            box-shadow: 0 12px 24px -16px rgba(238,0,0,.70) !important;
+        }
+
+        .mobile-secondary-btn {
+            min-height: 52px;
+            border-radius: 18px !important;
+        }
+
+        input, textarea, select, button {
+            font-size: 16px;
+        }
+
+        @media (max-width: 430px) {
+            .home-hero {
+                margin-top: 4px !important;
+                margin-bottom: 16px !important;
+            }
+
+            .home-hero .service-pill {
+                padding: 8px 14px !important;
+                font-size: 9px !important;
+            }
+
+            .support-card {
+                padding: 16px !important;
+                border-radius: 24px !important;
+            }
+
+            .support-card .support-phone {
+                font-size: 18px !important;
+            }
+
+            .mobile-grid {
+                gap: 12px !important;
+            }
+
+            .mobile-tile {
+                padding: 18px !important;
+                min-height: 126px;
+            }
+
+            .mobile-tile .tile-icon {
+                width: 44px !important;
+                height: 44px !important;
+                border-radius: 16px !important;
+                font-size: 18px !important;
+            }
+
+            .mobile-tile .tile-title {
+                font-size: 13px !important;
+            }
+
+            .mobile-tile .tile-subtitle {
+                font-size: 8px !important;
+                letter-spacing: .04em !important;
+            }
+
+            .view-card {
+                padding: 20px !important;
+                border-radius: 26px !important;
+            }
+
+            .room-grid {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 8px;
+            }
+
+            .fixed .max-w-md {
+                max-width: none !important;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .app-shell {
+                max-width: 440px !important;
+                margin: 0 auto !important;
+                min-height: 100vh;
+                box-shadow: 0 0 36px rgba(15, 23, 42, .08);
+            }
+        }
+
     </style>
 </head>
-<body class="text-slate-800 antialiased bg-slate-100 relative">
+<body class="text-slate-800 antialiased relative">
 
     <div class="fixed inset-0 overflow-hidden pointer-events-none z-0 flex justify-center">
-        <div class="w-full max-w-md relative h-full">
+        <div class="w-full relative h-full">
             <div class="absolute -top-20 -left-20 w-72 h-72 bg-red-400 rounded-full mix-blend-multiply filter blur-[80px] opacity-30 animate-pulse"></div>
             <div class="absolute top-1/4 -right-20 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-[80px] opacity-30 animate-pulse" style="animation-delay: 2s;"></div>
             <div class="absolute bottom-1/4 left-10 w-72 h-72 bg-rose-200 rounded-full mix-blend-multiply filter blur-[80px] opacity-30 animate-pulse" style="animation-delay: 4s;"></div>
@@ -123,9 +263,9 @@
         </div>
     </div>
 
-    <div class="max-w-md mx-auto min-h-[100dvh] flex flex-col bg-white/60 backdrop-blur-2xl relative shadow-2xl overflow-x-hidden pb-10 border-x border-white/50">
+    <div class="app-shell w-full min-h-[100svh] flex flex-col relative overflow-x-hidden pb-0">
         
-        <header class="bg-gradient-to-r from-[#ee0000] to-[#ff4b4b] p-6 sticky top-0 z-40 shadow-[0_10px_30px_-10px_rgba(238,0,0,0.4)] flex justify-between items-center rounded-b-[40px] border-b border-red-400/50">
+        <header class="app-header bg-gradient-to-r from-[#ee0000] to-[#ff4b4b] sticky top-0 z-40 flex justify-between items-center border-b border-red-400/50">
             <div class="flex items-center space-x-3 cursor-pointer" onclick="resetApp()">
                 <div class="bg-white p-2 rounded-2xl shadow-inner text-viettel">
                     <i class="fas fa-hotel text-lg"></i>
@@ -140,24 +280,24 @@
             </button>
         </header>
 
-        <main class="flex-grow p-4 space-y-6 relative z-10">
+        <main class="app-main flex-grow space-y-5 relative z-10 w-full">
             
             <section id="homeView" class="space-y-6 animate-fade">
-                <div class="flex flex-col items-center justify-center mt-2 mb-6">
-                    <div class="bg-white/80 backdrop-blur-md text-viettel px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border border-white mb-2 shadow-sm flex items-center gap-2">
+                <div class="home-hero flex flex-col items-center justify-center mt-2 mb-6">
+                    <div class="service-pill bg-white/80 backdrop-blur-md text-viettel px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border border-white mb-2 shadow-sm flex items-center gap-2">
                         <i class="fas fa-concierge-bell"></i> Dịch vụ Nội trú
                     </div>
                     <p class="text-[11px] text-slate-500 font-medium">Lựa chọn tác vụ bên dưới để bắt đầu</p>
                 </div>
 
-                <div class="bg-white/90 backdrop-blur-xl border border-white p-5 rounded-[2rem] flex items-center justify-between shadow-xl shadow-slate-200/50">
+                <div class="support-card mobile-card bg-white/95 backdrop-blur-xl border border-white p-5 rounded-3xl flex items-center justify-between shadow-xl shadow-slate-200/50">
                     <div class="flex items-center gap-4">
                         <div class="w-12 h-12 rounded-full bg-red-50 text-viettel flex items-center justify-center text-xl shadow-inner border border-red-100/50">
                             <i class="fas fa-headset"></i>
                         </div>
                         <div>
                             <p class="text-[9px] font-bold uppercase text-slate-400 mb-0.5 tracking-widest">Hỗ trợ trực tuyến 24/7</p>
-                            <p class="text-xl font-black tracking-wider text-slate-800">0983.863.380</p>
+                            <p class="support-phone text-xl font-black tracking-wider text-slate-800">0983.863.380</p>
                         </div>
                     </div>
                     <a href="tel:0983863380" class="w-10 h-10 bg-gradient-to-br from-red-500 to-viettel rounded-full flex items-center justify-center shadow-lg shadow-red-500/40 active:scale-95 transition-all text-white">
@@ -165,55 +305,55 @@
                     </a>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
-                    <button onclick="showView('lookupView')" class="relative overflow-hidden bg-white/90 backdrop-blur-xl border border-white p-6 rounded-[2rem] shadow-xl shadow-slate-200/50 flex flex-col items-start justify-center space-y-4 active:scale-95 transition-all group hover:border-red-100">
+                <div class="mobile-grid grid grid-cols-2 gap-3">
+                    <button onclick="showView('lookupView')" class="mobile-tile relative overflow-hidden bg-white/90 backdrop-blur-xl border border-white p-5 rounded-[2rem] shadow-xl shadow-slate-200/50 flex flex-col items-start justify-center space-y-4 active:scale-95 transition-all group hover:border-red-100">
                         <div class="absolute -right-4 -top-4 w-20 h-20 bg-red-50 rounded-full blur-2xl group-hover:bg-red-100 transition-all"></div>
-                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-red-500 to-viettel text-white flex items-center justify-center text-xl shadow-lg shadow-red-500/30">
+                        <div class="tile-icon w-12 h-12 rounded-2xl bg-gradient-to-br from-red-500 to-viettel text-white flex items-center justify-center text-xl shadow-lg shadow-red-500/30">
                             <i class="fas fa-qrcode"></i>
                         </div>
                         <div class="text-left relative z-10">
-                            <span class="block font-black text-sm text-slate-800 tracking-wide">Nhận phòng</span>
-                            <span class="block text-[9px] font-bold text-slate-400 mt-1 uppercase tracking-wider">Xác thực mã QR</span>
+                            <span class="tile-title block font-black text-sm text-slate-800 tracking-wide">Nhận phòng</span>
+                            <span class="tile-subtitle block text-[9px] font-bold text-slate-400 mt-1 uppercase tracking-wider">Xác thực mã QR</span>
                         </div>
                     </button>
                     
-                    <button onclick="showView('checkOutView')" class="relative overflow-hidden bg-white/90 backdrop-blur-xl border border-white p-6 rounded-[2rem] shadow-xl shadow-slate-200/50 flex flex-col items-start justify-center space-y-4 active:scale-95 transition-all group hover:border-slate-300">
+                    <button onclick="showView('checkOutView')" class="mobile-tile relative overflow-hidden bg-white/90 backdrop-blur-xl border border-white p-5 rounded-[2rem] shadow-xl shadow-slate-200/50 flex flex-col items-start justify-center space-y-4 active:scale-95 transition-all group hover:border-slate-300">
                         <div class="absolute -right-4 -top-4 w-20 h-20 bg-slate-100 rounded-full blur-2xl group-hover:bg-slate-200 transition-all"></div>
-                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-700 to-slate-900 text-white flex items-center justify-center text-xl shadow-lg shadow-slate-800/30">
+                        <div class="tile-icon w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-700 to-slate-900 text-white flex items-center justify-center text-xl shadow-lg shadow-slate-800/30">
                             <i class="fas fa-sign-out-alt"></i>
                         </div>
                         <div class="text-left relative z-10">
-                            <span class="block font-black text-sm text-slate-800 tracking-wide">Trả phòng</span>
-                            <span class="block text-[9px] font-bold text-slate-400 mt-1 uppercase tracking-wider">Hoàn tất lưu trú</span>
+                            <span class="tile-title block font-black text-sm text-slate-800 tracking-wide">Trả phòng</span>
+                            <span class="tile-subtitle block text-[9px] font-bold text-slate-400 mt-1 uppercase tracking-wider">Hoàn tất lưu trú</span>
                         </div>
                     </button>
 
-                    <button onclick="showView('handbookView')" class="relative overflow-hidden bg-white/90 backdrop-blur-xl border border-white p-6 rounded-[2rem] shadow-xl shadow-slate-200/50 flex flex-col items-start justify-center space-y-4 active:scale-95 transition-all group hover:border-blue-100">
+                    <button onclick="showView('handbookView')" class="mobile-tile relative overflow-hidden bg-white/90 backdrop-blur-xl border border-white p-5 rounded-[2rem] shadow-xl shadow-slate-200/50 flex flex-col items-start justify-center space-y-4 active:scale-95 transition-all group hover:border-blue-100">
                         <div class="absolute -right-4 -top-4 w-20 h-20 bg-blue-50 rounded-full blur-2xl group-hover:bg-blue-100 transition-all"></div>
-                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-400 to-blue-600 text-white flex items-center justify-center text-xl shadow-lg shadow-blue-500/30">
+                        <div class="tile-icon w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-400 to-blue-600 text-white flex items-center justify-center text-xl shadow-lg shadow-blue-500/30">
                             <i class="fas fa-info-circle"></i>
                         </div>
                         <div class="text-left relative z-10">
-                            <span class="block font-black text-sm text-slate-800 tracking-wide">Thông tin</span>
-                            <span class="block text-[9px] font-bold text-slate-400 mt-1 uppercase tracking-wider">Cẩm nang KTX</span>
+                            <span class="tile-title block font-black text-sm text-slate-800 tracking-wide">Thông tin</span>
+                            <span class="tile-subtitle block text-[9px] font-bold text-slate-400 mt-1 uppercase tracking-wider">Cẩm nang KTX</span>
                         </div>
                     </button>
 
-                    <button onclick="showView('feedbackView')" class="relative overflow-hidden bg-white/90 backdrop-blur-xl border border-white p-6 rounded-[2rem] shadow-xl shadow-slate-200/50 flex flex-col items-start justify-center space-y-4 active:scale-95 transition-all group hover:border-amber-100">
+                    <button onclick="showView('feedbackView')" class="mobile-tile relative overflow-hidden bg-white/90 backdrop-blur-xl border border-white p-5 rounded-[2rem] shadow-xl shadow-slate-200/50 flex flex-col items-start justify-center space-y-4 active:scale-95 transition-all group hover:border-amber-100">
                         <div class="absolute -right-4 -top-4 w-20 h-20 bg-amber-50 rounded-full blur-2xl group-hover:bg-amber-100 transition-all"></div>
-                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 text-white flex items-center justify-center text-xl shadow-lg shadow-amber-500/30">
+                        <div class="tile-icon w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 text-white flex items-center justify-center text-xl shadow-lg shadow-amber-500/30">
                             <i class="fas fa-star"></i>
                         </div>
                         <div class="text-left relative z-10">
-                            <span class="block font-black text-sm text-slate-800 tracking-wide">Đánh giá</span>
-                            <span class="block text-[9px] font-bold text-slate-400 mt-1 uppercase tracking-wider">Chất lượng DV</span>
+                            <span class="tile-title block font-black text-sm text-slate-800 tracking-wide">Đánh giá</span>
+                            <span class="tile-subtitle block text-[9px] font-bold text-slate-400 mt-1 uppercase tracking-wider">Chất lượng DV</span>
                         </div>
                     </button>
                 </div>
             </section>
 
             <section id="handbookView" class="hidden space-y-4 animate-fade">
-                <div class="bg-white/95 backdrop-blur-xl p-6 rounded-[2.5rem] card-shadow border border-white space-y-4">
+                <div class="view-card mobile-card bg-white/95 backdrop-blur-xl p-5 rounded-3xl card-shadow border border-white space-y-4">
                     <div class="text-center space-y-2 mb-4">
                         <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-2">
                             <i class="fas fa-info-circle text-2xl"></i>
@@ -294,7 +434,7 @@
             </section>
 
             <section id="feedbackView" class="hidden space-y-4 animate-fade">
-                <div class="bg-white/95 backdrop-blur-xl p-6 rounded-[2.5rem] card-shadow border border-white space-y-5">
+                <div class="view-card mobile-card bg-white/95 backdrop-blur-xl p-6 rounded-[2.5rem] card-shadow border border-white space-y-5">
                     <div class="text-center space-y-2 mb-2">
                         <div class="w-16 h-16 bg-yellow-50 text-yellow-500 rounded-full flex items-center justify-center mx-auto mb-2 shadow-inner">
                             <i class="fas fa-comment-dots text-2xl"></i>
@@ -316,20 +456,20 @@
                     </div>
 
                     <div class="space-y-4">
-                        <div class="grid grid-cols-2 gap-3">
+                        <div class="mobile-grid grid grid-cols-2 gap-3">
                             <div class="space-y-1">
                                 <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Số phòng <span class="text-red-500">*</span></label>
-                                <input type="number" id="fbRoom" placeholder="VD: 201" class="w-full p-4 bg-slate-50 border border-slate-100 rounded-xl font-bold outline-none focus:border-red-500 transition-all text-sm text-center">
+                                <input type="number" id="fbRoom" placeholder="VD: 201" class="mobile-input w-full p-4 bg-slate-50 border border-slate-100 rounded-xl font-bold outline-none focus:border-red-500 transition-all text-sm text-center">
                             </div>
                             <div class="space-y-1">
                                 <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Họ Tên (Tùy chọn)</label>
-                                <input type="text" id="fbName" placeholder="Tên khách" class="w-full p-4 bg-slate-50 border border-slate-100 rounded-xl font-bold outline-none focus:border-red-500 transition-all text-sm text-center">
+                                <input type="text" id="fbName" placeholder="Tên khách" class="mobile-input w-full p-4 bg-slate-50 border border-slate-100 rounded-xl font-bold outline-none focus:border-red-500 transition-all text-sm text-center">
                             </div>
                         </div>
 
                         <div class="space-y-1">
                             <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Góp ý chi tiết</label>
-                            <textarea id="fbNote" placeholder="Chia sẻ thêm về trải nghiệm của bạn (Buồng phòng, Lễ tân, Nhà ăn...)" class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl text-xs outline-none focus:border-red-500 transition-all" rows="4"></textarea>
+                            <textarea id="fbNote" placeholder="Chia sẻ thêm về trải nghiệm của bạn (Buồng phòng, Lễ tân, Nhà ăn...)" class="mobile-input w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl text-xs outline-none focus:border-red-500 transition-all" rows="4"></textarea>
                         </div>
                     </div>
                     
@@ -339,7 +479,7 @@
             </section>
 
             <section id="lookupView" class="hidden space-y-4 animate-fade">
-                <div class="bg-white/95 backdrop-blur-xl p-6 rounded-[2.5rem] card-shadow border border-white space-y-5">
+                <div class="view-card mobile-card bg-white/95 backdrop-blur-xl p-6 rounded-[2.5rem] card-shadow border border-white space-y-5">
                     <div class="text-center space-y-2 mb-6">
                         <div class="w-16 h-16 bg-gradient-to-br from-red-50 to-red-100 text-viettel rounded-full flex items-center justify-center mx-auto mb-3 shadow-inner border border-white">
                             <i class="fas fa-id-card text-2xl"></i>
@@ -349,12 +489,12 @@
                     </div>
                     <div class="space-y-3">
                         <div class="relative">
-                            <input type="text" id="searchEmpId" placeholder="NHẬP MNV HOẶC HỌ TÊN" class="w-full p-4 pr-14 bg-slate-50 border border-slate-100 rounded-2xl font-black text-center uppercase outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all tracking-widest text-sm">
+                            <input type="text" id="searchEmpId" placeholder="NHẬP MNV HOẶC HỌ TÊN" class="mobile-input w-full p-4 pr-14 bg-slate-50 border border-slate-100 rounded-2xl font-black text-center uppercase outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all tracking-widest text-sm">
                             <button onclick="openQRScanner()" class="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-red-100 text-viettel rounded-xl hover:bg-red-200 flex items-center justify-center transition-all active:scale-95 shadow-sm" title="Quét mã QR">
                                 <i class="fas fa-qrcode text-xl"></i>
                             </button>
                         </div>
-                        <button onclick="searchRoom()" class="w-full bg-viettel py-4 rounded-2xl font-black shadow-lg shadow-red-200 uppercase text-xs active:scale-95 transition-all mt-3">
+                        <button onclick="searchRoom()" class="mobile-primary-btn w-full bg-viettel py-4 rounded-2xl font-black shadow-lg shadow-red-200 uppercase text-xs active:scale-95 transition-all mt-3">
                             <i class="fas fa-search mr-2"></i> Kiểm tra hệ thống
                         </button>
                     </div>
@@ -385,15 +525,15 @@
             </section>
 
             <section id="checkInView" class="hidden space-y-4 animate-fade">
-                <div class="bg-white/95 backdrop-blur-xl p-6 rounded-[2.5rem] card-shadow space-y-5 border border-white">
+                <div class="view-card mobile-card bg-white/95 backdrop-blur-xl p-6 rounded-[2.5rem] card-shadow space-y-5 border border-white">
                     <div class="space-y-1">
                         <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Thông tin khách hàng</label>
-                        <input type="text" id="inName" placeholder="HỌ VÀ TÊN KHÁCH" class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl font-bold uppercase outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all text-sm">
+                        <input type="text" id="inName" placeholder="HỌ VÀ TÊN KHÁCH" class="mobile-input w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl font-bold uppercase outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all text-sm">
                     </div>
                     <div class="space-y-1">
                         <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Số phòng</label>
                         <div class="relative">
-                            <input type="number" id="inRoom" oninput="autoCheckRoom(this.value)" placeholder="000" class="w-full p-5 bg-slate-50 border border-slate-100 rounded-2xl font-black text-4xl outline-none focus:border-red-500 transition-all text-center">
+                            <input type="number" id="inRoom" oninput="autoCheckRoom(this.value)" placeholder="000" class="mobile-input w-full p-5 bg-slate-50 border border-slate-100 rounded-2xl font-black text-4xl outline-none focus:border-red-500 transition-all text-center">
                             <div id="roomBadge" class="absolute right-4 top-1/2 -translate-y-1/2 hidden bg-viettel text-white text-[9px] px-3 py-1.5 rounded-full font-black uppercase shadow-sm">VIP</div>
                         </div>
                     </div>
@@ -405,25 +545,25 @@
                         <div id="assetList" class="max-h-[280px] overflow-y-auto pr-1 space-y-1 bg-slate-50 p-2 rounded-2xl border border-dashed border-slate-200"></div>
                     </div>
 
-                    <textarea id="inNote" placeholder="Lớp/Sự kiện (VD: Đào tạo Viettel T5)..." class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl text-xs outline-none focus:border-red-500" rows="2"></textarea>
+                    <textarea id="inNote" placeholder="Lớp/Sự kiện (VD: Đào tạo Viettel T5)..." class="mobile-input w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl text-xs outline-none focus:border-red-500" rows="2"></textarea>
                     
-                    <button id="btnIn" onclick="handleIn()" class="w-full bg-viettel py-5 rounded-2xl font-black shadow-xl uppercase text-xs tracking-widest active:scale-[0.98] transition-all">Xác nhận nhận phòng</button>
+                    <button id="btnIn" onclick="handleIn()" class="mobile-primary-btn w-full bg-viettel py-5 rounded-2xl font-black shadow-xl uppercase text-xs tracking-widest active:scale-[0.98] transition-all">Xác nhận nhận phòng</button>
                     <button onclick="resetApp()" class="w-full text-slate-400 font-bold text-[10px] uppercase py-2 hover:text-slate-600">Hủy bỏ & Quay lại</button>
                 </div>
             </section>
 
             <section id="checkOutView" class="hidden space-y-4 animate-fade">
-                <div class="bg-white/95 backdrop-blur-xl p-8 rounded-[3rem] card-shadow text-center space-y-6 border border-white">
+                <div class="view-card mobile-card bg-white/95 backdrop-blur-xl p-8 rounded-[3rem] card-shadow text-center space-y-6 border border-white">
                     <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto text-slate-400">
                         <i class="fas fa-door-open text-3xl"></i>
                     </div>
                     <div class="space-y-4">
-                        <input type="text" id="outName" placeholder="TÊN NGƯỜI TRẢ" class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl font-bold text-center uppercase outline-none focus:border-red-500 text-sm">
-                        <input type="number" id="outRoom" placeholder="SỐ PHÒNG" class="w-full p-5 bg-slate-50 border border-slate-100 rounded-2xl font-black text-5xl text-center outline-none focus:border-red-500 text-viettel">
+                        <input type="text" id="outName" placeholder="TÊN NGƯỜI TRẢ" class="mobile-input w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl font-bold text-center uppercase outline-none focus:border-red-500 text-sm">
+                        <input type="number" id="outRoom" placeholder="SỐ PHÒNG" class="mobile-input w-full p-5 bg-slate-50 border border-slate-100 rounded-2xl font-black text-5xl text-center outline-none focus:border-red-500 text-viettel">
                     </div>
                     <p class="text-[11px] text-slate-400 font-medium px-4 leading-relaxed">Đảm bảo tắt các thiết bị điện và gửi lại chìa khóa cho quản lý.</p>
                     
-                    <button id="btnOut" onclick="handleOut()" class="w-full bg-viettel py-5 rounded-2xl font-black shadow-xl uppercase text-xs tracking-widest active:scale-[0.98] transition-all">Xác nhận trả phòng</button>
+                    <button id="btnOut" onclick="handleOut()" class="mobile-primary-btn w-full bg-viettel py-5 rounded-2xl font-black shadow-xl uppercase text-xs tracking-widest active:scale-[0.98] transition-all">Xác nhận trả phòng</button>
                     <button onclick="resetApp()" class="w-full text-slate-400 font-bold text-[10px] uppercase py-2 hover:text-slate-600">Quay lại</button>
                 </div>
             </section>
@@ -484,10 +624,10 @@
                     <h3 class="font-black uppercase text-slate-800 tracking-widest text-sm">Quyền quản lý</h3>
                     <p class="text-[10px] text-slate-400 font-bold mt-1 uppercase">Nhập mã PIN để tiếp tục</p>
                 </div>
-                <input type="password" id="pinInput" maxlength="6" placeholder="••••••" class="w-full text-center tracking-[0.8em] font-black text-3xl p-5 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-2 focus:ring-red-500/20 transition-all">
+                <input type="password" id="pinInput" maxlength="6" placeholder="••••••" class="mobile-input w-full text-center tracking-[0.8em] font-black text-3xl p-5 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-2 focus:ring-red-500/20 transition-all">
                 <div class="flex gap-3">
                     <button onclick="closePinModal()" class="flex-1 p-4 bg-slate-100 text-slate-500 font-black text-xs rounded-2xl hover:bg-slate-200 transition-all">HỦY</button>
-                    <button onclick="verifyPin()" class="flex-1 p-4 bg-viettel font-black text-xs rounded-2xl shadow-lg shadow-red-200 active:scale-95 transition-all">XÁC NHẬN</button>
+                    <button onclick="verifyPin()" class="mobile-primary-btn flex-1 p-4 bg-viettel font-black text-xs rounded-2xl shadow-lg shadow-red-200 active:scale-95 transition-all">XÁC NHẬN</button>
                 </div>
             </div>
         </div>
@@ -508,7 +648,7 @@
                 <div id="qr-reader" class="w-full min-h-[200px] flex items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-slate-300 bg-slate-50"></div>
                 <div class="pt-2 border-t border-slate-100 text-left">
                     <p class="text-[9px] text-slate-400 font-bold uppercase mb-2">Hoặc tải ảnh mã QR lên</p>
-                    <input type="file" id="qr-upload" accept="image/*" class="w-full text-xs file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-red-50 file:text-viettel hover:file:bg-red-100 cursor-pointer" onchange="scanImage(event)">
+                    <input type="file" id="qr-upload" accept="image/*" class="mobile-input w-full text-xs file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-red-50 file:text-viettel hover:file:bg-red-100 cursor-pointer" onchange="scanImage(event)">
                 </div>
                 <button onclick="closeQRScanner()" class="w-full p-4 bg-slate-100 text-slate-500 font-black text-xs rounded-2xl hover:bg-slate-200 transition-all mt-2">ĐÓNG BẢNG QUÉT</button>
             </div>
@@ -531,7 +671,7 @@
     <script>
         // Cấu hình mạng thực tế
         const cfg = {
-            sheet: "https://script.google.com/macros/s/AKfycbxlDH-D7CuLX8fiZJFrf6KAAyShxD5w0wXC0LgKd1qFdIIwUJ1ncxs7ME6TR-YvT-ZZ/exec",
+            sheet: "https://script.google.com/macros/s/AKfycby1aEf9e1_OgSR6OIcSuZ1CBdlqNDJ0Dv9GA9Von0e34II7UZDmpPt68M4c0iSF4NJJ/exec",
             token: "",
             chat: "",
             pin: "271020"
@@ -803,7 +943,7 @@
                             <span class="text-[11px] font-bold text-slate-700">${i+1}. ${a.n}</span>
                             <span class="text-[9px] font-black text-slate-400 uppercase mt-0.5">Quy định: ${qty}</span>
                         </div>
-                        <input type="checkbox" value="${a.n}" class="asset-checkbox accent-red-600 rounded-md w-5 h-5 cursor-pointer" onclick="event.stopPropagation()">
+                        <input type="checkbox" value="${a.n}" class="mobile-input asset-checkbox accent-red-600 rounded-md w-5 h-5 cursor-pointer" onclick="event.stopPropagation()">
                     </div>`;
             });
         }
@@ -1083,7 +1223,22 @@
 
         // Đã gỡ khối FIX/UPGRADE V4 bị trùng hàm submitFeedback/handleIn/handleOut gây lỗi đánh giá.
 
+document.addEventListener('DOMContentLoaded', function () {
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code') || params.get('stayCode') || params.get('id');
 
+  if (code) {
+    const input = document.getElementById('searchEmpId');
+    if (input) {
+      input.value = code;
+      setTimeout(function () {
+        if (typeof searchRoom === 'function') {
+          searchRoom();
+        }
+      }, 700);
+    }
+  }
+});
     </script>
 </body>
 </html>
