@@ -671,7 +671,7 @@
     <script>
         // Cấu hình mạng thực tế
    const cfg = {
-    sheet: "https://script.google.com/macros/s/AKfycby1aEf9e1_OgSR6OIcSuZ1CBdlqNDJ0Dv9GA9Von0e34II7UZDmpPt68M4c0iSF4NJJ/exec",
+    sheet: "https://script.google.com/macros/s/AKfycbwkQDZCn8xTJZjWnGSVv2PXJeK3EqvL2kL4CBeWhhZ6RAD8JOLGjdsjTZbuCJbjzZF2/exec",
     token: "",
     chat: "",
     pin: "271020"
@@ -694,13 +694,26 @@
         }
 
         function postApi(payload) {
-            return fetch(cfg.sheet, {
-                method: "POST",
-                mode: "no-cors",
-                body: JSON.stringify(payload)
-            }).catch(function(e) {
-                console.log("API chạy nền lỗi:", e);
-            });
+            // Gửi thao tác thật về Apps Script bằng GET để tránh lỗi POST no-cors.
+            // Backend đã hỗ trợ checkIn/checkOut/feedback/cleanRoom trong doGet.
+            try {
+                const url = new URL(cfg.sheet);
+                Object.keys(payload || {}).forEach(function(k) {
+                    url.searchParams.set(k, payload[k] == null ? "" : payload[k]);
+                });
+                url.searchParams.set("_t", Date.now());
+
+                return fetch(url.toString(), {
+                    method: "GET",
+                    mode: "no-cors",
+                    cache: "no-store"
+                }).catch(function(e) {
+                    console.log("API chạy nền lỗi:", e);
+                });
+            } catch (e) {
+                console.log("Không tạo được URL API:", e);
+                return Promise.resolve();
+            }
         }
 
         function apiUrl(params) {
@@ -809,9 +822,9 @@
                 isGuestListLoaded = true;
             } catch (e) {
                 console.log("Lỗi tải danh sách từ Sheets:", e);
-                // Giữ lại mock dự phòng để app không bị treo nếu Google đứt cáp
-                guestList = [{ id: "V123", name: "NGUYỄN VĂN A", room: "201", in: "Hôm nay", out: "Ngày mai" }];
-                isGuestListLoaded = true;
+                guestList = [];
+                isGuestListLoaded = false;
+                throw e;
             }
         }
         document.addEventListener('DOMContentLoaded', preloadGuestList);
@@ -854,19 +867,51 @@
 
         async function searchRoom() {
             const searchInput = document.getElementById('searchEmpId').value.trim().toUpperCase();
-            if(!searchInput) return showInfo("Thiếu thông tin", "Vui lòng nhập Mã Nhân Viên hoặc Tên!");
-            
+            if(!searchInput) return showInfo("Thiếu thông tin", "Vui lòng nhập Mã / Tên / Số phòng / Mã đoàn!");
+
             setLoading(true);
-            if (!isGuestListLoaded) {
-                try { await preloadGuestList(); } 
-                catch (e) {
-                    setLoading(false);
-                    return showInfo("Lỗi kết nối", "Tín hiệu mạng không ổn định. Vui lòng thử lại.", "error");
-                }
+            try {
+                // Luôn tải lại dữ liệu mới nhất từ DanhSachKhach mỗi lần tìm.
+                await preloadGuestList();
+            } catch (e) {
+                setLoading(false);
+                return showInfo("Lỗi kết nối", "Không tải được DanhSachKhach từ Google Sheets. Vui lòng thử lại.", "error");
             }
             setLoading(false);
 
-            const guest = guestList.find(function(g) { return g.id === searchInput || g.name.includes(searchInput); });
+            function normalizeText(v) {
+                return String(v || '')
+                    .toUpperCase()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .replace(/Đ/g, 'D')
+                    .replace(/đ/g, 'd')
+                    .replace(/\s+/g, ' ')
+                    .trim();
+            }
+
+            const q = normalizeText(searchInput);
+
+            const guest = guestList.find(function(g) {
+                const haystack = [
+                    g.id,
+                    g.name,
+                    g.room,
+                    g.in,
+                    g.out,
+                    g.event,
+                    g.note,
+                    g.lopSuKien,
+                    g.detail,
+                    g.raw,
+                    g.searchText
+                ].map(normalizeText).join(' | ');
+
+                return normalizeText(g.id) === q ||
+                       normalizeText(g.room) === q ||
+                       haystack.includes(q);
+            });
+
             if(guest) {
                 currentUser = guest;
                 document.getElementById('resName').innerText = guest.name || '';
@@ -875,7 +920,7 @@
                 document.getElementById('lookupResult').classList.remove('hidden');
             } else {
                 document.getElementById('lookupResult').classList.add('hidden');
-                showInfo("Không tìm thấy", "Không tìm thấy dữ liệu trong danh sách phân phòng (Google Sheets) hôm nay.");
+                showInfo("Không tìm thấy", "Không tìm thấy mã/tên/phòng này trong DanhSachKhach. Kiểm tra lại mã hoặc cập nhật danh sách khách trên Sheet.");
             }
         }
 
