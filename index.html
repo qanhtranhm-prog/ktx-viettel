@@ -669,13 +669,16 @@
     </div>
 
     <script>
-        // Cấu hình mạng thực tế
-   const cfg = {
-    sheet: "https://script.google.com/macros/s/AKfycby1aEf9e1_OgSR6OIcSuZ1CBdlqNDJ0Dv9GA9Von0e34II7UZDmpPt68M4c0iSF4NJJ/exec",
-    token: "",
-    chat: "",
-    pin: "271020"
-};
+        // ==========================================
+        // CẤU HÌNH HỆ THỐNG VIETTEL STAYHUB
+        // ==========================================
+        const cfg = {
+            // Dán link Web App (Google Apps Script) của bạn vào dòng dưới đây
+            sheet: "https://script.google.com/macros/s/AKfycbwkQDZCn8xTJZjWnGSVv2PXJeK3EqvL2kL4CBeWhhZ6RAD8JOLGjdsjTZbuCJbjzZF2/exec",
+            token: "",
+            chat: "",
+            pin: "271020"
+        };
 
         let db = null;
         let currentUser = null;
@@ -693,9 +696,8 @@
             return [prefix, room, (name || '').replace(/\s+/g,''), Date.now(), Math.floor(Math.random()*100000)].join('-').toUpperCase();
         }
 
+        // ĐỒNG BỘ HÓA SANG DO-GET ĐỂ KHÔNG BỊ CHẶN LỖI NO-CORS TRÊN TRÌNH DUYỆT
         function postApi(payload) {
-            // Gửi thao tác thật về Apps Script bằng GET để tránh lỗi POST no-cors.
-            // Backend đã hỗ trợ checkIn/checkOut/feedback/cleanRoom trong doGet.
             try {
                 const url = new URL(cfg.sheet);
                 Object.keys(payload || {}).forEach(function(k) {
@@ -743,8 +745,6 @@
             { n: "Đèn học", q: "P" } 
         ];
 
-        // DEMO OFFLINE: không khởi tạo Firebase để tránh lỗi đỏ Console khi chạy GitHub/demo.
-        // Khi triển khai thật, nên đưa Firebase/Google Sheet API qua backend hoặc Apps Script bảo mật.
         db = null;
 
         function setLoading(state) {
@@ -770,7 +770,6 @@
             window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
-        /* ----- HÀM MỞ/ĐÓNG MÃ PIN (VỪA ĐƯỢC BỔ SUNG) ----- */
         function showPinModal() {
             document.getElementById('pinModal').classList.remove('hidden');
             document.getElementById('pinModal').classList.add('flex');
@@ -782,7 +781,6 @@
             document.getElementById('pinModal').classList.add('hidden');
             document.getElementById('pinModal').classList.remove('flex');
         }
-        /* ------------------------------------------------- */
 
         function resetApp() {
             document.getElementById('searchEmpId').value = '';
@@ -803,7 +801,6 @@
             showView('homeView');
         }
 
-        // TĂNG TIMEOUT LÊN 10 GIÂY ĐỂ ĐẢM BẢO MẠNG YẾU VẪN TẢI ĐƯỢC
         async function fetchWithTimeout(resource, options = {}) {
             const timeout = 10000; 
             const controller = new AbortController();
@@ -813,10 +810,8 @@
             return response;
         }
 
-        // TẢI DỮ LIỆU THỰC TẾ & CHỐNG LƯU CACHE CỦA TRÌNH DUYỆT (Lỗi máy tra được máy không)
         async function preloadGuestList() {
             try {
-                // &_t=Date.now() bắt buộc trình duyệt phải lấy dữ liệu mới nhất
                 const res = await fetchWithTimeout(`${cfg.sheet}?type=getGuests&_t=${Date.now()}`);
                 guestList = await res.json();
                 isGuestListLoaded = true;
@@ -829,7 +824,6 @@
         }
         document.addEventListener('DOMContentLoaded', preloadGuestList);
 
-        // ĐÁNH GIÁ (Gửi lên Sheet Thực tế)
         function setRating(stars) {
             currentRating = stars;
             const labels = ["Rất tệ", "Tệ", "Bình thường", "Tốt", "Tuyệt vời"];
@@ -871,7 +865,6 @@
 
             setLoading(true);
             try {
-                // Luôn tải lại dữ liệu mới nhất từ DanhSachKhach mỗi lần tìm.
                 await preloadGuestList();
             } catch (e) {
                 setLoading(false);
@@ -940,7 +933,6 @@
             roomInput.readOnly = true;
             roomInput.classList.add('bg-slate-200', 'text-slate-500');
 
-            // Mang theo Lớp học/Sự kiện từ dữ liệu khách đã tra cứu sang form nhận phòng.
             const eventText =
                 (currentUser && currentUser.event) ||
                 (currentUser && currentUser.note) ||
@@ -993,7 +985,6 @@
             });
         }
 
-        // CHẠY API NHẬN PHÒNG THỰC TẾ
         function handleIn() {
             const btn = document.getElementById('btnIn');
             if (btn && btn.dataset.busy === "1") return;
@@ -1015,7 +1006,6 @@
 
             setLoading(true);
 
-            // Ưu tiên trải nghiệm khách: gửi API chạy nền, báo thành công nhanh trong khoảng 1 giây.
             postApi({ 
                 type: "NHẬN PHÒNG",
                 room: room,
@@ -1038,7 +1028,6 @@
             }, 700);
         }
 
-        // CHẠY API TRẢ PHÒNG THỰC TẾ
         function handleOut() {
             const btn = document.getElementById('btnOut');
             if (btn && btn.dataset.busy === "1") return;
@@ -1122,6 +1111,7 @@
             }
         }
 
+        // ĐẾM THỰC TẾ SỐ PHÒNG
         function updateStats() {
             const totalRooms = 159; 
             const entries = Object.values(occupiedRooms);
@@ -1210,7 +1200,6 @@
             const detail = `${label}: ${data.note || data.occupant || data.name || 'Đang cập nhật'}`;
             showInfo(`Phòng ${roomNo}`, detail, status === 'occupied' ? 'info' : 'error');
 
-            // Với phòng cần dọn/trả trễ, hỏi nhanh để chuyển về phòng trống sau khi đã dọn.
             if (status === 'dirty' || status === 'late') {
                 setTimeout(function(){
                     if(confirm(`Xác nhận phòng ${roomNo} đã dọn xong và chuyển về TRỐNG?`)) {
@@ -1229,7 +1218,7 @@
             setTimeout(function(){ refreshAdminFromSheet(false); }, 1200);
         }
 
-        // QR SCANNER MODULE
+        // QUÉT QR
         function openQRScanner() {
             document.getElementById('qrModal').classList.remove('hidden'); document.getElementById('qrModal').classList.add('flex');
             document.getElementById('qr-upload').value = ""; 
@@ -1265,25 +1254,22 @@
             closeQRScanner(); searchRoom();
         }
 
+        document.addEventListener('DOMContentLoaded', function () {
+            const params = new URLSearchParams(window.location.search);
+            const code = params.get('code') || params.get('stayCode') || params.get('id');
 
-        // Đã gỡ khối FIX/UPGRADE V4 bị trùng hàm submitFeedback/handleIn/handleOut gây lỗi đánh giá.
-
-document.addEventListener('DOMContentLoaded', function () {
-  const params = new URLSearchParams(window.location.search);
-  const code = params.get('code') || params.get('stayCode') || params.get('id');
-
-  if (code) {
-    const input = document.getElementById('searchEmpId');
-    if (input) {
-      input.value = code;
-      setTimeout(function () {
-        if (typeof searchRoom === 'function') {
-          searchRoom();
-        }
-      }, 700);
-    }
-  }
-});
+            if (code) {
+                const input = document.getElementById('searchEmpId');
+                if (input) {
+                    input.value = code;
+                    setTimeout(function () {
+                        if (typeof searchRoom === 'function') {
+                            searchRoom();
+                        }
+                    }, 700);
+                }
+            }
+        });
     </script>
 </body>
 </html>
