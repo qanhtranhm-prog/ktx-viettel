@@ -696,26 +696,73 @@
             return [prefix, room, (name || '').replace(/\s+/g,''), Date.now(), Math.floor(Math.random()*100000)].join('-').toUpperCase();
         }
 
-        // ĐỒNG BỘ HÓA SANG DO-GET ĐỂ KHÔNG BỊ CHẶN LỖI NO-CORS TRÊN TRÌNH DUYỆT
-        function postApi(payload) {
+        // Gửi dữ liệu lên Google Apps Script và đợi kết quả thật từ Sheet.
+        async function postApi(payload) {
             try {
+                return await apiRequest(payload || {});
+            } catch (e) {
+                console.log("API lỗi:", e);
+                throw e;
+            }
+        }
+
+        async function apiRequest(params) {
+            const url = new URL(cfg.sheet);
+            Object.keys(params || {}).forEach(function(k) {
+                url.searchParams.set(k, params[k] == null ? "" : params[k]);
+            });
+            url.searchParams.set("_t", Date.now());
+
+            try {
+                const response = await fetchWithTimeout(url.toString(), { method: "GET", cache: "no-store" });
+                const data = await response.json();
+                if (data && data.status === "error") throw new Error(data.message || "Google Sheet báo lỗi");
+                return data;
+            } catch (fetchError) {
+                console.log("Fetch thường lỗi, chuyển sang JSONP:", fetchError);
+                return await jsonpRequest(params || {});
+            }
+        }
+
+        function jsonpRequest(params) {
+            return new Promise(function(resolve, reject) {
+                const callbackName = "ktxCallback_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
                 const url = new URL(cfg.sheet);
-                Object.keys(payload || {}).forEach(function(k) {
-                    url.searchParams.set(k, payload[k] == null ? "" : payload[k]);
+                Object.keys(params || {}).forEach(function(k) {
+                    url.searchParams.set(k, params[k] == null ? "" : params[k]);
                 });
+                url.searchParams.set("callback", callbackName);
                 url.searchParams.set("_t", Date.now());
 
-                return fetch(url.toString(), {
-                    method: "GET",
-                    mode: "no-cors",
-                    cache: "no-store"
-                }).catch(function(e) {
-                    console.log("API chạy nền lỗi:", e);
-                });
-            } catch (e) {
-                console.log("Không tạo được URL API:", e);
-                return Promise.resolve();
-            }
+                const script = document.createElement("script");
+                const timer = setTimeout(function() {
+                    cleanup();
+                    reject(new Error("Google Sheet phản hồi quá lâu"));
+                }, 15000);
+
+                function cleanup() {
+                    clearTimeout(timer);
+                    if (script.parentNode) script.parentNode.removeChild(script);
+                    try { delete window[callbackName]; } catch (e) { window[callbackName] = undefined; }
+                }
+
+                window[callbackName] = function(data) {
+                    cleanup();
+                    if (data && data.status === "error") {
+                        reject(new Error(data.message || "Google Sheet báo lỗi"));
+                    } else {
+                        resolve(data);
+                    }
+                };
+
+                script.onerror = function() {
+                    cleanup();
+                    reject(new Error("Không kết nối được Google Sheet"));
+                };
+
+                script.src = url.toString();
+                document.body.appendChild(script);
+            });
         }
 
         function apiUrl(params) {
@@ -812,8 +859,7 @@
 
         async function preloadGuestList() {
             try {
-                const res = await fetchWithTimeout(`${cfg.sheet}?type=getGuests&_t=${Date.now()}`);
-                guestList = await res.json();
+                guestList = await apiRequest({ type: "getGuests" });
                 isGuestListLoaded = true;
             } catch (e) {
                 console.log("Lỗi tải danh sách từ Sheets:", e);
@@ -838,7 +884,7 @@
             }
         }
 
-        function submitFeedback() {
+        async function submitFeedback() {
             const room = document.getElementById('fbRoom').value;
             const name = document.getElementById('fbName').value || "Ẩn danh";
             const note = document.getElementById('fbNote').value || "Không có phản hồi thêm";
@@ -849,14 +895,17 @@
             if (btn) { btn.disabled = true; btn.innerText = "ĐANG GỬI..."; }
             setLoading(true);
 
-            postApi({ type: "ĐÁNH GIÁ", room: room, name: name, rating: currentRating, note: note, txnId: makeTxnId('FB', room, name) });
-
-            setTimeout(function() {
+            try {
+                await postApi({ type: "ĐÁNH GIÁ", room: room, name: name, rating: currentRating, note: note, txnId: makeTxnId('FB', room, name) });
                 setLoading(false);
                 showInfo("Cảm ơn bạn!", "Đánh giá của bạn đã được ghi nhận và gửi đến Ban Quản Lý.", 'success');
                 if (btn) { btn.disabled = false; btn.innerText = "GỬI ĐÁNH GIÁ"; }
                 setTimeout(function() { document.getElementById('infoModal').classList.add('hidden'); resetApp(); }, 2200);
-            }, 500);
+            } catch (e) {
+                setLoading(false);
+                if (btn) { btn.disabled = false; btn.innerText = "GỬI ĐÁNH GIÁ"; }
+                showInfo("Chưa gửi được", e.message || "Không kết nối được Google Sheet. Vui lòng thử lại.", "error");
+            }
         }
 
         async function searchRoom() {
@@ -985,7 +1034,7 @@
             });
         }
 
-        function handleIn() {
+        async function handleIn() {
             const btn = document.getElementById('btnIn');
             if (btn && btn.dataset.busy === "1") return;
             if (btn) { btn.dataset.busy = "1"; btn.disabled = true; btn.innerText = "ĐANG GHI NHẬN..."; }
@@ -1006,17 +1055,16 @@
 
             setLoading(true);
 
-            postApi({ 
-                type: "NHẬN PHÒNG",
-                room: room,
-                name: name,
-                note: note,
-                brokenAssets: finalBrokenText,
-                roomType: document.getElementById('roomBadge').innerText || "Thường",
-                txnId: txnId
-            });
-
-            setTimeout(function() {
+            try {
+                await postApi({ 
+                    type: "NHẬN PHÒNG",
+                    room: room,
+                    name: name,
+                    note: note,
+                    brokenAssets: finalBrokenText,
+                    roomType: document.getElementById('roomBadge').innerText || "Thường",
+                    txnId: txnId
+                });
                 setLoading(false);
                 showInfo("Thành công", "Đã ghi nhận! Bạn có thể về phòng.", 'success');
                 if (btn) { btn.dataset.busy = "0"; btn.disabled = false; btn.innerText = "XÁC NHẬN NHẬN PHÒNG"; }
@@ -1025,10 +1073,14 @@
                     resetApp();
                     refreshAdminFromSheet(false);
                 }, 1800);
-            }, 700);
+            } catch (e) {
+                setLoading(false);
+                if (btn) { btn.dataset.busy = "0"; btn.disabled = false; btn.innerText = "XÁC NHẬN NHẬN PHÒNG"; }
+                showInfo("Chưa ghi nhận được", e.message || "Không kết nối được Google Sheet. Vui lòng thử lại.", "error");
+            }
         }
 
-        function handleOut() {
+        async function handleOut() {
             const btn = document.getElementById('btnOut');
             if (btn && btn.dataset.busy === "1") return;
             if (btn) { btn.dataset.busy = "1"; btn.disabled = true; btn.innerText = "ĐANG GHI NHẬN..."; }
@@ -1043,9 +1095,8 @@
             setLoading(true);
             const txnId = makeTxnId('OUT', room, name);
 
-            postApi({ type: "TRẢ PHÒNG", room: room, name: name, txnId: txnId });
-
-            setTimeout(function() {
+            try {
+                await postApi({ type: "TRẢ PHÒNG", room: room, name: name, txnId: txnId });
                 setLoading(false);
                 showInfo("Thành công", "Yêu cầu trả phòng đã được ghi nhận. Phòng sẽ chuyển sang trạng thái cần dọn.", 'success');
                 if (btn) { btn.dataset.busy = "0"; btn.disabled = false; btn.innerText = "XÁC NHẬN TRẢ PHÒNG"; }
@@ -1054,7 +1105,11 @@
                     resetApp();
                     refreshAdminFromSheet(false);
                 }, 1800);
-            }, 700);
+            } catch (e) {
+                setLoading(false);
+                if (btn) { btn.dataset.busy = "0"; btn.disabled = false; btn.innerText = "XÁC NHẬN TRẢ PHÒNG"; }
+                showInfo("Chưa ghi nhận được", e.message || "Không kết nối được Google Sheet. Vui lòng thử lại.", "error");
+            }
         }
 
         function verifyPin() {
@@ -1080,8 +1135,7 @@
         async function refreshAdminFromSheet(showSpin) {
             try {
                 if (showSpin) setLoading(true);
-                const res = await fetch(apiUrl({ type: "getOccupied" }));
-                const data = await res.json();
+                const data = await apiRequest({ type: "getOccupied" });
                 occupiedRooms = {};
                 const rooms = data.rooms || data || [];
                 rooms.forEach(function(r) {
@@ -1209,13 +1263,20 @@
             }
         }
 
-        function cleanRoom(roomNo) {
-            postApi({ type: "cleanRoom", room: roomNo, name: "Quản lý", txnId: makeTxnId('CLEAN', roomNo, 'QL') });
-            delete occupiedRooms[roomNo];
-            renderAdmin();
-            updateStats();
-            showInfo("Đã cập nhật", `Phòng ${roomNo} đã chuyển về trạng thái trống.`, 'success');
-            setTimeout(function(){ refreshAdminFromSheet(false); }, 1200);
+        async function cleanRoom(roomNo) {
+            setLoading(true);
+            try {
+                await postApi({ type: "cleanRoom", room: roomNo, name: "Quản lý", txnId: makeTxnId('CLEAN', roomNo, 'QL') });
+                delete occupiedRooms[roomNo];
+                renderAdmin();
+                updateStats();
+                showInfo("Đã cập nhật", `Phòng ${roomNo} đã chuyển về trạng thái trống.`, 'success');
+                setTimeout(function(){ refreshAdminFromSheet(false); }, 1200);
+            } catch (e) {
+                showInfo("Chưa cập nhật được", e.message || "Không kết nối được Google Sheet. Vui lòng thử lại.", "error");
+            } finally {
+                setLoading(false);
+            }
         }
 
         // QUÉT QR
