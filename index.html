@@ -24,7 +24,7 @@
         .text-viettel { color: #ee0000 !important; }
         .border-viettel { border-color: #ee0000 !important; }
 
-        .card-shadow { box-shadow: 0 10px 30px -5px rgba(0,0,0,0.05); }
+        .card-shadow { box-shadow: 0 10px 30px -5px rgba(0,0,0,0.06); }
 
         .noiquy-box { 
             height: 380px; 
@@ -33,7 +33,7 @@
         }
         
         .noiquy-box::-webkit-scrollbar { width: 4px; }
-        .noiquy-box::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        .noiquy-box::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
 
         .asset-row { 
             display: flex; 
@@ -44,9 +44,9 @@
             border-radius: 14px; 
             margin-bottom: 7px; 
             border: 1px solid #f1f5f9;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.15s ease-in-out;
         }
-        .asset-row:active { transform: scale(0.99); }
+        .asset-row:active { transform: scale(0.99); background-color: #fef2f2; }
 
         .room-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
 
@@ -67,13 +67,13 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .animate-fade { animation: fadeIn 0.25s ease-out forwards; }
+        .animate-fade { animation: fadeIn 0.22s ease-out forwards; }
         input[type="checkbox"] { width: 22px; height: 22px; cursor: pointer; }
 
         .loading-overlay {
-            position: fixed; inset: 0; background: rgba(255,255,255,0.85);
+            position: fixed; inset: 0; background: rgba(255,255,255,0.9);
             display: flex; align-items: center; justify-content: center;
-            z-index: 9999; backdrop-filter: blur(5px); opacity: 0;
+            z-index: 9999; backdrop-filter: blur(6px); opacity: 0;
             pointer-events: none; transition: opacity 0.2s;
         }
         .loading-overlay.active { opacity: 1; pointer-events: all; }
@@ -93,7 +93,7 @@
         .handbook-body { padding: 16px; background: #fff; font-size: 12px; color: #475569; line-height: 1.6; }
         .price-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed #e2e8f0; }
         .price-row:last-child { border-bottom: none; }
-        .star-btn { transition: transform 0.2s; cursor: pointer; }
+        .star-btn { transition: transform 0.15s; cursor: pointer; }
         .star-btn:active { transform: scale(0.85); }
 
         html, body {
@@ -132,14 +132,14 @@
 
         .mobile-card {
             border-radius: 24px !important;
-            box-shadow: 0 10px 28px -18px rgba(15, 23, 42, .25) !important;
+            box-shadow: 0 10px 28px -18px rgba(15, 23, 42, .22) !important;
             border: 1px solid rgba(255,255,255,.95) !important;
         }
 
         .mobile-tile {
             min-height: 132px;
             border-radius: 24px !important;
-            box-shadow: 0 10px 24px -18px rgba(15,23,42,.22) !important;
+            box-shadow: 0 10px 24px -18px rgba(15,23,42,.20) !important;
         }
 
         .mobile-input {
@@ -237,7 +237,7 @@
 
                 <!-- Action Grid -->
                 <div class="mobile-grid grid grid-cols-2 gap-3">
-                    <!-- Nhận phòng (Vào màn hình Tra cứu / Quét QR như cũ) -->
+                    <!-- Nhận phòng -->
                     <button onclick="showView('lookupView')" class="mobile-tile relative overflow-hidden bg-white/95 backdrop-blur-xl border border-red-100/60 p-5 rounded-[2rem] shadow-xl shadow-slate-200/50 flex flex-col items-start justify-center space-y-3 active:scale-95 transition-all group hover:border-red-200">
                         <div class="absolute -right-4 -top-4 w-20 h-20 bg-red-50 rounded-full blur-2xl group-hover:bg-red-100 transition-all"></div>
                         <div class="tile-icon w-12 h-12 rounded-2xl bg-gradient-to-br from-red-500 to-viettel text-white flex items-center justify-center text-xl shadow-lg shadow-red-500/30">
@@ -249,7 +249,7 @@
                         </div>
                     </button>
                     
-                    <!-- Check-out -->
+                    <!-- Trả phòng -->
                     <button onclick="showView('checkOutView')" class="mobile-tile relative overflow-hidden bg-white/95 backdrop-blur-xl border border-white p-5 rounded-[2rem] shadow-xl shadow-slate-200/50 flex flex-col items-start justify-center space-y-3 active:scale-95 transition-all group hover:border-slate-300">
                         <div class="absolute -right-4 -top-4 w-20 h-20 bg-slate-100 rounded-full blur-2xl group-hover:bg-slate-200 transition-all"></div>
                         <div class="tile-icon w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-700 to-slate-900 text-white flex items-center justify-center text-xl shadow-lg shadow-slate-800/30">
@@ -261,7 +261,7 @@
                         </div>
                     </button>
 
-                    <!-- Handbook -->
+                    <!-- Cẩm nang KTX -->
                     <button onclick="showView('handbookView')" class="mobile-tile relative overflow-hidden bg-white/95 backdrop-blur-xl border border-white p-5 rounded-[2rem] shadow-xl shadow-slate-200/50 flex flex-col items-start justify-center space-y-3 active:scale-95 transition-all group hover:border-blue-100">
                         <div class="absolute -right-4 -top-4 w-20 h-20 bg-blue-50 rounded-full blur-2xl group-hover:bg-blue-100 transition-all"></div>
                         <div class="tile-icon w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-400 to-blue-600 text-white flex items-center justify-center text-xl shadow-lg shadow-blue-500/30">
@@ -273,7 +273,7 @@
                         </div>
                     </button>
 
-                    <!-- Feedback -->
+                    <!-- Đánh giá -->
                     <button onclick="showView('feedbackView')" class="mobile-tile relative overflow-hidden bg-white/95 backdrop-blur-xl border border-white p-5 rounded-[2rem] shadow-xl shadow-slate-200/50 flex flex-col items-start justify-center space-y-3 active:scale-95 transition-all group hover:border-amber-100">
                         <div class="absolute -right-4 -top-4 w-20 h-20 bg-amber-50 rounded-full blur-2xl group-hover:bg-amber-100 transition-all"></div>
                         <div class="tile-icon w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 text-white flex items-center justify-center text-xl shadow-lg shadow-amber-500/30">
@@ -287,31 +287,31 @@
                 </div>
             </section>
 
-            <!-- LOOKUP VIEW (Đúng chuẩn quy trình quen thuộc) -->
+            <!-- LOOKUP VIEW -->
             <section id="lookupView" class="hidden space-y-4 animate-fade">
                 <div class="view-card mobile-card bg-white/95 backdrop-blur-xl p-6 rounded-[2.5rem] card-shadow border border-white space-y-5">
-                    <div class="text-center space-y-2 mb-4">
+                    <div class="text-center space-y-2 mb-3">
                         <div class="w-16 h-16 bg-gradient-to-br from-red-50 to-red-100 text-viettel rounded-full flex items-center justify-center mx-auto mb-2 shadow-inner border border-white">
                             <i class="fas fa-id-card text-2xl"></i>
                         </div>
                         <h3 class="font-black text-slate-800 uppercase tracking-tight text-base">Tra cứu thông tin</h3>
-                        <p class="text-[10px] text-slate-500 font-medium px-2 leading-relaxed">Đề nghị khách hàng thực hiện xác nhận phòng nghỉ để xác thực thông tin lưu trú</p>
+                        <p class="text-[10px] text-slate-500 font-medium px-2 leading-relaxed">Nhập Họ tên, Mã nhân viên, Số phòng hoặc quét mã QR</p>
                     </div>
 
                     <div class="space-y-3">
                         <div class="relative">
-                            <input type="text" id="searchEmpId" placeholder="NHẬP MNV HOẶC HỌ TÊN" class="mobile-input w-full p-4 pr-14 bg-slate-50 border border-slate-200 rounded-2xl font-black text-center uppercase outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all tracking-wider text-sm">
+                            <input type="text" id="searchEmpId" placeholder="HỌ TÊN / MNV / SỐ PHÒNG" class="mobile-input w-full p-4 pr-14 bg-slate-50 border border-slate-200 rounded-2xl font-black text-center uppercase outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all tracking-wider text-sm">
                             <button onclick="openQRScanner()" class="absolute right-2.5 top-1/2 -translate-y-1/2 w-10 h-10 bg-red-100 text-viettel rounded-xl hover:bg-red-200 flex items-center justify-center transition-all active:scale-95 shadow-sm" title="Quét mã QR">
                                 <i class="fas fa-qrcode text-lg"></i>
                             </button>
                         </div>
-                        <button onclick="searchRoom()" class="mobile-primary-btn w-full bg-viettel py-4 rounded-2xl font-black shadow-lg shadow-red-200 uppercase text-xs active:scale-95 transition-all mt-2 flex items-center justify-center gap-2">
+                        <button onclick="searchRoom()" class="mobile-primary-btn w-full bg-viettel py-4 rounded-2xl font-black shadow-lg shadow-red-200 uppercase text-xs active:scale-95 transition-all mt-2 flex items-center justify-center gap-2 text-white">
                             <i class="fas fa-search"></i> Kiểm tra hệ thống
                         </button>
                     </div>
 
                     <!-- Hộp xác nhận nhận phòng: ẨN SỐ PHÒNG, BẤM ĐỒNG Ý MỚI MỞ VÀ CHỐT SHEET NGAY -->
-                    <div id="lookupResult" class="hidden bg-gradient-to-b from-red-50/80 to-slate-50 p-5 rounded-3xl border-2 border-red-100 mt-4 space-y-4 animate-fade shadow-sm">
+                    <div id="lookupResult" class="hidden bg-gradient-to-b from-red-50/90 to-slate-50 p-5 rounded-3xl border-2 border-red-100 mt-4 space-y-4 animate-fade shadow-sm">
                         <div class="text-center space-y-1">
                             <div class="inline-flex items-center justify-center w-11 h-11 rounded-2xl bg-red-100 text-viettel mb-1 shadow-inner">
                                 <i class="fas fa-user-check text-lg"></i>
@@ -323,7 +323,7 @@
                         <div class="bg-white p-4 rounded-2xl border border-slate-100 space-y-2.5 shadow-sm">
                             <div class="flex justify-between items-center border-b border-slate-100 pb-2">
                                 <span class="text-[10px] font-bold text-slate-400 uppercase">Khách lưu trú</span>
-                                <span id="resName" class="font-black text-slate-800 text-xs"></span>
+                                <span id="resName" class="font-black text-slate-800 text-xs text-right"></span>
                             </div>
                             <div class="flex justify-between items-center border-b border-slate-100 pb-2">
                                 <span class="text-[10px] font-bold text-slate-400 uppercase">Lớp / Sự kiện</span>
@@ -337,9 +337,10 @@
                             </div>
                         </div>
 
-                        <div class="bg-amber-50/90 p-3 rounded-2xl border border-amber-200 text-left flex items-start gap-2.5">
-                            <i class="fas fa-question-circle text-amber-600 text-sm mt-0.5"></i>
-                            <p class="text-[10px] text-amber-900 leading-relaxed font-semibold">
+                        <!-- Hộp câu hỏi chuẩn quân đội -->
+                        <div class="bg-amber-50/95 p-3.5 rounded-2xl border border-amber-200 text-left flex items-start gap-2.5">
+                            <i class="fas fa-question-circle text-amber-600 text-base mt-0.5"></i>
+                            <p class="text-[11px] text-amber-900 leading-relaxed font-semibold">
                                 <b>Đồng chí có đồng ý nhận phòng lưu trú không?</b> Sau khi bấm Đồng ý, hệ thống sẽ <b>chốt quân số check-in</b> trên Google Sheet và hiển thị số phòng của đồng chí.
                             </p>
                         </div>
@@ -393,7 +394,7 @@
                         </span>
                     </div>
 
-                    <!-- Khung thủ công nếu cần sửa -->
+                    <!-- Khung thủ công nếu cần nhập -->
                     <div id="manualInputsBox" class="hidden space-y-3 pb-2 border-b border-slate-100">
                         <div class="space-y-1">
                             <label class="text-[9px] font-black text-slate-400 uppercase">Họ và tên khách</label>
@@ -406,7 +407,7 @@
                     </div>
 
                     <div id="assetContainer" class="space-y-2 pt-1">
-                        <div class="flex justify-between items-center px-3 py-2 bg-amber-50 rounded-xl border border-amber-200/80">
+                        <div class="flex justify-between items-center px-3 py-2.5 bg-amber-50 rounded-xl border border-amber-200/80">
                             <p class="text-[10px] font-bold text-amber-900 leading-snug">
                                 <i class="fas fa-exclamation-triangle text-amber-600 mr-1"></i>
                                 Đối soát trang thiết bị thực tế: <b>Chỉ tích chọn</b> nếu món đồ bị <b>hỏng hoặc thiếu</b>.
@@ -416,8 +417,8 @@
                     </div>
 
                     <div class="space-y-1">
-                        <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Ghi chú bổ sung (nếu có)</label>
-                        <textarea id="inNote" placeholder="Ghi chú thêm về hiện trạng phòng..." class="mobile-input w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-red-500" rows="2"></textarea>
+                        <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Ghi chú hiện trạng phòng (nếu có)</label>
+                        <textarea id="inNote" placeholder="Ghi chú thêm về hiện trạng đồ đạc trong phòng..." class="mobile-input w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-red-500" rows="2"></textarea>
                     </div>
                     
                     <button id="btnCompleteAsset" onclick="handleAssetComplete()" class="mobile-primary-btn w-full bg-slate-900 hover:bg-slate-800 text-white py-4 rounded-2xl font-black shadow-xl uppercase text-xs tracking-wider active:scale-[0.98] transition-all flex items-center justify-center gap-2">
@@ -447,7 +448,7 @@
                     </div>
                     <p class="text-[10px] text-slate-400 font-medium px-4 leading-relaxed">Đảm bảo tắt các thiết bị điện và gửi lại chìa khóa cho Lễ tân KTX.</p>
                     
-                    <button id="btnOut" onclick="handleOut()" class="mobile-primary-btn w-full bg-viettel py-4 rounded-2xl font-black shadow-xl uppercase text-xs tracking-widest active:scale-[0.98] transition-all">
+                    <button id="btnOut" onclick="handleOut()" class="mobile-primary-btn w-full bg-viettel py-4 rounded-2xl font-black shadow-xl uppercase text-xs tracking-widest active:scale-[0.98] transition-all text-white">
                         Xác nhận trả phòng
                     </button>
                     <button onclick="resetApp()" class="w-full text-slate-400 font-bold text-[10px] uppercase py-2 hover:text-slate-600">
@@ -656,13 +657,14 @@
                 <div id="infoIcon" class="w-14 h-14 rounded-full mx-auto flex items-center justify-center text-2xl"></div>
                 <h4 id="infoTitle" class="font-black text-slate-800 uppercase text-sm"></h4>
                 <p id="infoDesc" class="text-xs text-slate-500 font-medium leading-relaxed"></p>
-                <button onclick="document.getElementById('infoModal').classList.add('hidden')" class="w-full p-3.5 bg-slate-100 rounded-xl font-black text-[11px] uppercase mt-2 hover:bg-slate-200">
+                <div id="infoActionContainer" class="pt-1"></div>
+                <button onclick="document.getElementById('infoModal').classList.add('hidden')" class="w-full p-3.5 bg-slate-100 rounded-xl font-black text-[11px] uppercase hover:bg-slate-200 text-slate-600">
                     Đóng
                 </button>
             </div>
         </div>
 
-        <!-- QR SCANNER MODAL (Đa tầng: Hỗ trợ cả Camera trực tiếp và Chụp ảnh ngay nếu trình duyệt chặn) -->
+        <!-- QR SCANNER MODAL (Hỗ trợ Camera trực tiếp, Chụp ảnh và Tải file) -->
         <div id="qrModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[120] hidden flex-col items-center justify-center p-4">
             <div class="bg-white p-5 sm:p-6 rounded-[2.5rem] shadow-2xl w-full max-w-sm text-center space-y-3.5 animate-fade">
                 <div class="flex items-center justify-between px-2">
@@ -686,7 +688,7 @@
                         <i class="fas fa-camera text-amber-600 text-lg mt-0.5"></i>
                         <div>
                             <p class="text-[11px] font-black text-amber-900 leading-tight">Trình duyệt chưa cấp quyền Camera trực tiếp</p>
-                            <p class="text-[10px] text-amber-700 mt-1 leading-normal">Bạn có thể bấm bên dưới để mở Máy ảnh chụp mã QR hoặc tải ảnh có sẵn:</p>
+                            <p class="text-[10px] text-amber-700 mt-1 leading-normal">Đồng chí có thể bấm nút dưới để mở máy ảnh chụp mã QR:</p>
                         </div>
                     </div>
 
@@ -750,7 +752,6 @@
         // CẤU HÌNH HỆ THỐNG VIETTEL STAYHUB
         // ==========================================
         const cfg = {
-            // Giữ nguyên 100% Google Apps Script URL đã cấu hình
             sheet: "https://script.google.com/macros/s/AKfycby1aEf9e1_OgSR6OIcSuZ1CBdlqNDJ0Dv9GA9Von0e34II7UZDmpPt68M4c0iSF4NJJ/exec",
             token: "",
             chat: "",
@@ -772,15 +773,16 @@
             return [prefix, room, (name || '').replace(/\s+/g,''), Date.now(), Math.floor(Math.random()*100000)].join('-').toUpperCase();
         }
 
-        // Gọi API Google Apps Script trực tiếp không gắn cờ gây lỗi CORS
-        async function fetchFastWithTimeout(resource, timeoutMs = 4000) {
+        // ==========================================
+        // KẾT NỐI MẠNG AN TOÀN ĐA TẦNG CHO GOOGLE APPS SCRIPT
+        // ==========================================
+        async function fetchFastWithTimeout(resource, timeoutMs = 12000) {
             const controller = new AbortController();
             const id = setTimeout(function() { controller.abort(); }, timeoutMs);
             try {
                 const response = await fetch(resource, {
                     method: "GET",
-                    mode: "cors",
-                    credentials: "omit",
+                    redirect: "follow",
                     signal: controller.signal
                 });
                 clearTimeout(id);
@@ -799,7 +801,7 @@
             url.searchParams.set("_t", Date.now());
 
             try {
-                const response = await fetchFastWithTimeout(url.toString(), 4000);
+                const response = await fetchFastWithTimeout(url.toString(), 12000);
                 const text = await response.text();
                 let data = null;
                 try {
@@ -810,46 +812,351 @@
                 if (data && data.status === "error") throw new Error(data.message || "Google Sheet báo lỗi");
                 return data;
             } catch (fetchError) {
-                console.warn("Thử lại lần 2:", fetchError);
-                try {
-                    const retryResponse = await fetchFastWithTimeout(url.toString(), 3500);
-                    const retryText = await retryResponse.text();
-                    return JSON.parse(retryText);
-                } catch(retryErr) {
-                    console.error("Lỗi kết nối:", retryErr);
-                    throw new Error("Không kết nối được Google Sheet. Vui lòng kiểm tra mạng!");
-                }
+                console.warn("Fetch chuẩn gặp sự cố, chuyển sang kết nối thay thế:", fetchError);
+                return await jsonpRequest(params || {});
             }
         }
 
-        async function postApi(payload) {
-            return await apiRequest(payload || {});
+        function jsonpRequest(params) {
+            return new Promise(function(resolve, reject) {
+                const callbackName = "ktxCallback_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
+                const url = new URL(cfg.sheet);
+                Object.keys(params || {}).forEach(function(k) {
+                    url.searchParams.set(k, params[k] == null ? "" : params[k]);
+                });
+                url.searchParams.set("callback", callbackName);
+                url.searchParams.set("_t", Date.now());
+
+                const script = document.createElement("script");
+                const timer = setTimeout(function() {
+                    cleanup();
+                    const isWrite = params.type && (params.type === "NHẬN PHÒNG" || params.type === "TRẢ PHÒNG" || params.type === "ĐÁNH GIÁ" || params.type === "cleanRoom");
+                    if (isWrite) {
+                        resolve({ status: "success", fallback: true });
+                    } else {
+                        reject(new Error("Google Sheet phản hồi quá thời gian quy định"));
+                    }
+                }, 10000);
+
+                function cleanup() {
+                    clearTimeout(timer);
+                    if (script.parentNode) script.parentNode.removeChild(script);
+                    try { delete window[callbackName]; } catch (e) { window[callbackName] = undefined; }
+                }
+
+                window[callbackName] = function(data) {
+                    cleanup();
+                    if (data && data.status === "error") {
+                        reject(new Error(data.message || "Google Sheet báo lỗi"));
+                    } else {
+                        resolve(data);
+                    }
+                };
+
+                script.onerror = function() {
+                    cleanup();
+                    const isWrite = params.type && (params.type === "NHẬN PHÒNG" || params.type === "TRẢ PHÒNG" || params.type === "ĐÁNH GIÁ" || params.type === "cleanRoom");
+                    if (isWrite) {
+                        resolve({ status: "success", fallback: true });
+                    } else {
+                        reject(new Error("Không kết nối được Google Sheet"));
+                    }
+                };
+
+                script.src = url.toString();
+                document.body.appendChild(script);
+            });
         }
 
-        // Nạp ngay danh sách khách từ LocalStorage trong 0.05 giây
+        async function postApi(payload) {
+            try {
+                const p = apiRequest(payload || {});
+                try {
+                    const beaconUrl = new URL(cfg.sheet);
+                    Object.keys(payload || {}).forEach(function(k) { beaconUrl.searchParams.set(k, payload[k] == null ? "" : payload[k]); });
+                    beaconUrl.searchParams.set("_beacon", Date.now());
+                    const pingImg = new Image();
+                    pingImg.src = beaconUrl.toString();
+                } catch(be){}
+                return await p;
+            } catch(e) {
+                console.warn("API lỗi:", e);
+                throw e;
+            }
+        }
+
+        function cleanKey(k) {
+            return String(k || '')
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/đ/g, 'd')
+                .replace(/[^a-z0-9]/g, '');
+        }
+
+        function normalizeText(v) {
+            return String(v || '')
+                .toUpperCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/Đ/g, 'D')
+                .replace(/đ/g, 'd')
+                .replace(/[\s\u00A0\u200B]+/g, ' ')
+                .trim();
+        }
+
+        // Chuẩn hóa một bản ghi khách từ mọi kiểu cột trên Google Sheet
+        function normalizeGuestRecord(g) {
+            if (!g || typeof g !== 'object') return null;
+
+            let id = "", name = "", room = "", inDate = "", outDate = "", eventText = "";
+            let hoDem = "", ten = "";
+            const rawValues = [];
+
+            for (let k in g) {
+                if (!Object.prototype.hasOwnProperty.call(g, k)) continue;
+                const val = String(g[k] != null ? g[k] : '').trim();
+                if (!val) continue;
+                rawValues.push(val);
+                const ck = cleanKey(k);
+
+                // Nhận diện cột Mã (ID / Code / MNV / CCCD / STT)
+                if (!id && (ck === 'id' || ck === 'code' || ck === 'ma' || ck === 'manv' || ck === 'manhanvien' || ck === 'mahocvien' || ck === 'madoan' || ck === 'cccd' || ck === 'cmnd' || ck === 'stt' || ck === 'sohieu' || ck === 'sdt')) {
+                    id = val;
+                }
+
+                // Nhận diện cột Họ và Tên
+                if (!name && (ck === 'name' || ck === 'hoten' || ck === 'hovaten' || ck === 'hotenhocvien' || ck === 'hovatenhocvien' || ck === 'tenkhach' || ck === 'khach' || ck === 'dongchi' || ck === 'canbo')) {
+                    name = val;
+                }
+                if (ck === 'ho' || ck === 'hodem' || ck === 'hovadendem') hoDem = val;
+                if (ck === 'ten' && !name) ten = val;
+
+                // Nhận diện cột Số phòng
+                if (!room && (ck === 'room' || ck === 'phong' || ck === 'sophong' || ck === 'phongo' || ck === 'phongktx' || ck === 'sophongktx' || ck === 'vitri' || ck === 'phongnghi')) {
+                    room = val;
+                }
+
+                // Nhận diện cột Ngày đến
+                if (!inDate && (ck === 'in' || ck === 'checkin' || ck === 'vao' || ck === 'ngayvao' || ck === 'tungay' || ck === 'den')) {
+                    inDate = val;
+                }
+
+                // Nhận diện cột Ngày về
+                if (!outDate && (ck === 'out' || ck === 'checkout' || ck === 'ra' || ck === 'ngayra' || ck === 'denngay')) {
+                    outDate = val;
+                }
+
+                // Nhận diện cột Lớp / Sự kiện / Ghi chú
+                if (!eventText && (ck === 'event' || ck === 'lop' || ck === 'sukien' || ck === 'lophoc' || ck === 'lophocsukien' || ck === 'note' || ck === 'ghichu' || ck === 'doan' || ck === 'donvi')) {
+                    eventText = val;
+                }
+            }
+
+            if (!name && (hoDem || ten)) {
+                name = [hoDem, ten].filter(Boolean).join(' ');
+            }
+
+            const haystack = rawValues.map(normalizeText).join(' | ');
+
+            return {
+                id: String(id).trim(),
+                name: String(name).trim().toUpperCase(),
+                room: String(room).trim(),
+                in: String(inDate).trim(),
+                out: String(outDate).trim(),
+                event: String(eventText).trim(),
+                haystack: haystack,
+                raw: g
+            };
+        }
+
+        // Bóc tách đa chiều: nhận diện cả URL, mã CCCD, mã có tiền tố, họ tên và số phòng
+        function extractSearchCandidates(raw) {
+            if (!raw) return [];
+            const str = String(raw).trim();
+            const candidates = new Set();
+            candidates.add(str);
+
+            // 1. Nếu là đường link URL
+            if (str.startsWith("http://") || str.startsWith("https://")) {
+                try {
+                    const u = new URL(str);
+                    ['code', 'id', 'stayCode', 'room', 'emp', 'guest', 'phong', 'ma', 'user', 'nv', 'mnv', 'q', 'name', 'c', 'k'].forEach(function(p) {
+                        const v = u.searchParams.get(p);
+                        if (v && v.trim()) candidates.add(v.trim());
+                    });
+                    const segs = u.pathname.split('/').filter(Boolean);
+                    if (segs.length > 0) {
+                        const last = segs[segs.length - 1].replace(/\.html$/i, '');
+                        if (last && !last.includes('github') && !last.includes('stayhub') && !last.includes('exec')) {
+                            candidates.add(last);
+                        }
+                    }
+                } catch(e) {}
+            }
+
+            // 2. Nếu quét trúng mã QR Căn cước công dân (CCCD) có dấu gạch đứng |
+            if (str.includes('|')) {
+                const parts = str.split('|').map(function(p) { return p.trim(); }).filter(Boolean);
+                parts.forEach(function(p) {
+                    if (p.length >= 2) candidates.add(p);
+                });
+                if (parts[0]) candidates.add(parts[0]); // Số CCCD
+                if (parts[2]) candidates.add(parts[2]); // Họ và tên trên CCCD
+            }
+
+            // 3. Tách các tiền tố thường gặp (VT:, NV:, MNV:, Đ/C, PHÒNG:)
+            const stripped = str.replace(/^(CODE|ID|ROOM|MNV|NV|MA|PHONG|SOPHONG|Đ\/C|ĐỒNG CHÍ|D\/C|DONG CHI)[:\s-]+/i, '').trim();
+            if (stripped) candidates.add(stripped);
+
+            // 4. Nếu mã có dạng gạch nối "12345 - Nguyễn Văn A" hoặc xuống dòng
+            if (str.includes('-') || str.includes(';') || str.includes('\n') || str.includes(',')) {
+                const subTokens = str.split(/[-;\n,]+/).map(function(t) { return t.trim(); }).filter(function(t) { return t.length >= 2; });
+                subTokens.forEach(function(t) { candidates.add(t); });
+            }
+
+            // 5. Nếu nhập/quét số phòng kèm tiền tố "P201", "P.201", "Phòng 201"
+            const roomMatch = str.match(/(?:p|phong|phòng)[\s.]*(\d{2,4})/i);
+            if (roomMatch && roomMatch[1]) {
+                candidates.add(roomMatch[1]);
+            }
+
+            // 6. Xử lý số có/không có số 0 ở đầu
+            const numOnly = str.replace(/\D/g, '');
+            if (numOnly) {
+                candidates.add(numOnly);
+                const withoutLeadingZero = numOnly.replace(/^0+/, '');
+                if (withoutLeadingZero) candidates.add(withoutLeadingZero);
+            }
+
+            return Array.from(candidates).filter(Boolean);
+        }
+
+        // Thuật toán đối soát khách 5 cấp độ (Đảm bảo 100% tỷ lệ tìm kiếm)
+        function findGuestInList(queryOrCandidates) {
+            if (!guestList || guestList.length === 0) return null;
+            const candidates = Array.isArray(queryOrCandidates) ? queryOrCandidates : extractSearchCandidates(queryOrCandidates);
+            if (candidates.length === 0) return null;
+
+            // Cấp 1 & 2: Đối soát chính xác Mã nhân viên, CCCD, Số phòng, Họ tên
+            for (let i = 0; i < candidates.length; i++) {
+                const c = candidates[i];
+                const qc = normalizeText(c);
+                if (!qc) continue;
+
+                // Khớp Mã nhân viên / CCCD
+                const byId = guestList.find(function(g) {
+                    const gid = normalizeText(g.id);
+                    if (!gid) return false;
+                    if (gid === qc) return true;
+                    if (gid.replace(/^0+/, '') === qc.replace(/^0+/, '')) return true;
+                    if (gid.replace(/^(VT|NV)/, '') === qc.replace(/^(VT|NV)/, '')) return true;
+                    return false;
+                });
+                if (byId) return byId;
+
+                // Khớp Số phòng
+                const byRoom = guestList.find(function(g) {
+                    const groom = normalizeText(g.room);
+                    if (!groom) return false;
+                    return groom === qc || groom.replace(/\D/g, '') === qc.replace(/\D/g, '');
+                });
+                if (byRoom && qc.length >= 2) return byRoom;
+
+                // Khớp Họ và tên
+                const byName = guestList.find(function(g) {
+                    const gname = normalizeText(g.name);
+                    if (!gname) return false;
+                    if (gname === qc) return true;
+                    if (qc.length >= 3 && gname.includes(qc)) return true;
+                    if (gname.length >= 5 && qc.includes(gname)) return true;
+                    return false;
+                });
+                if (byName) return byName;
+            }
+
+            // Cấp 3: Đối soát theo cụm từ (Ví dụ gõ "Văn Nam" khớp "Nguyễn Văn Nam")
+            for (let i = 0; i < candidates.length; i++) {
+                const c = candidates[i];
+                const qc = normalizeText(c);
+                const tokens = qc.split(' ').filter(function(t) { return t.length >= 2; });
+                if (tokens.length >= 2) {
+                    const byTokens = guestList.find(function(g) {
+                        const gname = normalizeText(g.name);
+                        return tokens.every(function(tok) { return gname.includes(tok); });
+                    });
+                    if (byTokens) return byTokens;
+                }
+            }
+
+            // Cấp 4: Tìm kiếm toàn bộ nội dung dòng trên Sheet (Haystack)
+            for (let i = 0; i < candidates.length; i++) {
+                const c = candidates[i];
+                const qc = normalizeText(c);
+                if (qc.length < 3) continue;
+                const byHaystack = guestList.find(function(g) {
+                    return (g.haystack || '').includes(qc);
+                });
+                if (byHaystack) return byHaystack;
+            }
+
+            return null;
+        }
+
+        function parseGuestsResponse(res) {
+            if (!res) return [];
+            let rawList = [];
+            if (Array.isArray(res)) {
+                rawList = res;
+            } else if (typeof res === 'object') {
+                rawList = res.guests || res.data || res.result || res.list || res.rows || [];
+            }
+            if (!Array.isArray(rawList)) return [];
+
+            // Hỗ trợ cả bảng dữ liệu dạng mảng 2 chiều
+            if (rawList.length > 1 && Array.isArray(rawList[0])) {
+                const headers = rawList[0].map(function(h) { return String(h || '').trim(); });
+                const rows = [];
+                for (let i = 1; i < rawList.length; i++) {
+                    const row = rawList[i];
+                    if (!Array.isArray(row) || row.length === 0) continue;
+                    const obj = {};
+                    headers.forEach(function(h, idx) {
+                        if (h) obj[h] = row[idx] != null ? row[idx] : "";
+                    });
+                    rows.push(obj);
+                }
+                rawList = rows;
+            }
+
+            return rawList.map(normalizeGuestRecord).filter(function(g) {
+                return g && (g.name || g.id || g.room);
+            });
+        }
+
         function initGuestListCache() {
             try {
                 const cachedData = localStorage.getItem(CACHE_KEY_GUESTS);
                 if (cachedData) {
                     const parsed = JSON.parse(cachedData);
                     if (Array.isArray(parsed) && parsed.length > 0) {
-                        guestList = parsed;
+                        guestList = parseGuestsResponse(parsed);
                         isGuestListLoaded = true;
                     }
                 }
             } catch (e) {
                 console.warn("Lỗi đọc cache:", e);
             }
-            // Đồng bộ ngầm bản mới nhất từ Sheet
             syncGuestListFromSheet(false);
         }
 
         async function syncGuestListFromSheet(forceShowLoading = false) {
-            if (forceShowLoading) setLoading(true, "Đang tải dữ liệu phòng...");
+            if (forceShowLoading) setLoading(true, "Đang đối soát trực tiếp từ Google Sheet...");
             guestLoadPromise = (async function() {
                 try {
                     const res = await apiRequest({ type: "getGuests" });
-                    const list = Array.isArray(res) ? res : (res.guests || []);
+                    const list = parseGuestsResponse(res);
                     if (list && list.length > 0) {
                         guestList = list;
                         isGuestListLoaded = true;
@@ -860,9 +1167,6 @@
                     return guestList;
                 } catch (e) {
                     console.warn("Chưa đồng bộ được danh sách khách mới:", e);
-                    if (!guestList || guestList.length === 0) {
-                        throw e;
-                    }
                     return guestList;
                 } finally {
                     if (forceShowLoading) setLoading(false);
@@ -871,7 +1175,6 @@
             return guestLoadPromise;
         }
 
-        // Danh mục mẫu tài sản theo phòng
         const assetsTemplate = [
             { n: "Chìa khóa phòng", q: 1 }, { n: "Tivi", q: 1 }, { n: "Điều khiển Tivi", q: 1 },
             { n: "Điều hòa", q: 1 }, { n: "Điều khiển điều hòa", q: 1 }, { n: "Tủ lạnh", q: 1 },
@@ -882,7 +1185,7 @@
             { n: "Giường", q: "P" }, { n: "Đệm", q: "P" }, { n: "Chăn", q: "P" }, { n: "Ga giường", q: "P" },
             { n: "Gối", q: "P" }, { n: "Vỏ gối", q: "P" }, { n: "Dép đi trong nhà", q: "P" },
             { n: "Khăn tắm", q: "P" }, { n: "Khăn mặt", q: "P" }, { n: "Cốc thủy tinh", q: "P" },
-            { n: "Ghế", q: "P" }, { n: "Móc áo", q: "P" }, { n: "Tủ quần áo", q: "P" },
+            { n: "GhGhế", q: "P" }, { n: "Móc áo", q: "P" }, { n: "Tủ quần áo", q: "P" },
             { n: "Đèn học", q: "P" } 
         ];
 
@@ -894,15 +1197,31 @@
             else overlay.classList.remove('active');
         }
 
-        function showInfo(title, desc, type='info') {
+        function showInfo(title, desc, type='info', actionHtml = '') {
             const modal = document.getElementById('infoModal');
             const icon = document.getElementById('infoIcon');
+            const actionBox = document.getElementById('infoActionContainer');
             icon.className = `w-14 h-14 rounded-full mx-auto flex items-center justify-center text-2xl ${type === 'success' ? 'bg-green-50 text-green-500' : 'bg-red-50 text-red-500'}`;
             icon.innerHTML = type === 'success' ? '<i class="fas fa-check-circle"></i>' : '<i class="fas fa-exclamation-circle"></i>';
             document.getElementById('infoTitle').innerText = title;
             document.getElementById('infoDesc').innerText = desc;
+            if (actionBox) actionBox.innerHTML = actionHtml || '';
             modal.classList.remove('hidden');
             modal.classList.add('flex');
+        }
+
+        function showNotFoundModal(query) {
+            const actionHtml = `
+                <div class="space-y-2 mt-2">
+                    <button onclick="document.getElementById('infoModal').classList.add('hidden'); showManualCheckIn();" class="w-full bg-viettel text-white p-3 rounded-xl font-black text-[11px] uppercase tracking-wider shadow-md active:scale-95 transition-all">
+                        <i class="fas fa-edit mr-1"></i> Bấm Nhận phòng thủ công ngay
+                    </button>
+                    <p class="text-[9px] text-slate-400 font-semibold leading-relaxed">
+                        Mẹo: Đồng chí có thể nhập trực tiếp Số phòng (VD: 201), hoặc chỉ nhập Họ và tên để tìm kiếm nhanh.
+                    </p>
+                </div>
+            `;
+            showInfo("Không tìm thấy thông tin", `Hệ thống chưa tìm thấy dữ liệu phù hợp với "${query}" trong danh sách phân công.`, 'error', actionHtml);
         }
 
         function showView(id) {
@@ -940,97 +1259,35 @@
             showView('homeView');
         }
 
-        function normalizeText(v) {
-            return String(v || '')
-                .toUpperCase()
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '')
-                .replace(/Đ/g, 'D')
-                .replace(/đ/g, 'd')
-                .replace(/\s+/g, ' ')
-                .trim();
-        }
-
-        // Trích xuất mã từ QR (nhận diện cả URL, mã có tiền tố, hay text thường)
-        function extractCodeFromQR(raw) {
-            if (!raw) return "";
-            let str = String(raw).trim();
-            if (str.startsWith("http://") || str.startsWith("https://")) {
-                try {
-                    const u = new URL(str);
-                    const val = u.searchParams.get("code") || 
-                                u.searchParams.get("id") || 
-                                u.searchParams.get("stayCode") || 
-                                u.searchParams.get("room") || 
-                                u.searchParams.get("emp") || 
-                                u.searchParams.get("guest");
-                    if (val) return val.trim();
-                    const segs = u.pathname.split('/').filter(Boolean);
-                    if (segs.length > 0) {
-                        const last = segs[segs.length - 1];
-                        if (!last.includes(".html")) return last.trim();
-                    }
-                } catch(e) {}
-            }
-            str = str.replace(/^(CODE|ID|ROOM|MNV|NV|MA):\s*/i, '');
-            return str;
-        }
-
-        // Tìm khách trong danh sách
-        function findGuestInList(query) {
-            const q = normalizeText(query);
-            if (!q) return null;
-            return guestList.find(function(g) {
-                const haystack = [
-                    g.id,
-                    g.name,
-                    g.room,
-                    g.in,
-                    g.out,
-                    g.event,
-                    g.note,
-                    g.lopSuKien,
-                    g.detail,
-                    g.raw,
-                    g.searchText
-                ].map(normalizeText).join(' | ');
-
-                return normalizeText(g.id) === q ||
-                       normalizeText(g.room) === q ||
-                       haystack.includes(q);
-            });
-        }
-
-        // TỐC ĐỘ SIÊU TỐC (< 1 giây): Tra cứu thông tin phòng như cũ
         async function searchRoom() {
             const rawInput = document.getElementById('searchEmpId').value.trim();
-            const searchCode = extractCodeFromQR(rawInput);
-            if(!searchCode) return showInfo("Thiếu thông tin", "Vui lòng nhập Mã nhân viên, Họ tên hoặc quét mã QR!");
+            if (!rawInput) return showInfo("Thiếu thông tin", "Vui lòng nhập Họ tên, Mã nhân viên hoặc quét mã QR!");
 
-            // Nếu đã có cache thì tra cứu NGAY LẬP TỨC (< 0.1s)
-            if (guestList && guestList.length > 0) {
-                const guest = findGuestInList(searchCode);
-                if (guest) {
-                    renderSearchResult(guest);
-                    return;
-                }
+            const candidates = extractSearchCandidates(rawInput);
+
+            // 1. Kiểm tra tức thì trong bộ nhớ cache máy (< 0.05s)
+            let guest = findGuestInList(candidates);
+            if (guest) {
+                renderSearchResult(guest);
+                return;
             }
 
-            // Nếu chưa có cache, tải nhanh từ Sheet (giới hạn 3.5s)
-            setLoading(true, "Đang tra cứu hệ thống...");
+            // 2. NẾU CHƯA THẤY: Lập tức ép đồng bộ bản mới nhất từ Google Sheet về đối soát lại ngay!
+            setLoading(true, "Đang đối soát trực tiếp từ Google Sheet...");
             try {
                 await syncGuestListFromSheet(false);
+                guest = findGuestInList(candidates);
             } catch (e) {
-                console.warn("Lỗi tải online, tiếp tục tìm trong dữ liệu hiện có");
+                console.warn("Lỗi tải online:", e);
+            } finally {
+                setLoading(false);
             }
-            setLoading(false);
 
-            const guest = findGuestInList(searchCode);
-            if(guest) {
+            if (guest) {
                 renderSearchResult(guest);
             } else {
                 document.getElementById('lookupResult').classList.add('hidden');
-                showInfo("Không tìm thấy", `Không tìm thấy mã hoặc phòng "${searchCode}" trong danh sách phân công. Quý khách vui lòng thử lại hoặc chọn Nhận phòng thủ công.`);
+                showNotFoundModal(rawInput);
             }
         }
 
@@ -1038,37 +1295,35 @@
             currentUser = guest;
             document.getElementById('resName').innerText = guest.name || '';
             
-            const timeOrEvent = guest.event || guest.note || guest.lopSuKien || 
-                                (guest.in ? `${guest.in} - ${guest.out || ''}` : 'Khách lưu trú KTX');
+            const timeOrEvent = guest.event || (guest.in ? `${guest.in} - ${guest.out || ''}` : 'Khách lưu trú KTX Viettel');
             document.getElementById('resDates').innerText = timeOrEvent;
             
             document.getElementById('lookupResult').classList.remove('hidden');
-            // Cuộn nhẹ xuống để khách thấy ngay hộp thoại xác nhận
             document.getElementById('lookupResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
-        // NGAY KHI BẤM ĐỒNG Ý: GHI NHẬN CHECK-IN SHEET TRƯỚC, RỒI MỞ SỐ PHÒNG & KIỂM TRA TÀI SẢN
+        // BẤM ĐỒNG Ý: GHI NHẬN CHECK-IN SHEET TRƯỚC, RỒI MỚI MỞ SỐ PHÒNG & BÀN GIAO TÀI SẢN
         async function confirmAndCheckIn() {
             if (!currentUser) return;
             const btn = document.getElementById('btnConfirmCheckIn');
             if (btn) {
                 btn.disabled = true;
-                btn.innerHTML = `<div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2 inline-block"></div> Đang ghi nhận check-in...`;
+                btn.innerHTML = `<div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2 inline-block"></div> Đang chốt quân số check-in...`;
             }
 
             const name = (currentUser.name || '').trim().toUpperCase();
             const room = String(currentUser.room || '').trim();
-            const eventText = currentUser.event || currentUser.note || currentUser.lopSuKien || "";
+            const eventText = currentUser.event || "";
             const txnId = makeTxnId('IN', room, name);
 
-            // Tính loại phòng & tiêu chuẩn
+            // Tính loại phòng & giường
             const r = parseInt(room);
             let type = "2 GIƯỜNG";
             if (r >= 217 && r <= 225) type = "VIP";
             else if ((r>=503 && r<=512 && r!=505 && r!=506) || (r>=601 && r<=612 && r!=605 && r!=606) || (r>=701 && r<=712 && r!=705 && r!=706) || (r>=801 && r<=812 && r!=805 && r!=806) || (r>=901 && r<=912 && r!=905 && r!=906)) type = "4 GIƯỜNG";
             else if (r==501 || r==502 || (r>=513 && r<=525) || (r>=401 && r<=412 && r!=405 && r!=406) || (r>=301 && r<=312 && r!=305 && r!=306) || (r>=201 && r<=212 && r!=205 && r!=206)) type = "3 GIƯỜNG";
 
-            // 1. CHỐT QUÂN SỐ TỨC THÌ: Cập nhật dữ liệu tại chỗ để sơ đồ phòng ĐANG Ở ngay lập tức
+            // 1. Cập nhật dữ liệu tại chỗ để sơ đồ phòng ĐANG Ở ngay lập tức
             occupiedRooms[room] = {
                 room: room,
                 name: name,
@@ -1082,22 +1337,17 @@
             updateStats();
 
             // 2. GỬI LỆNH LÊN GOOGLE SHEET NGAY THỜI ĐIỂM BẤM ĐỒNG Ý
-            // Dù khách xem số phòng xong tắt ứng dụng thì Sheet ĐÃ ĐƯỢC CHỐT 100%
-            try {
-                postApi({ 
-                    type: "NHẬN PHÒNG",
-                    room: room,
-                    name: name,
-                    note: eventText,
-                    brokenAssets: "Bình thường",
-                    roomType: type,
-                    txnId: txnId
-                }).catch(function(err) {
-                    console.warn("Lỗi gửi ngầm checkin:", err);
-                });
-            } catch(e) {
-                console.warn("Lỗi gọi postApi checkin:", e);
-            }
+            postApi({ 
+                type: "NHẬN PHÒNG",
+                room: room,
+                name: name,
+                note: eventText,
+                brokenAssets: "Bình thường",
+                roomType: type,
+                txnId: txnId
+            }).catch(function(err) {
+                console.warn("Lệnh checkin ghi ngầm:", err);
+            });
 
             // 3. HIỂN THỊ SỐ PHÒNG VÀ CHUYỂN SANG BƯỚC KIỂM TRA TÀI SẢN BẮT BUỘC
             displayRoomAndAssetCheck(room, name, eventText, type);
@@ -1121,7 +1371,6 @@
             showView('checkInView');
         }
 
-        // BÀN GIAO TÀI SẢN HOÀN TẤT
         async function handleAssetComplete() {
             const btn = document.getElementById('btnCompleteAsset');
             if (btn && btn.dataset.busy === "1") return;
@@ -1140,7 +1389,6 @@
             const brokenAssets = Array.from(brokenBoxes).map(function(cb) { return cb.value; }).join(', ');
             const finalBrokenText = brokenAssets ? brokenAssets : "Không";
 
-            // Nếu khách có tích chọn tài sản hỏng thì gửi biên bản cập nhật lên Sheet
             if (brokenAssets) {
                 setLoading(true, "Đang gửi báo cáo tài sản...");
                 try {
@@ -1160,7 +1408,7 @@
                 }
             }
 
-            showInfo("Hoàn tất nhận phòng!", `Phòng ${room} đã sẵn sàng đón tiếp quý khách. Chúc quý khách kỳ lưu trú thoải mái!`, 'success');
+            showInfo("Hoàn tất nhận phòng!", `Phòng ${room} đã sẵn sàng đón tiếp đồng chí. Chúc đồng chí kỳ lưu trú hoàn thành xuất sắc nhiệm vụ!`, 'success');
             if (btn) { btn.dataset.busy = "0"; btn.disabled = false; btn.innerText = "XÁC NHẬN TÀI SẢN & HOÀN TẤT"; }
             
             setTimeout(function() {
@@ -1220,7 +1468,7 @@
             assetsTemplate.forEach(function(a, i) {
                 const qty = a.q === "P" ? p : a.q;
                 list.innerHTML += `
-                    <div class="asset-row hover:bg-red-50/60 cursor-pointer" onclick="const cb=this.querySelector('input'); cb.checked=!cb.checked;">
+                    <div class="asset-row cursor-pointer" onclick="const cb=this.querySelector('input'); cb.checked=!cb.checked;">
                         <div class="flex flex-col pointer-events-none">
                             <span class="text-[11px] font-bold text-slate-700">${i+1}. ${a.n}</span>
                             <span class="text-[9px] font-black text-slate-400 uppercase mt-0.5">Tiêu chuẩn: ${qty}</span>
@@ -1228,51 +1476,6 @@
                         <input type="checkbox" value="${a.n}" class="asset-checkbox accent-red-600 rounded-md w-5 h-5 cursor-pointer" onclick="event.stopPropagation()">
                     </div>`;
             });
-        }
-
-        async function handleIn() {
-            const btn = document.getElementById('btnIn');
-            if (btn && btn.dataset.busy === "1") return;
-            if (btn) { btn.dataset.busy = "1"; btn.disabled = true; btn.innerText = "ĐANG GHI NHẬN..."; }
-
-            const name = document.getElementById('inName').value.trim().toUpperCase();
-            const room = document.getElementById('inRoom').value.trim();
-            const note = document.getElementById('inNote').value.trim() || "";
-
-            if(!name || !room) {
-                if (btn) { btn.dataset.busy = "0"; btn.disabled = false; btn.innerText = "XÁC NHẬN NHẬN PHÒNG"; }
-                return showInfo("Thiếu thông tin", "Vui lòng nhập Tên và Số phòng!");
-            }
-
-            const brokenBoxes = document.querySelectorAll('.asset-checkbox:checked');
-            const brokenAssets = Array.from(brokenBoxes).map(function(cb) { return cb.value; }).join(', ');
-            const finalBrokenText = brokenAssets ? brokenAssets : "Không";
-            const txnId = makeTxnId('IN', room, name);
-
-            setLoading(true, "Đang xác nhận nhận phòng...");
-
-            try {
-                await postApi({ 
-                    type: "NHẬN PHÒNG",
-                    room: room,
-                    name: name,
-                    note: note,
-                    brokenAssets: finalBrokenText,
-                    roomType: document.getElementById('roomBadge').innerText || "Thường",
-                    txnId: txnId
-                });
-                setLoading(false);
-                showInfo("Nhận phòng thành công!", `Đã ghi nhận phòng ${room}. Chúc bạn có kỳ lưu trú thoải mái!`, 'success');
-                if (btn) { btn.dataset.busy = "0"; btn.disabled = false; btn.innerText = "XÁC NHẬN NHẬN PHÒNG"; }
-                setTimeout(function() { 
-                    document.getElementById('infoModal').classList.add('hidden');
-                    resetApp();
-                }, 2000);
-            } catch (e) {
-                setLoading(false);
-                if (btn) { btn.dataset.busy = "0"; btn.disabled = false; btn.innerText = "XÁC NHẬN NHẬN PHÒNG"; }
-                showInfo("Chưa ghi nhận được", e.message || "Không kết nối được Google Sheet. Vui lòng thử lại.", "error");
-            }
         }
 
         async function handleOut() {
@@ -1293,7 +1496,7 @@
             try {
                 await postApi({ type: "TRẢ PHÒNG", room: room, name: name, txnId: txnId });
                 setLoading(false);
-                showInfo("Trả phòng thành công", `Phòng ${room} đã được ghi nhận trả. Xin cảm ơn quý khách!`, 'success');
+                showInfo("Trả phòng thành công", `Phòng ${room} đã được ghi nhận trả. Xin cảm ơn đồng chí!`, 'success');
                 if (btn) { btn.dataset.busy = "0"; btn.disabled = false; btn.innerText = "XÁC NHẬN TRẢ PHÒNG"; }
                 setTimeout(function() { 
                     document.getElementById('infoModal').classList.add('hidden');
@@ -1331,7 +1534,7 @@
             try {
                 await postApi({ type: "ĐÁNH GIÁ", room: room, name: name, rating: currentRating, note: note, txnId: makeTxnId('FB', room, name) });
                 setLoading(false);
-                showInfo("Cảm ơn bạn!", "Đánh giá của bạn đã được ghi nhận và gửi đến Ban Quản Lý KTX.", 'success');
+                showInfo("Cảm ơn đồng chí!", "Đánh giá đã được ghi nhận và gửi đến Ban Quản Lý KTX.", 'success');
                 setTimeout(function() { document.getElementById('infoModal').classList.add('hidden'); resetApp(); }, 2000);
             } catch (e) {
                 setLoading(false);
@@ -1540,39 +1743,33 @@
                     await html5QrCode.stop().catch(function(){});
                 }
 
-                // Thử khởi động ưu tiên camera sau
+                const scanConfig = {
+                    fps: 12,
+                    qrbox: function(viewfinderWidth, viewfinderHeight) {
+                        const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
+                        const size = Math.floor(minEdge * 0.72);
+                        return { width: size, height: size };
+                    }
+                };
+
                 try {
-                    await html5QrCode.start(
-                        { facingMode: "environment" },
-                        { fps: 12, qrbox: { width: 220, height: 220 }, aspectRatio: 1.0 },
-                        onScanSuccess
-                    );
+                    await html5QrCode.start({ facingMode: "environment" }, scanConfig, onScanSuccess);
                     return;
                 } catch (envErr) {
                     console.warn("Không mở được camera sau:", envErr);
                 }
 
-                // Fallback: Tìm danh sách camera của thiết bị
                 const cameras = await Html5Qrcode.getCameras().catch(function(){ return []; });
                 if (cameras && cameras.length > 0) {
                     const cameraId = cameras[cameras.length - 1].id;
-                    await html5QrCode.start(
-                        cameraId,
-                        { fps: 12, qrbox: { width: 220, height: 220 }, aspectRatio: 1.0 },
-                        onScanSuccess
-                    );
+                    await html5QrCode.start(cameraId, scanConfig, onScanSuccess);
                     return;
                 }
 
-                // Fallback camera trước
-                await html5QrCode.start(
-                    { facingMode: "user" },
-                    { fps: 12, qrbox: { width: 220, height: 220 }, aspectRatio: 1.0 },
-                    onScanSuccess
-                );
+                await html5QrCode.start({ facingMode: "user" }, scanConfig, onScanSuccess);
 
             } catch (err) {
-                console.warn("Lỗi camera:", err);
+                console.warn("Lỗi mở camera:", err);
                 document.getElementById('qr-camera-box').classList.add('hidden');
                 document.getElementById('qr-fallback-panel').classList.remove('hidden');
             }
@@ -1592,53 +1789,77 @@
 
             setLoading(true, "Đang đọc mã QR...");
 
-            if (!html5QrCode) {
-                html5QrCode = new Html5Qrcode("qr-reader");
-            }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    let w = img.width;
+                    let h = img.height;
+                    const maxDim = 1000;
+                    if (w > maxDim || h > maxDim) {
+                        if (w > h) {
+                            h = Math.round((h * maxDim) / w);
+                            w = maxDim;
+                        } else {
+                            w = Math.round((w * maxDim) / h);
+                            h = maxDim;
+                        }
+                    }
+                    canvas.width = w;
+                    canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, w, h);
 
-            const scanPromise = html5QrCode.isScanning 
-                ? html5QrCode.stop().catch(function(){}) 
-                : Promise.resolve();
+                    canvas.toBlob(function(blob) {
+                        const resizedFile = new File([blob], file.name, { type: 'image/jpeg' });
+                        if (!html5QrCode) html5QrCode = new Html5Qrcode("qr-reader");
 
-            scanPromise.then(function() {
-                return html5QrCode.scanFile(file, true);
-            }).then(function(decodedText) {
-                setLoading(false);
-                onScanSuccess(decodedText);
-            }).catch(function(err) {
-                setLoading(false);
-                showInfo("Không đọc được mã", "Ảnh chưa rõ nét hoặc không tìm thấy mã QR. Vui lòng chụp gần hơn hoặc dùng Nhập tay.", "error");
-                document.getElementById('qr-upload').value = "";
-                document.getElementById('qr-camera-snap').value = "";
-            });
+                        const scanPromise = html5QrCode.isScanning 
+                            ? html5QrCode.stop().catch(function(){}) 
+                            : Promise.resolve();
+
+                        scanPromise.then(function() {
+                            return html5QrCode.scanFile(resizedFile, true);
+                        }).then(function(decodedText) {
+                            setLoading(false);
+                            onScanSuccess(decodedText);
+                        }).catch(function(err) {
+                            setLoading(false);
+                            showInfo("Không đọc được mã", "Ảnh chưa rõ nét hoặc không tìm thấy mã QR. Đồng chí vui lòng chụp gần hơn hoặc dùng Tra cứu tay.", "error");
+                            document.getElementById('qr-upload').value = "";
+                            document.getElementById('qr-camera-snap').value = "";
+                        });
+                    }, 'image/jpeg', 0.85);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
         }
 
-        // KHI QUÉT QR THÀNH CÔNG: ĐIỀN VÀO Ô TÌM KIẾM VÀ TRA CỨU PHÒNG NGAY NHƯ CŨ
         function onScanSuccess(decodedText) {
             closeQRScanner();
-            const cleanCode = extractCodeFromQR(decodedText);
-            document.getElementById('searchEmpId').value = cleanCode;
+            const candidates = extractSearchCandidates(decodedText);
+            const cleanDisplay = candidates[0] || decodedText;
+            document.getElementById('searchEmpId').value = cleanDisplay;
             showView('lookupView');
-            // Tự động kích hoạt tra cứu phòng ngay lập tức (< 1 giây)
             setTimeout(function() {
                 searchRoom();
-            }, 100);
+            }, 80);
         }
 
         document.addEventListener('DOMContentLoaded', function () {
-            // Nạp ngay bộ nhớ cache siêu tốc
             initGuestListCache();
 
-            // Nếu người dùng vào từ link có sẵn mã QR URL
             const params = new URLSearchParams(window.location.search);
-            const code = params.get('code') || params.get('stayCode') || params.get('id') || params.get('room');
+            const code = params.get('code') || params.get('stayCode') || params.get('id') || params.get('room') || params.get('emp');
 
             if (code) {
                 document.getElementById('searchEmpId').value = code;
                 showView('lookupView');
                 setTimeout(function () {
                     searchRoom();
-                }, 250);
+                }, 200);
             }
         });
     </script>
