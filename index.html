@@ -341,7 +341,7 @@
                         <div class="bg-amber-50/95 p-3.5 rounded-2xl border border-amber-200 text-left flex items-start gap-2.5">
                             <i class="fas fa-question-circle text-amber-600 text-base mt-0.5"></i>
                             <p class="text-[11px] text-amber-900 leading-relaxed font-semibold">
-                                <b>Đồng chí có đồng ý nhận phòng lưu trú không?</b> Sau khi bấm Đồng ý, hệ thống sẽ <b>chốt quân số check-in</b> trên Google Sheet và hiển thị số phòng của đồng chí.
+                                Đồng chí vui lòng <b>xác nhận nhận phòng</b> để xem số phòng và mật khẩu.
                             </p>
                         </div>
 
@@ -378,6 +378,14 @@
                         </div>
                     </div>
                     <p id="displayGuestName" class="text-xs font-black uppercase text-white/95 pt-0.5 tracking-wide"></p>
+                </div>
+
+                <!-- Chỉ mở sau khi đồng chí đồng ý nhận phòng -->
+                <div id="roomAccessCard" class="hidden bg-white p-5 rounded-3xl card-shadow border border-red-100 space-y-3" aria-live="polite">
+                    <p class="text-xs font-black uppercase text-slate-700"><i class="fas fa-key text-viettel mr-1"></i> Mật khẩu vào phòng</p>
+                    <p id="roomAccessCode" class="text-3xl font-black tracking-widest text-viettel text-center" style="overflow-wrap:anywhere"></p>
+                    <p id="roomAccessPeriod" class="text-xs text-slate-500 text-center"></p>
+                    <p class="text-xs text-slate-700 leading-relaxed bg-amber-50 border border-amber-200 rounded-2xl p-4">Đề nghị đồng chí gửi lại thẻ phòng cho lễ tân khi ra ngoài. Trường hợp làm mất thẻ, đồng chí có trách nhiệm bồi hoàn cho Ban Quản lý <strong>500.000 VNĐ/thẻ</strong>.</p>
                 </div>
 
                 <!-- Thẻ kiểm tra tài sản bắt buộc -->
@@ -758,7 +766,56 @@
             pin: "271020"
         };
 
+        // MẬT KHẨU THEO THÁNG (giờ Việt Nam). Chỉ sửa vùng cấu hình này khi đổi mã.
+        // Đây là mã HIỂN THỊ; phải cài cùng mã trên khóa cửa thực tế.
+        // Thêm một mục 'YYYY-MM' cho từng tháng. Không tự dùng lại mã tháng cũ.
+        // floorPrefixes: 3 chữ số đầu theo tầng; roomOverrides: mã riêng đầy đủ của phòng.
+        // Ví dụ cấu trúc tháng mới: '2026-11': { floorPrefixes: {...}, roomOverrides: {...} }
+        // Chỉ điền mã đã được BQL xác nhận, không tự tạo mã tháng mới.
+        const ROOM_ACCESS_BY_MONTH = {
+            '2026-10': {
+                floorPrefixes: {1: '111', 2: '222', 3: '333', 4: '444', 5: '555', 6: '666', 7: '777', 8: '888', 9: '999'},
+                roomOverrides: {}
+            }
+        };
+
+        function getRoomAccess(room, now = new Date()) {
+            const parts = new Intl.DateTimeFormat('en-GB', {
+                timeZone: 'Asia/Ho_Chi_Minh', year: 'numeric', month: '2-digit'
+            }).formatToParts(now);
+            const month = parts.find(p => p.type === 'year').value + '-' + parts.find(p => p.type === 'month').value;
+            const roomNo = String(room == null ? '' : room).trim();
+            const floor = Number(roomNo.charAt(0));
+            const index = Number(roomNo.slice(1));
+            // Khớp 159 phòng đang cấu hình ở renderAdmin và sheet Rooms.
+            const max = floor === 1 ? 11 : (floor <= 5 ? 25 : 12);
+            if (!/^[1-9]\d{2}$/.test(roomNo) || index < 1 || index > max) return {month, code: ''};
+            const config = ROOM_ACCESS_BY_MONTH[month];
+            if (!config) return {month, code: ''};
+            const override = config.roomOverrides && config.roomOverrides[roomNo];
+            if (override !== undefined) return {month, code: /^\d{6}#$/.test(override) ? override : ''};
+            const prefix = config.floorPrefixes && config.floorPrefixes[floor];
+            return {month, code: /^\d{3}$/.test(prefix || '') ? prefix + roomNo + '#' : ''};
+        }
+
+        function clearRoomAccess() {
+            document.getElementById('roomAccessCard').classList.add('hidden');
+            document.getElementById('roomAccessCode').textContent = '';
+            document.getElementById('roomAccessPeriod').textContent = '';
+        }
+
+        function displayRoomAccess(room) {
+            const access = getRoomAccess(room);
+            document.getElementById('roomAccessCode').textContent = access.code;
+            document.getElementById('roomAccessPeriod').textContent = access.code
+                ? 'Áp dụng tháng ' + access.month.slice(5) + '/' + access.month.slice(0, 4) + '. Vui lòng giữ kín mật khẩu.'
+                : 'Vui lòng liên hệ lễ tân để nhận mật khẩu phòng của tháng hiện tại.';
+            document.getElementById('roomAccessCard').classList.remove('hidden');
+        }
+
         const CACHE_KEY_GUESTS = 'viettel_stayhub_guests_cache';
+        const GUEST_LOOKUP_FRESH_MS = 60000; // Dùng lại danh sách đã tải thành công tối đa 60 giây.
+        var guestListSyncedAt = 0; // Không coi dữ liệu localStorage từ phiên cũ là dữ liệu mới.
         var guestList = [];
         var isGuestListLoaded = false;
         var guestLoadPromise = null;
@@ -801,12 +858,13 @@
             url.searchParams.set("_t", Date.now());
 
             try {
-                const response = await fetchFastWithTimeout(url.toString(), 12000);
+                const response = await fetchFastWithTimeout(url.toString(), params && params.type === "getGuests" ? 45000 : 12000);
                 const text = await response.text();
                 let data = null;
                 try {
                     data = JSON.parse(text);
                 } catch(pe) {
+                    if (params && params.type === "getGuests") throw new Error("Phản hồi danh sách khách không hợp lệ");
                     data = { status: "success", raw: text };
                 }
                 if (data && data.status === "error") throw new Error(data.message || "Google Sheet báo lỗi");
@@ -836,7 +894,7 @@
                     } else {
                         reject(new Error("Google Sheet phản hồi quá thời gian quy định"));
                     }
-                }, 10000);
+                }, params.type === "getGuests" ? 45000 : 10000);
 
                 function cleanup() {
                     clearTimeout(timer);
@@ -921,7 +979,7 @@
                 const ck = cleanKey(k);
 
                 // Nhận diện cột Mã (ID / Code / MNV / CCCD / STT)
-                if (!id && (ck === 'id' || ck === 'code' || ck === 'ma' || ck === 'manv' || ck === 'manhanvien' || ck === 'mahocvien' || ck === 'madoan' || ck === 'cccd' || ck === 'cmnd' || ck === 'stt' || ck === 'sohieu' || ck === 'sdt')) {
+                if (!id && (ck === 'id' || ck === 'mnv' || ck === 'code' || ck === 'ma' || ck === 'manv' || ck === 'manhanvien' || ck === 'mahocvien' || ck === 'madoan' || ck === 'cccd' || ck === 'cmnd' || ck === 'stt' || ck === 'sohieu' || ck === 'sdt')) {
                     id = val;
                 }
 
@@ -938,17 +996,17 @@
                 }
 
                 // Nhận diện cột Ngày đến
-                if (!inDate && (ck === 'in' || ck === 'checkin' || ck === 'vao' || ck === 'ngayvao' || ck === 'tungay' || ck === 'den')) {
+                if (!inDate && (ck === 'in' || ck === 'checkin' || ck === 'vao' || ck === 'ngayvao' || ck === 'ngayden' || ck === 'tungay' || ck === 'den')) {
                     inDate = val;
                 }
 
                 // Nhận diện cột Ngày về
-                if (!outDate && (ck === 'out' || ck === 'checkout' || ck === 'ra' || ck === 'ngayra' || ck === 'denngay')) {
+                if (!outDate && (ck === 'out' || ck === 'checkout' || ck === 'ra' || ck === 'ngayra' || ck === 'ngaydi' || ck === 'denngay')) {
                     outDate = val;
                 }
 
                 // Nhận diện cột Lớp / Sự kiện / Ghi chú
-                if (!eventText && (ck === 'event' || ck === 'lop' || ck === 'sukien' || ck === 'lophoc' || ck === 'lophocsukien' || ck === 'note' || ck === 'ghichu' || ck === 'doan' || ck === 'donvi')) {
+                if (!eventText && (ck === 'event' || ck === 'tenlop' || ck === 'lop' || ck === 'sukien' || ck === 'lophoc' || ck === 'lophocsukien' || ck === 'note' || ck === 'ghichu' || ck === 'doan' || ck === 'donvi')) {
                     eventText = val;
                 }
             }
@@ -1110,7 +1168,7 @@
             if (Array.isArray(res)) {
                 rawList = res;
             } else if (typeof res === 'object') {
-                rawList = res.guests || res.data || res.result || res.list || res.rows || [];
+                rawList = res.guests || res.data || res.result || res.list || res.rows || res.values || [];
             }
             if (!Array.isArray(rawList)) return [];
 
@@ -1148,31 +1206,40 @@
             } catch (e) {
                 console.warn("Lỗi đọc cache:", e);
             }
-            syncGuestListFromSheet(false);
+            syncGuestListFromSheet(false).catch(function(e) { console.warn("Tải nền danh sách khách:", e); });
         }
 
-        async function syncGuestListFromSheet(forceShowLoading = false) {
-            if (forceShowLoading) setLoading(true, "Đang đối soát trực tiếp từ Google Sheet...");
+        async function syncGuestListFromSheet(forceShowLoading = false, requireFresh = false) {
+            if (forceShowLoading) setLoading(true, "Đang tra cứu thông tin, đồng chí vui lòng chờ...");
+            // Dùng chung yêu cầu đang chạy, tránh gửi trùng khi khách vừa mở trang đã tra cứu.
+            if (guestLoadPromise) return guestLoadPromise;
             guestLoadPromise = (async function() {
                 try {
                     const res = await apiRequest({ type: "getGuests" });
-                    const list = parseGuestsResponse(res);
-                    if (list && list.length > 0) {
-                        guestList = list;
-                        isGuestListLoaded = true;
-                        try {
-                            localStorage.setItem(CACHE_KEY_GUESTS, JSON.stringify(list));
-                        } catch(se){}
+                    const rawList = Array.isArray(res) ? res : res && (res.guests || res.data || res.result || res.list || res.rows || res.values);
+                    if (!Array.isArray(rawList)) {
+                        throw new Error('getGuests không trả về danh sách khách hợp lệ. Cần kiểm tra Apps Script.');
                     }
+                    const list = parseGuestsResponse(res);
+                    guestList = list;
+                    guestListSyncedAt = Date.now();
+                    isGuestListLoaded = true;
+                    try {
+                        localStorage.setItem(CACHE_KEY_GUESTS, JSON.stringify(list));
+                    } catch(se){}
                     return guestList;
                 } catch (e) {
                     console.warn("Chưa đồng bộ được danh sách khách mới:", e);
-                    return guestList;
+                    throw e;
                 } finally {
                     if (forceShowLoading) setLoading(false);
                 }
             })();
-            return guestLoadPromise;
+            try {
+                return await guestLoadPromise;
+            } finally {
+                guestLoadPromise = null;
+            }
         }
 
         const assetsTemplate = [
@@ -1211,17 +1278,8 @@
         }
 
         function showNotFoundModal(query) {
-            const actionHtml = `
-                <div class="space-y-2 mt-2">
-                    <button onclick="document.getElementById('infoModal').classList.add('hidden'); showManualCheckIn();" class="w-full bg-viettel text-white p-3 rounded-xl font-black text-[11px] uppercase tracking-wider shadow-md active:scale-95 transition-all">
-                        <i class="fas fa-edit mr-1"></i> Bấm Nhận phòng thủ công ngay
-                    </button>
-                    <p class="text-[9px] text-slate-400 font-semibold leading-relaxed">
-                        Mẹo: Đồng chí có thể nhập trực tiếp Số phòng (VD: 201), hoặc chỉ nhập Họ và tên để tìm kiếm nhanh.
-                    </p>
-                </div>
-            `;
-            showInfo("Không tìm thấy thông tin", `Hệ thống chưa tìm thấy dữ liệu phù hợp với "${query}" trong danh sách phân công.`, 'error', actionHtml);
+            const actionHtml = `<a href="tel:0983863380" class="block mt-3 bg-viettel text-white p-3 rounded-xl font-bold text-xs text-center"><i class="fas fa-phone-alt mr-1"></i> Gọi lễ tân: 0983.863.380</a>`;
+            showInfo("Chưa thấy thông tin khách hàng", "Đồng chí vui lòng liên hệ lễ tân để được kiểm tra và hỗ trợ nhận phòng.", 'error', actionHtml);
         }
 
         function showView(id) {
@@ -1244,6 +1302,7 @@
         }
 
         function resetApp() {
+            clearRoomAccess();
             document.getElementById('searchEmpId').value = '';
             document.getElementById('inName').value = '';
             document.getElementById('inRoom').value = '';
@@ -1265,20 +1324,27 @@
 
             const candidates = extractSearchCandidates(rawInput);
 
-            // 1. Kiểm tra tức thì trong bộ nhớ cache máy (< 0.05s)
-            let guest = findGuestInList(candidates);
-            if (guest) {
-                renderSearchResult(guest);
-                return;
+            // Tra cứu tức thì chỉ từ danh sách vừa đồng bộ thành công trong phiên này.
+            document.getElementById('lookupResult').classList.add('hidden');
+            currentUser = null;
+            clearRoomAccess();
+            let guest = null;
+            const cacheAge = Date.now() - guestListSyncedAt;
+            if (guestListSyncedAt > 0 && cacheAge >= 0 && cacheAge < GUEST_LOOKUP_FRESH_MS) {
+                guest = findGuestInList(candidates);
+                if (guest) {
+                    renderSearchResult(guest);
+                    return;
+                }
             }
-
-            // 2. NẾU CHƯA THẤY: Lập tức ép đồng bộ bản mới nhất từ Google Sheet về đối soát lại ngay!
-            setLoading(true, "Đang đối soát trực tiếp từ Google Sheet...");
+            setLoading(true, "Đang tra cứu thông tin, đồng chí vui lòng chờ...");
             try {
-                await syncGuestListFromSheet(false);
+                await syncGuestListFromSheet(false, true);
                 guest = findGuestInList(candidates);
             } catch (e) {
                 console.warn("Lỗi tải online:", e);
+                showNotFoundModal(rawInput);
+                return;
             } finally {
                 setLoading(false);
             }
@@ -1292,6 +1358,7 @@
         }
 
         function renderSearchResult(guest) {
+            clearRoomAccess();
             currentUser = guest;
             document.getElementById('resName').innerText = guest.name || '';
             
@@ -1351,6 +1418,7 @@
 
             // 3. HIỂN THỊ SỐ PHÒNG VÀ CHUYỂN SANG BƯỚC KIỂM TRA TÀI SẢN BẮT BUỘC
             displayRoomAndAssetCheck(room, name, eventText, type);
+            displayRoomAccess(room);
             if (btn) {
                 btn.disabled = false;
                 btn.innerHTML = `<i class="fas fa-check-circle text-sm"></i> Tôi đồng ý nhận phòng`;
@@ -1418,6 +1486,7 @@
         }
 
         function showManualCheckIn() {
+            clearRoomAccess();
             currentUser = null;
             document.getElementById('displayRoomNo').innerText = "---";
             document.getElementById('displayGuestName').innerText = "Nhận phòng thủ công";
