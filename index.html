@@ -21,6 +21,7 @@
         }
 
         .bg-viettel { background-color: #ee0000 !important; color: #ffffff !important; }
+        .room-inactive { background: #e2e8f0 !important; color: #64748b !important; border: 1px dashed #94a3b8 !important; }
         .text-viettel { color: #ee0000 !important; }
         .border-viettel { border-color: #ee0000 !important; }
 
@@ -341,7 +342,7 @@
                         <div class="bg-amber-50/95 p-3.5 rounded-2xl border border-amber-200 text-left flex items-start gap-2.5">
                             <i class="fas fa-question-circle text-amber-600 text-base mt-0.5"></i>
                             <p class="text-[11px] text-amber-900 leading-relaxed font-semibold">
-                                Đồng chí vui lòng <b>xác nhận nhận phòng</b> để xem số phòng và mật khẩu.
+                                Đồng chí vui lòng <b>xác nhận nhận phòng</b> để xem số phòng và hướng dẫn nhận thẻ từ.
                             </p>
                         </div>
 
@@ -380,12 +381,11 @@
                     <p id="displayGuestName" class="text-xs font-black uppercase text-white/95 pt-0.5 tracking-wide"></p>
                 </div>
 
-                <!-- Chỉ mở sau khi đồng chí đồng ý nhận phòng -->
+                <!-- Hướng dẫn mở cửa bằng thẻ từ; không hiển thị mã mở cửa -->
                 <div id="roomAccessCard" class="hidden bg-white p-5 rounded-3xl card-shadow border border-red-100 space-y-3" aria-live="polite">
-                    <p class="text-xs font-black uppercase text-slate-700"><i class="fas fa-key text-viettel mr-1"></i> Mật khẩu vào phòng</p>
-                    <p id="roomAccessCode" class="text-3xl font-black tracking-widest text-viettel text-center" style="overflow-wrap:anywhere"></p>
-                    <p id="roomAccessPeriod" class="text-xs text-slate-500 text-center"></p>
-                    <p class="text-xs text-slate-700 leading-relaxed bg-amber-50 border border-amber-200 rounded-2xl p-4">Đề nghị đồng chí gửi lại thẻ phòng cho lễ tân khi ra ngoài. Trường hợp làm mất thẻ, đồng chí có trách nhiệm bồi hoàn cho Ban Quản lý <strong>500.000 VNĐ/thẻ</strong>.</p>
+                    <p class="text-xs font-black uppercase text-slate-700"><i class="fas fa-id-card text-viettel mr-1"></i> Thẻ từ mở cửa phòng</p>
+                    <p class="text-sm font-bold text-slate-700 leading-relaxed">Đồng chí bắt buộc sử dụng thẻ từ để mở cửa phòng. Vui lòng nhận thẻ tại lễ tân.</p>
+                    <p class="text-xs text-slate-700 leading-relaxed bg-amber-50 border border-amber-200 rounded-2xl p-4">Vui lòng gửi thẻ từ tại lễ tân khi ra ngoài và hoàn trả khi trả phòng. Mất thẻ: bồi hoàn <strong>500.000 VNĐ/thẻ</strong>.</p>
                 </div>
 
                 <!-- Thẻ kiểm tra tài sản bắt buộc -->
@@ -397,7 +397,7 @@
                             </h4>
                             <p class="text-[9px] text-red-500 font-bold uppercase mt-0.5">* Bước bắt buộc theo quy chế KTX</p>
                         </div>
-                        <span class="text-[9px] font-black bg-slate-100 text-slate-500 px-2.5 py-1 rounded-lg uppercase">
+                        <span id="assetCountLabel" class="text-[9px] font-black bg-slate-100 text-slate-500 px-2.5 py-1 rounded-lg uppercase">
                             29 Hạng mục
                         </span>
                     </div>
@@ -454,7 +454,7 @@
                         <input type="text" id="outName" placeholder="TÊN NGƯỜI TRẢ" class="mobile-input w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-center uppercase outline-none focus:border-red-500 text-sm">
                         <input type="number" id="outRoom" placeholder="SỐ PHÒNG" class="mobile-input w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl font-black text-4xl text-center outline-none focus:border-red-500 text-viettel tracking-wider">
                     </div>
-                    <p class="text-[10px] text-slate-400 font-medium px-4 leading-relaxed">Đảm bảo tắt các thiết bị điện và gửi lại chìa khóa cho Lễ tân KTX.</p>
+                    <p class="text-[10px] text-slate-400 font-medium px-4 leading-relaxed">Đảm bảo tắt các thiết bị điện và hoàn trả thẻ từ cho Lễ tân KTX.</p>
                     
                     <button id="btnOut" onclick="handleOut()" class="mobile-primary-btn w-full bg-viettel py-4 rounded-2xl font-black shadow-xl uppercase text-xs tracking-widest active:scale-[0.98] transition-all text-white">
                         Xác nhận trả phòng
@@ -575,7 +575,6 @@
                         <div class="handbook-card">
                             <div class="handbook-header"><i class="fas fa-money-bill-wave text-red-500 text-lg"></i> Bảng giá Đền bù Tài sản</div>
                             <div class="handbook-body">
-                                <div class="price-row"><span>Chìa khóa phòng</span><b class="text-red-600">200,000đ</b></div>
                                 <div class="price-row"><span>Tivi</span><b class="text-red-600">10,000,000đ</b></div>
                                 <div class="price-row"><span>Tủ lạnh Mini</span><b class="text-red-600">2,800,000đ</b></div>
                                 <div class="price-row"><span>Điều khiển (TV/ĐH)</span><b class="text-red-600">120k - 200k</b></div>
@@ -612,8 +611,8 @@
                 <!-- Stats summary -->
                 <div class="grid grid-cols-3 gap-2.5">
                     <div class="bg-white/95 p-3.5 rounded-2xl shadow-sm border border-slate-100 text-center">
-                        <p class="text-[9px] font-bold text-slate-400 uppercase mb-0.5">Tổng phòng</p>
-                        <p class="text-xl font-black text-slate-700" id="statTotal">159</p>
+                        <p class="text-[9px] font-bold text-slate-400 uppercase mb-0.5">Phòng sử dụng</p>
+                        <p class="text-xl font-black text-slate-700" id="statTotal">158</p>
                     </div>
                     <div class="bg-viettel p-3.5 rounded-2xl shadow-md text-center text-white">
                         <p class="text-[9px] font-bold opacity-80 uppercase mb-0.5">Đang ở</p>
@@ -621,7 +620,7 @@
                     </div>
                     <div class="bg-green-50 p-3.5 rounded-2xl shadow-sm border border-green-100 text-center">
                         <p class="text-[9px] font-bold text-green-600 uppercase mb-0.5">Trống</p>
-                        <p class="text-xl font-black text-green-600" id="statEmpty">159</p>
+                        <p class="text-xl font-black text-green-600" id="statEmpty">158</p>
                     </div>
                 </div>
                 
@@ -766,51 +765,44 @@
             pin: "271020"
         };
 
-        // MẬT KHẨU THEO THÁNG (giờ Việt Nam). Chỉ sửa vùng cấu hình này khi đổi mã.
-        // Đây là mã HIỂN THỊ; phải cài cùng mã trên khóa cửa thực tế.
-        // Thêm một mục 'YYYY-MM' cho từng tháng. Không tự dùng lại mã tháng cũ.
-        // floorPrefixes: 3 chữ số đầu theo tầng; roomOverrides: mã riêng đầy đủ của phòng.
-        // Ví dụ cấu trúc tháng mới: '2026-11': { floorPrefixes: {...}, roomOverrides: {...} }
-        // Chỉ điền mã đã được BQL xác nhận, không tự tạo mã tháng mới.
-        const ROOM_ACCESS_BY_MONTH = {
-            '2026-10': {
-                floorPrefixes: {1: '111', 2: '222', 3: '333', 4: '444', 5: '555', 6: '666', 7: '777', 8: '888', 9: '999'},
-                roomOverrides: {}
-            }
-        };
-
-        function getRoomAccess(room, now = new Date()) {
-            const parts = new Intl.DateTimeFormat('en-GB', {
-                timeZone: 'Asia/Ho_Chi_Minh', year: 'numeric', month: '2-digit'
-            }).formatToParts(now);
-            const month = parts.find(p => p.type === 'year').value + '-' + parts.find(p => p.type === 'month').value;
-            const roomNo = String(room == null ? '' : room).trim();
-            const floor = Number(roomNo.charAt(0));
-            const index = Number(roomNo.slice(1));
-            // Khớp 159 phòng đang cấu hình ở renderAdmin và sheet Rooms.
-            const max = floor === 1 ? 11 : (floor <= 5 ? 25 : 12);
-            if (!/^[1-9]\d{2}$/.test(roomNo) || index < 1 || index > max) return {month, code: ''};
-            const config = ROOM_ACCESS_BY_MONTH[month];
-            if (!config) return {month, code: ''};
-            const override = config.roomOverrides && config.roomOverrides[roomNo];
-            if (override !== undefined) return {month, code: /^\d{6}#$/.test(override) ? override : ''};
-            const prefix = config.floorPrefixes && config.floorPrefixes[floor];
-            return {month, code: /^\d{3}$/.test(prefix || '') ? prefix + roomNo + '#' : ''};
+        // Danh mục hiện tại theo ảnh số giường do BQL cung cấp ngày 28/10/2026.
+        // Mỗi mảng theo thứ tự phòng x01, x02...; 0 = không sử dụng (phòng 101).
+        const ROOM_BEDS_BY_FLOOR = Object.freeze({
+            1: Object.freeze([0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]),
+            2: Object.freeze([3, 3, 3, 3, 2, 2, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1]),
+            3: Object.freeze([3, 3, 3, 3, 2, 2, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]),
+            4: Object.freeze([3, 3, 3, 3, 2, 2, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]),
+            5: Object.freeze([3, 3, 3, 3, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]),
+            6: Object.freeze([3, 3, 3, 3, 2, 2, 3, 3, 3, 3, 3, 3]),
+            7: Object.freeze([3, 3, 3, 3, 2, 2, 3, 3, 3, 3, 3, 3]),
+            8: Object.freeze([3, 3, 3, 3, 2, 2, 3, 3, 3, 3, 3, 3]),
+            9: Object.freeze([4, 4, 4, 4, 2, 2, 3, 3, 3, 2, 4, 4])
+        });
+        const ROOM_CATALOG = Object.freeze(Object.keys(ROOM_BEDS_BY_FLOOR).flatMap(function(floor) {
+            return ROOM_BEDS_BY_FLOOR[floor].map(function(capacity, index) {
+                const room = String(Number(floor) * 100 + index + 1);
+                return Object.freeze({ room: room, floor: Number(floor), capacity: capacity,
+                    active: capacity > 0, roomType: capacity === 0 ? 'KHÔNG SỬ DỤNG' : (capacity === 1 ? 'VIP' : capacity + ' GIƯỜNG') });
+            });
+        }));
+        const ROOM_CONFIG = Object.freeze(Object.fromEntries(ROOM_CATALOG.map(function(room) { return [room.room, room]; })));
+        function getRoomConfig(room) {
+            return ROOM_CONFIG[String(room == null ? '' : room).trim()] || null;
         }
-
+        function requireActiveRoom(room) {
+            const config = getRoomConfig(room);
+            if (!config || !config.active) {
+                showInfo('Phòng chưa thể nhận', config ? 'Phòng ' + config.room + ' hiện không sử dụng. Đồng chí vui lòng liên hệ lễ tân để được bố trí phòng khác.' : 'Số phòng chưa hợp lệ. Đồng chí vui lòng liên hệ lễ tân để được hỗ trợ.');
+                return null;
+            }
+            return config;
+        }
         function clearRoomAccess() {
             document.getElementById('roomAccessCard').classList.add('hidden');
-            document.getElementById('roomAccessCode').textContent = '';
-            document.getElementById('roomAccessPeriod').textContent = '';
         }
-
         function displayRoomAccess(room) {
-            const access = getRoomAccess(room);
-            document.getElementById('roomAccessCode').textContent = access.code;
-            document.getElementById('roomAccessPeriod').textContent = access.code
-                ? 'Áp dụng tháng ' + access.month.slice(5) + '/' + access.month.slice(0, 4) + '. Vui lòng giữ kín mật khẩu.'
-                : 'Vui lòng liên hệ lễ tân để nhận mật khẩu phòng của tháng hiện tại.';
-            document.getElementById('roomAccessCard').classList.remove('hidden');
+            const config = getRoomConfig(room);
+            document.getElementById('roomAccessCard').classList.toggle('hidden', !config || !config.active);
         }
 
         const CACHE_KEY_GUESTS = 'viettel_stayhub_guests_cache';
@@ -1243,7 +1235,7 @@
         }
 
         const assetsTemplate = [
-            { n: "Chìa khóa phòng", q: 1 }, { n: "Tivi", q: 1 }, { n: "Điều khiển Tivi", q: 1 },
+            { n: "Tivi", q: 1 }, { n: "Điều khiển Tivi", q: 1 },
             { n: "Điều hòa", q: 1 }, { n: "Điều khiển điều hòa", q: 1 }, { n: "Tủ lạnh", q: 1 },
             { n: "Bình nóng lạnh", q: 1 }, { n: "Ấm siêu tốc", q: 1 }, { n: "Vòi hoa sen", q: 1 },
             { n: "Thảm lau chân", q: 1 }, { n: "Gương soi", q: 1 }, { n: "Rèm cửa", q: 1 },
@@ -1252,7 +1244,7 @@
             { n: "Giường", q: "P" }, { n: "Đệm", q: "P" }, { n: "Chăn", q: "P" }, { n: "Ga giường", q: "P" },
             { n: "Gối", q: "P" }, { n: "Vỏ gối", q: "P" }, { n: "Dép đi trong nhà", q: "P" },
             { n: "Khăn tắm", q: "P" }, { n: "Khăn mặt", q: "P" }, { n: "Cốc thủy tinh", q: "P" },
-            { n: "GhGhế", q: "P" }, { n: "Móc áo", q: "P" }, { n: "Tủ quần áo", q: "P" },
+            { n: "Ghế", q: "P" }, { n: "Móc áo", q: "P" }, { n: "Tủ quần áo", q: "P" },
             { n: "Đèn học", q: "P" } 
         ];
 
@@ -1372,6 +1364,8 @@
         // BẤM ĐỒNG Ý: GHI NHẬN CHECK-IN SHEET TRƯỚC, RỒI MỚI MỞ SỐ PHÒNG & BÀN GIAO TÀI SẢN
         async function confirmAndCheckIn() {
             if (!currentUser) return;
+            const roomConfig = requireActiveRoom(currentUser.room);
+            if (!roomConfig) return;
             const btn = document.getElementById('btnConfirmCheckIn');
             if (btn) {
                 btn.disabled = true;
@@ -1383,12 +1377,8 @@
             const eventText = currentUser.event || "";
             const txnId = makeTxnId('IN', room, name);
 
-            // Tính loại phòng & giường
-            const r = parseInt(room);
-            let type = "2 GIƯỜNG";
-            if (r >= 217 && r <= 225) type = "VIP";
-            else if ((r>=503 && r<=512 && r!=505 && r!=506) || (r>=601 && r<=612 && r!=605 && r!=606) || (r>=701 && r<=712 && r!=705 && r!=706) || (r>=801 && r<=812 && r!=805 && r!=806) || (r>=901 && r<=912 && r!=905 && r!=906)) type = "4 GIƯỜNG";
-            else if (r==501 || r==502 || (r>=513 && r<=525) || (r>=401 && r<=412 && r!=405 && r!=406) || (r>=301 && r<=312 && r!=305 && r!=306) || (r>=201 && r<=212 && r!=205 && r!=206)) type = "3 GIƯỜNG";
+            // Dùng cùng danh mục với sơ đồ và định mức tài sản.
+            const type = roomConfig.roomType;
 
             // 1. Cập nhật dữ liệu tại chỗ để sơ đồ phòng ĐANG Ở ngay lập tức
             occupiedRooms[room] = {
@@ -1440,6 +1430,7 @@
         }
 
         async function handleAssetComplete() {
+            if (!requireActiveRoom(document.getElementById('inRoom').value)) return;
             const btn = document.getElementById('btnCompleteAsset');
             if (btn && btn.dataset.busy === "1") return;
             if (btn) { btn.dataset.busy = "1"; btn.disabled = true; btn.innerText = "ĐANG LƯU HỒ SƠ..."; }
@@ -1476,7 +1467,7 @@
                 }
             }
 
-            showInfo("Hoàn tất nhận phòng!", `Phòng ${room} đã sẵn sàng đón tiếp đồng chí. Chúc đồng chí kỳ lưu trú hoàn thành xuất sắc nhiệm vụ!`, 'success');
+            showInfo("Hoàn tất nhận phòng!", `Đồng chí sử dụng thẻ từ để mở cửa phòng ${room}. Vui lòng nhận thẻ tại lễ tân và hoàn trả khi trả phòng.`, 'success');
             if (btn) { btn.dataset.busy = "0"; btn.disabled = false; btn.innerText = "XÁC NHẬN TÀI SẢN & HOÀN TẤT"; }
             
             setTimeout(function() {
@@ -1506,25 +1497,25 @@
         }
 
         function autoCheckRoom(room) {
-            const r = parseInt(room);
+            const config = getRoomConfig(room);
             const badge = document.getElementById('roomBadge');
             const container = document.getElementById('assetContainer');
-            if (!room || isNaN(r)) {
+            const list = document.getElementById('assetList');
+            if (!config || !config.active) {
                 if (container) container.classList.add('hidden');
-                if (badge) badge.classList.add('hidden');
+                if (list) list.innerHTML = '';
+                if (badge) {
+                    badge.textContent = config ? 'KHÔNG SỬ DỤNG' : 'PHÒNG CHƯA HỢP LỆ';
+                    badge.classList.toggle('hidden', !room);
+                }
+                clearRoomAccess();
                 return;
             }
-
-            let type = "2 GIƯỜNG"; let p = 2;
-            if(r >= 217 && r <= 225) { 
-                type = "VIP"; p = 1; 
-            }
-            else if((r>=503 && r<=512 && r!=505 && r!=506) || (r>=601 && r<=612 && r!=605 && r!=606) || (r>=701 && r<=712 && r!=705 && r!=706) || (r>=801 && r<=812 && r!=805 && r!=806) || (r>=901 && r<=912 && r!=905 && r!=906)) {
-                type = "4 GIƯỜNG"; p = 4;
-            }
-            else if(r==501 || r==502 || (r>=513 && r<=525) || (r>=401 && r<=412 && r!=405 && r!=406) || (r>=301 && r<=312 && r!=305 && r!=306) || (r>=201 && r<=212 && r!=205 && r!=206)) {
-                type = "3 GIƯỜNG"; p = 3;
-            }
+            const type = config.roomType;
+            const p = config.capacity;
+            const assetCount = document.getElementById('assetCountLabel');
+            if (assetCount) assetCount.textContent = assetsTemplate.length + ' Hạng mục';
+            displayRoomAccess(config.room);
 
             if (badge) {
                 badge.innerText = type; 
@@ -1532,7 +1523,6 @@
             }
             if (container) container.classList.remove('hidden');
             
-            const list = document.getElementById('assetList'); 
             list.innerHTML = "";
             assetsTemplate.forEach(function(a, i) {
                 const qty = a.q === "P" ? p : a.q;
@@ -1574,7 +1564,7 @@
             } catch (e) {
                 setLoading(false);
                 if (btn) { btn.dataset.busy = "0"; btn.disabled = false; btn.innerText = "XÁC NHẬN TRẢ PHÒNG"; }
-                showInfo("Chưa ghi nhận được", e.message || "Không kết nối được Google Sheet. Vui lòng thử lại.", "error");
+                showInfo("Chưa ghi nhận được", e.message || "Chưa kết nối được hệ thống. Đồng chí vui lòng thử lại hoặc liên hệ lễ tân.", "error");
             }
         }
 
@@ -1607,7 +1597,7 @@
                 setTimeout(function() { document.getElementById('infoModal').classList.add('hidden'); resetApp(); }, 2000);
             } catch (e) {
                 setLoading(false);
-                showInfo("Chưa gửi được", "Không thể gửi dữ liệu lên Sheet. Vui lòng thử lại sau.", "error");
+                showInfo("Chưa gửi được", "Chưa gửi được thông tin. Đồng chí vui lòng thử lại hoặc liên hệ lễ tân.", "error");
             }
         }
 
@@ -1668,8 +1658,8 @@
         }
 
         function updateStats() {
-            const totalRooms = 159; 
-            const entries = Object.values(occupiedRooms);
+            const totalRooms = ROOM_CATALOG.filter(function(r) { return r.active; }).length;
+            const entries = Object.values(occupiedRooms).filter(function(r) { const config = getRoomConfig(r.room); return config && config.active; });
             const occupiedCount = entries.filter(function(r){ return (r.status || 'occupied') === 'occupied'; }).length;
             const dirtyCount = entries.filter(function(r){ return r.status === 'dirty'; }).length;
             const lateCount = entries.filter(function(r){ return r.status === 'late'; }).length;
@@ -1678,7 +1668,7 @@
             document.getElementById('statTotal').innerText = totalRooms;
             document.getElementById('statOccupied').innerText = occupiedCount;
             document.getElementById('statEmpty').innerText = emptyCount;
-            document.getElementById('guestCountText').innerText = `${occupiedCount} đang ở • ${dirtyCount} cần dọn • ${lateCount} trả trễ`;
+            document.getElementById('guestCountText').innerText = `${occupiedCount} đang ở • ${dirtyCount} cần dọn • ${lateCount} trả trễ • ${ROOM_CATALOG.reduce(function(total, r) { return total + r.capacity; }, 0)} giường • 101 không sử dụng`;
         }
 
         function renderAdmin() {
@@ -1689,18 +1679,21 @@
                 let roomsHTML = "";
                 for(let i=start; i<=end; i++) {
                     const roomNo = i.toString();
+                    const config = getRoomConfig(roomNo);
                     const data = occupiedRooms[roomNo];
-                    const status = data ? (data.status || 'occupied') : 'empty';
+                    const status = !config || !config.active ? 'inactive' : (data ? (data.status || 'occupied') : 'empty');
                     let statusClass = 'room-empty';
-                    if(status === 'occupied') statusClass = 'room-occupied';
+                    if(status === 'inactive') statusClass = 'room-inactive';
+                    else if(status === 'occupied') statusClass = 'room-occupied';
                     else if(status === 'dirty') statusClass = 'room-dirty';
                     else if(status === 'late') statusClass = 'room-late';
-                    const display = data ? (data.note || data.occupant || data.name || '') : '';
+                    const display = status === 'inactive' ? 'Không sử dụng' : (data ? (data.note || data.occupant || data.name || '') : '');
                     roomsHTML += `
                         <div class="room-card ${statusClass}" onclick="showRoomDetails('${roomNo}')">
                             <span class="opacity-50 text-[8px] mb-0.5">PHÒNG</span>${roomNo}
+                            <span class="text-[9px] font-bold mt-1">${config && config.active ? config.capacity + ' giường' : 'Không sử dụng'}</span>
                             ${display ? `<div class="room-note">${String(display).replace(/[&<>"']/g, '')}</div>` : ''}
-                            ${status !== 'empty' ? '<div class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-viettel rounded-full border-2 border-white"></div>' : ''}
+                            ${status !== 'empty' && status !== 'inactive' ? '<div class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-viettel rounded-full border-2 border-white"></div>' : ''}
                         </div>`;
                 }
                 cont.innerHTML += `
@@ -1715,8 +1708,10 @@
         }
 
         function showRoomDetails(roomNo) {
+            const config = getRoomConfig(roomNo);
+            if (!config || !config.active) return showInfo('Phòng ' + roomNo, 'Phòng hiện không sử dụng, không bố trí nhận phòng.');
             const data = occupiedRooms[roomNo];
-            if(!data) return showInfo(`Phòng ${roomNo}`, `Phòng hiện đang trống và sẵn sàng đón khách.`, 'success');
+            if(!data) return showInfo(`Phòng ${roomNo}`, `Phòng ${config.capacity} giường hiện đang trống và sẵn sàng đón khách.`, 'success');
 
             const status = data.status || 'occupied';
             const label = status === 'dirty' ? 'Cần dọn dẹp' : (status === 'late' ? 'Trả trễ / cần dọn' : 'Đang ở');
