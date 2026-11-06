@@ -1,3288 +1,680 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0A0F1C">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<title>Viettel Stayhub — Quản lý lưu trú</title>
-<!-- Không phụ thuộc CDN: font hệ thống + QR tải khi cần -->
-<meta name="format-detection" content="telephone=no">
-<style>
-:root{
-  --ink:#0A0F1C; --ink-2:#1C2635; --ink-3:#46536A; --ink-4:#69778D;
-  --paper:#FFFFFF; --bg:#F2F4F7; --bg-2:#E9EDF2; --line:#E1E6ED; --line-2:#EEF1F5;
-  --brand:#E11D2E; --brand-ink:#A4000F; --brand-soft:#FDEEEF;
-  --ok:#0C8F63; --ok-bg:#E8F6F0;
-  --warn:#A85B06; --warn-bg:#FCF3E4;
-  --late:#C4161C; --late-bg:#FBEBEB;
-  --idle:#69778D; --idle-bg:#EDF0F4;
-  --r-sm:10px; --r-md:14px; --r-lg:20px; --r-xl:28px;
-  --sh-1:0 1px 2px rgba(10,15,28,.05);
-  --sh-2:0 2px 8px -2px rgba(10,15,28,.08), 0 1px 2px rgba(10,15,28,.04);
-  --sh-3:0 12px 32px -12px rgba(10,15,28,.22);
-  --font-display:system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', 'Helvetica Neue', Arial, sans-serif;
-  --font-ui:system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', 'Helvetica Neue', Arial, sans-serif;
-  --font-mono:ui-monospace, 'Roboto Mono', 'SF Mono', Menlo, Consolas, 'Courier New', monospace;
-}
-*,*::before,*::after{box-sizing:border-box}
-html,body{margin:0;padding:0}
-html{-webkit-text-size-adjust:100%}
-body{
-  font-family:var(--font-ui); color:var(--ink); background:var(--bg);
-  font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased;
-  text-rendering:optimizeLegibility;
-}
-button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
-input,textarea,select{font:inherit;color:inherit}
-a{color:inherit;text-decoration:none}
-h1,h2,h3,h4,p{margin:0}
-:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:6px}
-.ico{width:20px;height:20px;flex:0 0 auto;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
-.ico-sm{width:16px;height:16px}
-.ico-lg{width:26px;height:26px}
-.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.hidden{display:none !important}
-
-/* ---------------- shell ---------------- */
-.app{min-height:100dvh;display:flex;flex-direction:column;background:var(--bg)}
-.shell{width:100%;max-width:1240px;margin:0 auto;padding:0 16px}
-@media(min-width:900px){ .shell{padding:0 28px} }
-
-.topbar{
-  position:sticky;top:0;z-index:40;background:rgba(255,255,255,.86);
-  backdrop-filter:saturate(180%) blur(14px);border-bottom:1px solid var(--line);
-}
-.topbar-in{display:flex;align-items:center;gap:14px;height:60px}
-.brand{display:flex;align-items:center;gap:11px;min-width:0}
-.brand-mark{
-  width:34px;height:34px;border-radius:10px;background:var(--brand);color:#fff;
-  display:grid;place-items:center;box-shadow:0 4px 12px -4px rgba(225,29,46,.6);flex:0 0 auto;
-}
-.brand-name{font-family:var(--font-display);font-weight:700;font-size:14.5px;letter-spacing:-.01em;line-height:1.1}
-.brand-sub{font-size:11px;color:var(--ink-4);font-weight:500;letter-spacing:.02em;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}
-.topbar-actions{margin-left:auto;display:flex;align-items:center;gap:8px}
-
-.lang{display:flex;background:var(--bg-2);border-radius:9px;padding:3px;gap:2px}
-.lang button{
-  font-size:11.5px;font-weight:700;letter-spacing:.04em;color:var(--ink-3);
-  padding:5px 9px;border-radius:6px;line-height:1;transition:background .15s,color .15s;
-}
-.lang button[aria-pressed="true"]{background:var(--paper);color:var(--ink);box-shadow:var(--sh-1)}
-
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  font-family:var(--font-display);font-weight:600;font-size:14px;letter-spacing:-.005em;
-  border-radius:12px;padding:0 16px;height:44px;transition:transform .12s,background .15s,box-shadow .15s;
-  white-space:nowrap;
-}
-.btn:active{transform:scale(.985)}
-.btn-primary{background:var(--brand);color:#fff;box-shadow:0 6px 16px -8px rgba(225,29,46,.85)}
-.btn-primary:hover{background:#CF1526}
-.btn-ghost{background:var(--paper);color:var(--ink-2);border:1px solid var(--line);box-shadow:var(--sh-1)}
-.btn-ghost:hover{background:#FAFBFC;border-color:#D3DAE4}
-.btn-ink{background:var(--ink);color:#fff}
-.btn-ink:hover{background:var(--ink-2)}
-.btn-quiet{color:var(--ink-3);font-weight:600;font-size:13.5px}
-.btn:disabled{opacity:.55;pointer-events:none}
-.btn-block{width:100%}
-.btn-lg{height:52px;font-size:15px;border-radius:14px}
-.btn-sm{height:34px;font-size:12.5px;padding:0 11px;border-radius:9px}
-
-/* ---------------- guest home ---------------- */
-.guest{flex:1;display:flex;flex-direction:column}
-.guest-main{flex:1;padding:26px 0 40px}
-@media(min-width:900px){ .guest-main{padding:44px 0 72px} }
-
-.hero{max-width:560px;margin:0 auto 24px;text-align:center}
-.hero-eyebrow{
-  display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:700;
-  letter-spacing:.13em;text-transform:uppercase;color:var(--brand-ink);
-  background:var(--brand-soft);border-radius:100px;padding:6px 12px;margin-bottom:14px;
-}
-.hero h1{
-  font-family:var(--font-display);font-weight:700;font-size:27px;line-height:1.2;
-  letter-spacing:-.025em;margin-bottom:8px;
-}
-.hero p{color:var(--ink-3);font-size:14.5px;max-width:420px;margin:0 auto}
-@media(min-width:520px){ .hero h1{font-size:32px} }
-
-.panel{background:var(--paper);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--sh-2)}
-.panel-pad{padding:18px}
-.guest-col{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
-
-.support{
-  display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--ink);
-  color:#fff;border-radius:var(--r-lg);box-shadow:var(--sh-3);
-}
-.support-label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.62);display:block;white-space:nowrap}
-.support-num{font-family:var(--font-mono);font-weight:600;font-size:17px;letter-spacing:.01em;white-space:nowrap;display:block}
-.support a{
-  margin-left:auto;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;
-  background:var(--brand);color:#fff;flex:0 0 auto;
-}
-
-.actions{overflow:hidden}
-.action{
-  display:flex;align-items:center;gap:14px;width:100%;padding:15px 16px;text-align:left;
-  transition:background .14s;position:relative;
-}
-.action+.action{border-top:1px solid var(--line-2)}
-.action:hover{background:#FAFBFC}
-.action:active{background:var(--bg)}
-.action-ico{
-  width:40px;height:40px;border-radius:11px;display:grid;place-items:center;flex:0 0 auto;
-  background:var(--bg);color:var(--ink-2);
-}
-.action[data-tone="brand"] .action-ico{background:var(--brand-soft);color:var(--brand)}
-.action[data-tone="ink"] .action-ico{background:var(--ink);color:#fff}
-.action[data-tone="blue"] .action-ico{background:#EAF1FE;color:#1D4ED8}
-.action[data-tone="amber"] .action-ico{background:#FDF3E2;color:#B45309}
-.action-title{font-family:var(--font-display);font-weight:600;font-size:15px;letter-spacing:-.01em}
-.action-sub{font-size:12.5px;color:var(--ink-4);margin-top:1px}
-.action-go{margin-left:auto;color:var(--ink-4);display:grid;place-items:center}
-
-.secure-note{display:flex;gap:8px;align-items:flex-start;color:var(--ink-4);font-size:12px;line-height:1.5;padding:0 4px}
-
-/* ---------------- page head (sub views) ---------------- */
-.page-head{display:flex;align-items:center;gap:12px;margin-bottom:18px}
-.back{
-  width:38px;height:38px;border-radius:11px;border:1px solid var(--line);background:var(--paper);
-  display:grid;place-items:center;color:var(--ink-2);box-shadow:var(--sh-1);flex:0 0 auto;
-}
-.page-title{font-family:var(--font-display);font-weight:700;font-size:19px;letter-spacing:-.02em;line-height:1.2}
-.page-sub{font-size:12.5px;color:var(--ink-4);margin-top:1px}
-
-/* steps */
-.steps{display:flex;align-items:center;gap:5px;margin-bottom:16px;min-width:0}
-.step{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;color:var(--ink-4);white-space:nowrap;flex:0 0 auto}
-.step>span:last-child{flex:0 0 auto;white-space:nowrap}
-@media(max-width:400px){ .step{font-size:10.5px;gap:5px} .steps{gap:4px} .step-line{min-width:6px} }
-.step-dot{
-  width:20px;height:20px;flex:0 0 auto;border-radius:50%;display:grid;place-items:center;
-  background:var(--bg-2);color:var(--ink-4);font-size:11px;font-weight:700;font-family:var(--font-mono);
-}
-.step[data-on="1"]{color:var(--ink)}
-.step[data-on="1"] .step-dot{background:var(--ink);color:#fff}
-.step[data-done="1"] .step-dot{background:var(--ok);color:#fff}
-.step-line{flex:1 1 8px;height:1px;background:var(--line);min-width:6px}
-
-/* ---------------- forms ---------------- */
-.field{margin-bottom:13px}
-.label{display:block;font-size:11.5px;font-weight:700;color:var(--ink-3);letter-spacing:.02em;margin-bottom:6px}
-.label .req{color:var(--brand)}
-.input{
-  width:100%;height:48px;padding:0 14px;border-radius:12px;border:1px solid var(--line);
-  background:var(--paper);font-size:15px;transition:border-color .15s,box-shadow .15s;
-}
-.input::placeholder{color:#98A3B4}
-.input:focus{outline:none;border-color:var(--ink-2);box-shadow:0 0 0 3px rgba(28,38,53,.07)}
-.input-mono{font-family:var(--font-mono);font-weight:600;letter-spacing:.06em}
-.input-center{text-align:center}
-textarea.input{height:auto;padding:12px 14px;min-height:76px;resize:vertical;line-height:1.55}
-.input-wrap{position:relative}
-.input-wrap .input{padding-right:52px}
-.input-btn{
-  position:absolute;right:6px;top:6px;width:36px;height:36px;border-radius:9px;
-  background:var(--brand-soft);color:var(--brand);display:grid;place-items:center;transition:background .15s;
-}
-.input-btn:hover{background:#FBDDDF}
-.hint{font-size:12px;color:var(--ink-4);margin-top:6px;line-height:1.5}
-.hint-ok{color:var(--ok);font-weight:600}
-.hint-warn{color:var(--warn);font-weight:600}
-
-/* ---------------- result card ---------------- */
-.result{border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;background:var(--paper);animation:rise .22s ease-out}
-@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.result-head{padding:14px 16px;background:var(--bg);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
-.result-head .ico{color:var(--ok)}
-.result-title{font-family:var(--font-display);font-weight:600;font-size:13.5px}
-.kv{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:11px 16px}
-.kv+.kv{border-top:1px solid var(--line-2)}
-.kv-k{font-size:12px;color:var(--ink-4);font-weight:500;flex:0 0 auto}
-.kv-v{font-weight:600;font-size:13.5px;text-align:right;word-break:break-word}
-.kv-v.big{font-family:var(--font-mono);font-size:16px;letter-spacing:.04em}
-.locked{
-  display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;
-  color:var(--warn);background:var(--warn-bg);border-radius:7px;padding:4px 8px;
-}
-.notice{
-  display:flex;gap:9px;align-items:flex-start;padding:11px 13px;border-radius:11px;
-  font-size:12.5px;line-height:1.5;background:var(--warn-bg);color:#7C4A08;
-}
-.notice .ico{color:#B45309;width:17px;height:17px;margin-top:1px}
-.notice-info{background:#EDF3FE;color:#1E40AF}
-.notice-info .ico{color:#2563EB}
-.notice-ok{background:var(--ok-bg);color:#08654A}
-.notice-ok .ico{color:var(--ok)}
-.notice-danger{background:var(--late-bg);color:#8E1116}
-.notice-danger .ico{color:var(--late)}
-
-/* ---------------- room card (check-in) ---------------- */
-.room-hero{
-  background:var(--ink);color:#fff;border-radius:var(--r-xl);padding:22px 20px;
-  text-align:center;position:relative;overflow:hidden;box-shadow:var(--sh-3);
-}
-.room-hero::after{
-  content:"";position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(120% 90% at 50% -30%,rgba(225,29,46,.45),transparent 60%);
-}
-.room-hero-badge{
-  position:relative;display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;
-  letter-spacing:.1em;text-transform:uppercase;background:rgba(255,255,255,.14);
-  border:1px solid rgba(255,255,255,.2);border-radius:100px;padding:5px 11px;margin-bottom:12px;
-}
-.room-hero-label{position:relative;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.6)}
-.room-hero-no{
-  position:relative;font-family:var(--font-mono);font-weight:600;font-size:52px;line-height:1.05;
-  letter-spacing:.02em;margin:2px 0 4px;
-}
-.room-hero-name{position:relative;font-family:var(--font-display);font-weight:600;font-size:14.5px;color:rgba(255,255,255,.92)}
-.room-hero-type{
-  position:relative;display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
-  background:rgba(255,255,255,.92);color:var(--brand-ink);border-radius:100px;padding:3px 9px;margin-top:8px;
-}
-
-.asset-list{display:flex;flex-direction:column;gap:1px;background:var(--line-2);border-radius:12px;overflow:hidden;max-height:290px;overflow-y:auto}
-.asset{
-  display:flex;align-items:center;gap:12px;padding:11px 13px;background:var(--paper);cursor:pointer;
-  transition:background .12s;
-}
-.asset:hover{background:#FAFBFC}
-.asset[data-on="1"]{background:var(--late-bg)}
-.asset-index{font-family:var(--font-mono);font-size:11px;color:var(--ink-4);width:16px;flex:0 0 auto}
-.asset-name{font-size:13px;font-weight:500;flex:1;min-width:0}
-.asset-qty{font-family:var(--font-mono);font-size:11.5px;color:var(--ink-4);flex:0 0 auto}
-.check{
-  width:20px;height:20px;border-radius:6px;border:1.5px solid #C6CED9;background:var(--paper);
-  display:grid;place-items:center;flex:0 0 auto;transition:background .12s,border-color .12s;
-}
-.check .ico{width:13px;height:13px;color:#fff;opacity:0;stroke-width:2.6}
-.asset[data-on="1"] .check{background:var(--late);border-color:var(--late)}
-.asset[data-on="1"] .check .ico{opacity:1}
-
-/* damage chips */
-.chips{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-@media(min-width:520px){ .chips{grid-template-columns:repeat(3,minmax(0,1fr))} }
-.chip{
-  display:flex;align-items:center;gap:8px;padding:10px 11px;border:1px solid var(--line);
-  border-radius:10px;background:var(--paper);font-size:12.5px;font-weight:500;text-align:left;
-  transition:background .12s,border-color .12s,color .12s;line-height:1.25;
-}
-.chip:hover{border-color:#CFD7E1}
-.chip[aria-pressed="true"]{background:var(--late-bg);border-color:#E7A6A6;color:#8E1116;font-weight:600}
-.chip .dot{width:7px;height:7px;border-radius:50%;background:#D3DAE4;flex:0 0 auto}
-.chip[aria-pressed="true"] .dot{background:var(--late)}
-
-/* ---------------- admin ---------------- */
-.admin-bar{
-  position:sticky;top:60px;z-index:30;background:rgba(242,244,247,.9);
-  backdrop-filter:blur(12px);border-bottom:1px solid var(--line);
-}
-.admin-bar-in{display:flex;align-items:center;gap:10px;padding:12px 0;overflow-x:auto;scrollbar-width:none}
-.admin-bar-in::-webkit-scrollbar{display:none}
-.tabs{display:flex;gap:4px;background:var(--bg-2);border-radius:10px;padding:3px;flex:0 0 auto}
-.tab{
-  display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;
-  padding:7px 12px;border-radius:8px;color:var(--ink-3);white-space:nowrap;transition:background .15s,color .15s;
-}
-.tab[aria-selected="true"]{background:var(--paper);color:var(--ink);box-shadow:var(--sh-1)}
-.admin-spacer{flex:1}
-.live{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;color:var(--ink-4);white-space:nowrap}
-.live-dot{width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px rgba(12,143,99,.16)}
-.live[data-off="1"] .live-dot{background:var(--warn);box-shadow:0 0 0 3px rgba(168,91,6,.16)}
-
-.admin-main{padding:20px 0 80px}
-
-/* quick actions — one-handed, top of dashboard */
-.quickbar{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:16px}
-.qbtn{
-  position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
-  min-height:66px;padding:8px 6px;border-radius:14px;border:1px solid var(--line);background:var(--paper);
-  font-family:var(--font-display);font-weight:600;font-size:12.5px;line-height:1.15;text-align:center;
-  box-shadow:var(--sh-1);transition:transform .12s,box-shadow .15s,background .15s;color:var(--ink-2);
-}
-.qbtn:active{transform:scale(.97)}
-.qbtn .ico{width:19px;height:19px}
-.qbtn[data-tone="brand"]{background:var(--brand);color:#fff;border-color:transparent;box-shadow:0 8px 20px -10px rgba(225,29,46,.9)}
-.qbtn[data-tone="ink"]{background:var(--ink);color:#fff;border-color:transparent;box-shadow:0 8px 20px -12px rgba(10,15,28,.9)}
-.qbtn[data-tone="warn"]{background:var(--warn-bg);color:#7C4A08;border-color:#EBD3A8}
-.qbtn .qcount{
-  position:absolute;top:6px;right:7px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;
-  background:var(--warn);color:#fff;font-family:var(--font-mono);font-size:10.5px;font-weight:600;
-  display:flex;align-items:center;justify-content:center;
-}
-@media(min-width:600px){
-  .qbtn{flex-direction:row;min-height:54px;font-size:14px;gap:9px;padding:8px 14px}
-  .qbtn .ico{width:20px;height:20px}
-}
-@media(min-width:900px){
-  .quickbar{position:sticky;top:105px;z-index:29;background:var(--bg);padding:8px 0;margin:-8px 0 10px}
-  .quickbar::before{content:"";position:absolute;left:-28px;right:-28px;top:0;bottom:0;background:var(--bg);z-index:-1}
-}
-
-/* quick sheet */
-.qroom-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
-.qroom{
-  display:flex;flex-direction:column;gap:2px;padding:11px 12px;border-radius:11px;border:1px solid var(--line);
-  background:var(--paper);text-align:left;transition:border-color .12s,transform .12s;
-}
-.qroom:active{transform:scale(.97)}
-.qroom-no{font-family:var(--font-mono);font-weight:600;font-size:16px;line-height:1.1}
-.qroom-who{font-size:11px;color:var(--ink-4);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.qroom[data-s="dirty"]{border-color:#EBD3A8;background:var(--warn-bg)}
-.qroom[data-s="late"]{border-color:#E7A6A6;background:var(--late-bg)}
-.qrow{
-  display:flex;align-items:center;gap:11px;width:100%;padding:11px 12px;border-radius:11px;
-  border:1px solid var(--line);background:var(--paper);text-align:left;margin-bottom:7px;
-  transition:border-color .12s,background .12s;
-}
-.qrow:active{background:var(--bg)}
-.qrow-room{
-  font-family:var(--font-mono);font-weight:600;font-size:15px;min-width:42px;
-  color:var(--brand-ink);
-}
-.qrow-name{font-weight:600;font-size:13.5px;line-height:1.2}
-.qrow-sub{font-size:11.5px;color:var(--ink-4);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.qempty{text-align:center;padding:28px 12px;color:var(--ink-4);font-size:13px}
-.qdone{
-  display:flex;align-items:center;gap:9px;background:var(--ok-bg);color:#08654A;border-radius:11px;
-  padding:11px 13px;font-size:13px;font-weight:600;margin-bottom:11px;
-}
-.qdone .ico{color:var(--ok);width:17px;height:17px}
-
-/* stats */
-.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:18px}
-@media(min-width:720px){ .stats{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px} }
-.stat{background:var(--paper);border:1px solid var(--line);border-radius:var(--r-md);padding:13px 15px;box-shadow:var(--sh-1)}
-.stat-k{font-size:11px;font-weight:600;color:var(--ink-4);letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:6px}
-.stat-v{font-family:var(--font-mono);font-weight:600;font-size:25px;line-height:1.15;margin-top:5px;letter-spacing:-.02em}
-.stat-v small{font-size:12px;font-weight:500;color:var(--ink-4);font-family:var(--font-ui);letter-spacing:0}
-.stat[data-tone="ok"] .stat-v{color:var(--ok)}
-.stat[data-tone="warn"] .stat-v{color:var(--warn)}
-.stat[data-tone="late"] .stat-v{color:var(--late)}
-
-/* ribbon */
-.ribbon-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--r-md);padding:15px 16px 13px;margin-bottom:20px;box-shadow:var(--sh-1)}
-.ribbon-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:11px;flex-wrap:wrap}
-.ribbon-title{font-family:var(--font-display);font-weight:600;font-size:13px}
-.ribbon-legend{display:flex;gap:12px;flex-wrap:wrap}
-.legend{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--ink-3);font-weight:500}
-.legend i{width:8px;height:8px;border-radius:2px;display:block}
-.ribbon{display:flex;gap:6px;align-items:stretch;height:44px}
-.rgroup{display:flex;gap:2px;flex:1;align-items:stretch;min-width:0}
-.rseg{
-  flex:1 1 0;min-width:3px;height:100%;border-radius:2px;background:var(--idle-bg);
-  transition:transform .12s,filter .12s;cursor:pointer;border:0;padding:0;
-}
-.rseg[data-s="occupied"]{background:#8FD4B8}
-.rseg[data-s="dirty"]{background:#EBC98C}
-.rseg[data-s="late"]{background:#E88B8B}
-.rseg[data-s="vacant"]{background:#DCE2EA}
-.rseg:hover{transform:scaleY(1.12);filter:brightness(.94)}
-.ribbon-axis{display:flex;gap:3px;margin-top:6px}
-.ribbon-axis span{flex:1;text-align:center;font-family:var(--font-mono);font-size:10px;color:var(--ink-4)}
-
-/* floor grid */
-.floor{margin-bottom:24px}
-.floor-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.floor-name{font-family:var(--font-display);font-weight:600;font-size:13px;color:var(--ink-2);letter-spacing:-.01em}
-.floor-meta{font-family:var(--font-mono);font-size:11px;color:var(--ink-4)}
-.floor-rule{flex:1;height:1px;background:var(--line)}
-.rooms{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:8px}
-@media(min-width:1100px){ .rooms{grid-template-columns:repeat(auto-fill,minmax(146px,1fr));gap:10px} }
-
-.room{
-  position:relative;background:var(--paper);border:1px solid var(--line);border-radius:11px;
-  padding:10px 11px 10px 14px;text-align:left;min-height:78px;display:flex;flex-direction:column;
-  transition:border-color .12s,box-shadow .12s,transform .12s;overflow:hidden;
-}
-.room::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:#DCE2EA}
-.room:hover{border-color:#CFD7E1;box-shadow:var(--sh-2);transform:translateY(-1px)}
-.room[data-state="occupied"]::before{background:var(--ok)}
-.room[data-state="dirty"]::before{background:#D99323}
-.room[data-state="late"]::before{background:var(--late)}
-.room[data-state="inactive"]{background:#F7F8FA;border-style:dashed;color:var(--ink-4)}
-.room[data-state="inactive"]::before{background:#D6DCE5}
-.room-no{font-family:var(--font-mono);font-weight:600;font-size:17px;letter-spacing:.01em;line-height:1.1}
-.room-beds{font-size:10.5px;color:var(--ink-4);margin-top:1px}
-.room-who{
-  font-size:11.5px;font-weight:500;color:var(--ink-2);margin-top:auto;padding-top:6px;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-}
-.room[data-state="dirty"] .room-who{color:#7C4A08}
-.room[data-state="late"] .room-who{color:#8E1116}
-.room-when{font-size:10px;color:var(--ink-4);font-family:var(--font-mono);margin-top:2px}
-.room-flag{position:absolute;top:8px;right:8px;width:6px;height:6px;border-radius:50%;background:var(--brand)}
-
-/* history */
-.saver-btn{display:inline-flex;align-items:center;gap:6px}
-.saver-state{
-  font-family:var(--font-mono);font-size:10px;font-weight:600;padding:1px 5px;border-radius:5px;
-  background:var(--ok-bg);color:#08654A;
-}
-.saver-btn[aria-pressed="false"] .saver-state{background:var(--idle-bg);color:var(--ink-3)}
-@media(max-width:639px){ .saver-txt{display:none} }
-.res-room{
-  font-family:var(--font-mono);font-size:20px;font-weight:700;color:var(--brand);
-  letter-spacing:.02em;line-height:1.1;
-}
-.hist-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
-.hist-search{position:relative;flex:1;min-width:180px}
-.hist-search .ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ink-4);width:17px;height:17px}
-.hist-search .input{height:40px;padding-left:36px;font-size:13.5px;border-radius:10px}
-.hist-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;box-shadow:var(--sh-1)}
-.htable{width:100%;border-collapse:collapse;font-size:13px}
-.htable th{
-  text-align:left;font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
-  color:var(--ink-4);padding:10px 12px;background:#FAFBFC;border-bottom:1px solid var(--line);white-space:nowrap;
-}
-.htable td{padding:11px 12px;border-bottom:1px solid var(--line-2);vertical-align:top}
-.htable tr:last-child td{border-bottom:0}
-.htable tbody tr:hover{background:#FAFBFC}
-.t-when{font-family:var(--font-mono);font-size:11.5px;color:var(--ink-3);white-space:nowrap}
-.t-room{font-family:var(--font-mono);font-weight:600;font-size:13.5px}
-.t-name{font-weight:600}
-.t-note{font-size:12px;color:var(--ink-4);margin-top:2px;line-height:1.4;max-width:320px}
-.badge{
-  display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;letter-spacing:.04em;
-  text-transform:uppercase;padding:3px 7px;border-radius:6px;white-space:nowrap;
-}
-.b-in{background:var(--ok-bg);color:#08654A}
-.b-out{background:var(--idle-bg);color:var(--ink-2)}
-.b-clean{background:var(--warn-bg);color:#7C4A08}
-.b-fb{background:#EDF3FE;color:#1E40AF}
-.b-late{background:var(--late-bg);color:#8E1116}
-.hist-cards{display:flex;flex-direction:column}
-.hist-row{padding:12px 14px;border-bottom:1px solid var(--line-2);display:flex;gap:11px}
-.hist-row:last-child{border-bottom:0}
-.hist-room{
-  font-family:var(--font-mono);font-weight:600;font-size:14px;width:46px;flex:0 0 auto;
-  color:var(--ink);padding-top:1px;
-}
-.hist-body{min-width:0;flex:1;display:block}
-.hist-top{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
-.hist-name{font-weight:600;font-size:13px}
-.hist-body .t-note{display:block;margin-top:3px}
-.hist-meta{display:block;font-size:11.5px;color:var(--ink-4);margin-top:4px;font-family:var(--font-mono)}
-.empty{
-  padding:44px 20px;text-align:center;color:var(--ink-4);
-}
-.empty .ico{width:28px;height:28px;color:#B8C2D0;margin-bottom:8px}
-.empty p{font-size:13px;font-weight:500}
-.empty small{display:block;font-size:12px;margin-top:4px;color:#98A3B4}
-
-/* pending */
-.pending{background:var(--warn-bg);border:1px solid #EBD3A8;border-radius:var(--r-md);padding:13px 15px;margin-bottom:16px}
-.pending-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.pending-title{font-family:var(--font-display);font-weight:600;font-size:12.5px;color:#7C4A08}
-.pending-item{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-top:1px solid rgba(168,91,6,.14);font-size:12px}
-.pending-item .m{font-family:var(--font-mono);font-size:11px;color:#8A6218}
-
-/* ---------------- modal / sheet ---------------- */
-.overlay{
-  position:fixed;inset:0;z-index:100;background:rgba(10,15,28,.45);backdrop-filter:blur(3px);
-  display:flex;align-items:center;justify-content:center;padding:16px;
-}
-.overlay[hidden]{display:none}
-.modal{
-  background:var(--paper);border-radius:var(--r-lg);width:100%;max-width:380px;
-  box-shadow:0 24px 60px -20px rgba(10,15,28,.5);animation:pop .18s ease-out;max-height:92dvh;overflow:auto;
-}
-@keyframes pop{from{opacity:0;transform:scale(.97) translateY(6px)}to{opacity:1;transform:none}}
-.modal-head{display:flex;align-items:flex-start;gap:12px;padding:18px 18px 0}
-.modal-ico{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;flex:0 0 auto}
-.modal-ico.ok{background:var(--ok-bg);color:var(--ok)}
-.modal-ico.err{background:var(--late-bg);color:var(--late)}
-.modal-ico.warn{background:var(--warn-bg);color:#B45309}
-.modal-ico.info{background:#EDF3FE;color:#2563EB}
-.modal-title{font-family:var(--font-display);font-weight:700;font-size:16px;letter-spacing:-.015em;line-height:1.3}
-.modal-close{margin-left:auto;width:30px;height:30px;border-radius:8px;display:grid;place-items:center;color:var(--ink-4)}
-.modal-close:hover{background:var(--bg)}
-.modal-body{padding:10px 18px 4px;font-size:13.5px;color:var(--ink-3);line-height:1.6}
-.modal-foot{padding:14px 18px 18px;display:flex;flex-direction:column;gap:8px}
-.sheet{align-self:flex-end;max-width:none;border-radius:20px 20px 0 0;animation:up .2s ease-out}
-@keyframes up{from{transform:translateY(14px);opacity:.9}to{transform:none;opacity:1}}
-@media(max-width:520px){
-  .overlay{padding:0;align-items:flex-end}
-  .modal{max-width:none;border-radius:20px 20px 0 0;animation:up .2s ease-out;max-height:94dvh}
-}
-
-/* qr */
-.qr-box{border-radius:14px;overflow:hidden;background:#0A0F1C;min-height:230px;display:grid;place-items:center;position:relative}
-#qr-reader{width:100%}
-#qr-reader video{border-radius:12px}
-
-/* pin */
-.pin-input{
-  font-family:var(--font-mono);font-size:22px;letter-spacing:.55em;text-align:center;
-  height:56px;padding-left:.55em;
-}
-
-/* toast/banner */
-.sync{
-  display:none;align-items:center;gap:9px;padding:10px 13px;border-radius:11px;font-size:12.5px;
-  font-weight:500;margin-bottom:14px;cursor:pointer;border:1px solid;
-}
-.sync[data-on="1"]{display:flex}
-.sync[data-critical="1"]{background:var(--late-bg);border-color:#EBC0C0;color:#8E1116}
-.sync:not([data-critical="1"]){background:var(--warn-bg);border-color:#EBD3A8;color:#7C4A08}
-.sync .ico{width:17px;height:17px}
-.sync .retry{margin-left:auto;font-weight:700;text-decoration:underline;white-space:nowrap}
-
-.loading{
-  position:fixed;inset:0;z-index:999;background:rgba(255,255,255,.82);backdrop-filter:blur(4px);
-  display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;
-}
-.loading[data-on="1"]{display:flex}
-.spinner{width:30px;height:30px;border-radius:50%;border:2.5px solid var(--brand);border-top-color:transparent;animation:spin .7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.loading-txt{font-size:12.5px;font-weight:600;color:var(--ink-3);letter-spacing:.02em}
-
-/* footer */
-.foot{
-  margin-top:auto;padding:16px 0 calc(16px + env(safe-area-inset-bottom));
-  border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-4);
-  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
-}
-.foot .dot-sep{width:3px;height:3px;border-radius:50%;background:#C6CED9}
-.foot .ver{font-family:var(--font-mono);font-size:10.5px}
-
-/* Fallback cho WebView cũ chưa hỗ trợ gap trong flexbox */
-@supports not (gap: 1px) {
-  .topbar-actions > * + *{margin-left:8px}
-  .brand > * + *{margin-left:11px}
-  .action > * + *{margin-left:14px}
-  .admin-bar-in > * + *{margin-left:10px}
-  .lang button + button{margin-left:2px}
-  .qbtn > * + *{margin-top:5px}
-  .kv > * + *{margin-left:14px}
-  .foot > * + *{margin-left:10px}
-}
-
-@media(max-width:359px){
-  .shell{padding:0 12px}
-  .hero h1{font-size:23px}
-  .qbtn{font-size:11.5px;min-height:62px}
-  .stat-v{font-size:22px}
-  .room-no{font-size:15px}
-  .chips{grid-template-columns:1fr}
-  .modal-head{padding:16px 15px 0}
-  .modal-body{padding:10px 15px 4px}
-  .modal-foot{padding:12px 15px 16px}
-  .support-num{font-size:15px}
-  .support-label{font-size:10px;letter-spacing:.04em}
-  .brand-sub{display:none}
-}
-
-@media(prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}
-}
-</style>
-</head>
-<body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <defs>
-    <symbol id="i-hotel" viewBox="0 0 24 24"><path d="M3 21h18M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2"/></symbol>
-    <symbol id="i-qr" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3h-3zM20 14v.01M14 20v.01M20 20v.01"/></symbol>
-    <symbol id="i-out" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></symbol>
-    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.01"/></symbol>
-    <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></symbol>
-    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></symbol>
-    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></symbol>
-    <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
-    <symbol id="i-chev" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
-    <symbol id="i-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
-    <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="m11 12 8-8M17 4l2 2M15 6l2 2"/></symbol>
-    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></symbol>
-    <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9"/></symbol>
-    <symbol id="i-bed" viewBox="0 0 24 24"><path d="M2 4v16M2 10h18a2 2 0 0 1 2 2v8M2 17h20"/></symbol>
-    <symbol id="i-broom" viewBox="0 0 24 24"><path d="M19 3v6M12 21l-1-5 7-7 3 3-7 7zM11 16l-5 5H3v-3l5-5"/></symbol>
-    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
-    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 9v4M12 17v.01M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></symbol>
-    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
-    <symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 2.6-6.4M3 3v6h6"/><path d="M12 8v4l3 2"/></symbol>
-    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
-    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7M21 3v6h-6"/></symbol>
-    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
-    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></symbol>
-    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M14.5 4h-5L8 7H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3.5"/></symbol>
-    <symbol id="i-keyboard" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10v.01M10 10v.01M14 10v.01M18 10v.01M8 14h8"/></symbol>
-    <symbol id="i-cash" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12v.01M18 12v.01"/></symbol>
-    <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></symbol>
-    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></symbol>
-  </defs>
-</svg>
-
-<div class="app">
-  <header class="topbar">
-    <div class="shell">
-      <div class="topbar-in">
-        <button class="brand" onclick="resetApp()" aria-label="Home">
-          <span class="brand-mark"><svg class="ico" aria-hidden="true"><use href="#i-hotel"/></svg></span>
-          <span>
-            <span class="brand-name">Viettel Stayhub</span>
-            <span class="brand-sub" data-i18n="app.sub">Quản lý lưu trú KTX</span>
-          </span>
-        </button>
-        <div class="topbar-actions">
-          <div class="lang" role="group" aria-label="Language">
-            <button type="button" id="langVi" onclick="setLanguage('vi')" aria-pressed="true">VI</button>
-            <button type="button" id="langEn" onclick="setLanguage('en')" aria-pressed="false">EN</button>
-          </div>
-          <button class="btn btn-ghost btn-sm" onclick="showPinModal()" id="btnAdmin">
-            <svg class="ico ico-sm" aria-hidden="true"><use href="#i-lock"/></svg>
-            <span data-i18n="app.admin">Quản lý</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <div class="loading" id="loading" data-on="0" role="status" aria-live="polite">
-    <div class="spinner"></div>
-    <p class="loading-txt" id="loadingText">Đang xử lý…</p>
-  </div>
-
-  <!-- ==================== GUEST ==================== -->
-  <main class="guest" id="guestRoot">
-    <div class="shell guest-main">
-
-      <!-- HOME -->
-      <section id="homeView">
-        <div class="hero">
-          <span class="hero-eyebrow"><svg class="ico ico-sm" aria-hidden="true"><use href="#i-hotel"/></svg><span data-i18n="home.eyebrow">Ký túc xá Viettel</span></span>
-          <h1 data-i18n="home.title">Thủ tục lưu trú</h1>
-          <p data-i18n="home.sub">Nhận phòng, trả phòng và tra cứu thông tin lưu trú trong vài bước.</p>
-        </div>
-
-        <div class="guest-col">
-          <div class="sync" id="syncBanner" data-on="0" onclick="flushQueue(false)" role="button" tabindex="0">
-            <svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg>
-            <span id="syncBannerText"></span>
-            <span class="retry" data-i18n="sync.retry">Gửi lại</span>
-          </div>
-
-          <div class="support">
-            <span style="width:38px;height:38px;border-radius:11px;background:rgba(255,255,255,.12);display:grid;place-items:center">
-              <svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg>
-            </span>
-            <span>
-              <span class="support-label" data-i18n="home.support">Xử lý sự cố</span>
-              <span class="support-num">0399 026 026</span>
-            </span>
-            <a href="tel:0399026026" aria-label="Incident support"><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg></a>
-          </div>
-
-          <div class="panel actions">
-            <button class="action" data-tone="brand" onclick="openCheckIn()">
-              <span class="action-ico"><svg class="ico" aria-hidden="true"><use href="#i-qr"/></svg></span>
-              <span>
-                <span class="action-title" data-i18n="home.checkin">Nhận phòng</span>
-                <span class="action-sub" data-i18n="home.checkinSub">Quét mã QR trên phiếu của bạn</span>
-              </span>
-              <span class="action-go"><svg class="ico ico-sm" aria-hidden="true"><use href="#i-chev"/></svg></span>
-            </button>
-            <button class="action" data-tone="ink" onclick="openCheckOut()">
-              <span class="action-ico"><svg class="ico" aria-hidden="true"><use href="#i-out"/></svg></span>
-              <span>
-                <span class="action-title" data-i18n="home.checkout">Trả phòng</span>
-                <span class="action-sub" data-i18n="home.checkoutSub">Kết thúc kỳ lưu trú</span>
-              </span>
-              <span class="action-go"><svg class="ico ico-sm" aria-hidden="true"><use href="#i-chev"/></svg></span>
-            </button>
-            <button class="action" data-tone="blue" onclick="showView('handbookView')">
-              <span class="action-ico"><svg class="ico" aria-hidden="true"><use href="#i-book"/></svg></span>
-              <span>
-                <span class="action-title" data-i18n="home.info">Cẩm nang</span>
-                <span class="action-sub" data-i18n="home.infoSub">Giờ ăn, nội quy, bảng giá</span>
-              </span>
-              <span class="action-go"><svg class="ico ico-sm" aria-hidden="true"><use href="#i-chev"/></svg></span>
-            </button>
-            <button class="action" data-tone="amber" onclick="showView('feedbackView')">
-              <span class="action-ico"><svg class="ico" aria-hidden="true"><use href="#i-star"/></svg></span>
-              <span>
-                <span class="action-title" data-i18n="home.feedback">Đánh giá</span>
-                <span class="action-sub" data-i18n="home.feedbackSub">Góp ý chất lượng dịch vụ</span>
-              </span>
-              <span class="action-go"><svg class="ico ico-sm" aria-hidden="true"><use href="#i-chev"/></svg></span>
-            </button>
-          </div>
-
-          <p class="secure-note">
-            <svg class="ico ico-sm" style="margin-top:1px" aria-hidden="true"><use href="#i-shield"/></svg>
-            <span data-i18n="home.secure">Thông tin chỉ dùng để xác thực lưu trú và không chia sẻ cho bên thứ ba.</span>
-          </p>
-        </div>
-      </section>
-
-      <!-- LOOKUP -->
-      <section id="lookupView" class="hidden">
-        <div class="guest-col">
-          <div class="page-head">
-            <button class="back" onclick="resetApp()" aria-label="Back"><svg class="ico" aria-hidden="true"><use href="#i-left"/></svg></button>
-            <div>
-              <h2 class="page-title" data-i18n="lookup.title">Tra cứu thông tin</h2>
-              <p class="page-sub" data-i18n="lookup.sub">Họ tên, mã nhân viên, số phòng hoặc mã QR</p>
-            </div>
-          </div>
-
-          <div class="panel panel-pad">
-            <div class="steps">
-              <span class="step" data-on="1"><span class="step-dot">1</span><span data-i18n="steps.find">Tra cứu</span></span>
-              <span class="step-line"></span>
-              <span class="step"><span class="step-dot">2</span><span data-i18n="steps.confirm">Xác nhận</span></span>
-              <span class="step-line"></span>
-              <span class="step"><span class="step-dot">3</span><span data-i18n="steps.assets">Bàn giao</span></span>
-            </div>
-
-            <div class="field">
-              <label class="label" for="searchEmpId" data-i18n="lookup.label">Thông tin tra cứu</label>
-              <div class="input-wrap">
-                <input class="input input-center" id="searchEmpId" type="text" autocomplete="off" autocapitalize="characters"
-                       enterkeyhint="search" data-i18n-ph="lookup.ph" placeholder="HỌ TÊN / MNV / SỐ PHÒNG">
-                <button class="input-btn" onclick="openQRScanner()" aria-label="QR" data-i18n-title="lookup.qr">
-                  <svg class="ico" aria-hidden="true"><use href="#i-qr"/></svg>
-                </button>
-              </div>
-            </div>
-
-            <button class="btn btn-primary btn-block btn-lg" onclick="searchRoom()">
-              <svg class="ico" aria-hidden="true"><use href="#i-search"/></svg>
-              <span data-i18n="lookup.btn">Kiểm tra hệ thống</span>
-            </button>
-
-            <div id="lookupResult" class="hidden" style="margin-top:16px" aria-live="polite">
-              <div class="result">
-                <div class="result-head">
-                  <svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>
-                  <div>
-                    <p class="result-title" id="resTitle" data-i18n="lookup.found">Đã tìm thấy thông tin</p>
-                    <p style="font-size:11.5px;color:var(--ink-4)" id="resSub" data-i18n="lookup.foundSub">Kiểm tra lại trước khi xác nhận</p>
-                  </div>
-                </div>
-                <div class="kv"><span class="kv-k" data-i18n="lookup.guest">Khách lưu trú</span><span class="kv-v" id="resName"></span></div>
-                <div class="kv"><span class="kv-k" data-i18n="lookup.group">Đoàn / Sự kiện</span><span class="kv-v" id="resDates"></span></div>
-                <div class="kv"><span class="kv-k" data-i18n="lookup.room">Số phòng</span><span class="kv-v" id="resRoom"><span class="locked"><svg class="ico" style="width:12px;height:12px" aria-hidden="true"><use href="#i-lock"/></svg><span data-i18n="lookup.locked">Hiện sau khi xác nhận</span></span></span></div>
-              </div>
-
-              <div class="notice" style="margin-top:12px">
-                <svg class="ico" aria-hidden="true"><use href="#i-info"/></svg>
-                <span id="resNotice" data-i18n="lookup.agreeHint">Bấm xác nhận để xem số phòng và hướng dẫn nhận thẻ từ.</span>
-              </div>
-
-              <button class="btn btn-primary btn-block btn-lg" style="margin-top:12px" id="btnConfirmCheckIn" onclick="confirmAndCheckIn()">
-                <svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>
-                <span data-i18n="lookup.agree">Tôi xác nhận nhận phòng</span>
-              </button>
-            </div>
-          </div>
-
-          <button class="btn btn-quiet" onclick="showManualCheckIn()" data-i18n="lookup.manual">Không có tên trong danh sách? Nhận phòng thủ công</button>
-        </div>
-      </section>
-
-      <!-- CHECK-IN -->
-      <section id="checkInView" class="hidden">
-        <div class="guest-col">
-          <div class="page-head">
-            <button class="back" onclick="resetApp()" aria-label="Back"><svg class="ico" aria-hidden="true"><use href="#i-left"/></svg></button>
-            <div>
-              <h2 class="page-title" data-i18n="checkin.title">Nhận phòng</h2>
-              <p class="page-sub" data-i18n="checkin.sub">Bàn giao tài sản phòng</p>
-            </div>
-          </div>
-
-          <div class="steps">
-            <span class="step" data-done="1"><span class="step-dot"><svg class="ico" style="width:11px;height:11px" aria-hidden="true"><use href="#i-check"/></svg></span><span data-i18n="steps.find">Tra cứu</span></span>
-            <span class="step-line"></span>
-            <span class="step" data-done="1"><span class="step-dot"><svg class="ico" style="width:11px;height:11px" aria-hidden="true"><use href="#i-check"/></svg></span><span data-i18n="steps.confirm">Xác nhận</span></span>
-            <span class="step-line"></span>
-            <span class="step" data-on="1"><span class="step-dot">3</span><span data-i18n="steps.assets">Bàn giao</span></span>
-          </div>
-
-          <div class="room-hero">
-            <span class="room-hero-badge"><svg class="ico" style="width:12px;height:12px" aria-hidden="true"><use href="#i-check"/></svg><span data-i18n="checkin.done">Đã nhận phòng</span></span>
-            <p class="room-hero-label" data-i18n="checkin.yourRoom">Số phòng của bạn</p>
-            <p class="room-hero-no" id="displayRoomNo">---</p>
-            <p class="room-hero-name" id="displayGuestName"></p>
-            <p><span class="room-hero-type" id="roomBadge"></span></p>
-          </div>
-
-          <div class="panel panel-pad hidden" id="roomAccessCard">
-            <div style="display:flex;gap:12px;align-items:flex-start">
-              <span class="action-ico" style="background:var(--brand-soft);color:var(--brand)"><svg class="ico" aria-hidden="true"><use href="#i-key"/></svg></span>
-              <div>
-                <p style="font-family:var(--font-display);font-weight:600;font-size:14px" data-i18n="checkin.keyTitle">Thẻ từ mở cửa phòng</p>
-                <p style="font-size:13px;color:var(--ink-3);margin-top:4px" data-i18n="checkin.keyBody">Nhận thẻ tại lễ tân. Gửi lại thẻ khi ra ngoài và hoàn trả khi trả phòng.</p>
-              </div>
-            </div>
-            <div class="notice" style="margin-top:12px">
-              <svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg>
-              <span data-i18n="checkin.keyWarn">Mất thẻ từ: bồi hoàn 500.000đ/thẻ.</span>
-            </div>
-          </div>
-
-          <div class="panel panel-pad">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
-              <div style="flex:1">
-                <p style="font-family:var(--font-display);font-weight:600;font-size:14px" data-i18n="checkin.assets">Bàn giao tài sản</p>
-                <p style="font-size:12px;color:var(--ink-4);margin-top:1px" data-i18n="checkin.assetsSub">Bắt buộc theo quy chế KTX</p>
-              </div>
-              <span class="badge b-out" id="assetCountLabel">29</span>
-            </div>
-
-            <div id="manualInputsBox" class="hidden" style="margin-bottom:12px">
-              <div class="field">
-                <label class="label" for="inName" data-i18n="checkin.name">Họ và tên</label>
-                <input class="input" id="inName" type="text" data-i18n-ph="checkin.namePh" placeholder="HỌ VÀ TÊN">
-              </div>
-              <div class="field" style="margin-bottom:0">
-                <label class="label" for="inRoom" data-i18n="checkin.room">Số phòng</label>
-                <input class="input input-mono input-center" id="inRoom" type="number" inputmode="numeric" oninput="autoCheckRoom(this.value)" placeholder="000">
-              </div>
-            </div>
-
-            <div class="notice" style="margin-bottom:10px">
-              <svg class="ico" aria-hidden="true"><use href="#i-info"/></svg>
-              <span data-i18n="checkin.assetHint">Chỉ tích những món đã hỏng hoặc thiếu. Còn đủ thì để trống.</span>
-            </div>
-
-            <div id="assetContainer">
-              <div class="asset-list" id="assetList"></div>
-            </div>
-
-            <div class="field" style="margin-top:12px;margin-bottom:0">
-              <label class="label" for="inNote" data-i18n="checkin.note">Ghi chú hiện trạng</label>
-              <textarea class="input" id="inNote" rows="2" data-i18n-ph="checkin.notePh" placeholder="Ví dụ: vết xước trên mặt bàn…"></textarea>
-            </div>
-          </div>
-
-          <button class="btn btn-ink btn-block btn-lg" id="btnCompleteAsset" onclick="handleAssetComplete()">
-            <svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>
-            <span data-i18n="checkin.finish">Xác nhận &amp; hoàn tất</span>
-          </button>
-        </div>
-      </section>
-
-      <!-- CHECK-OUT -->
-      <section id="checkOutView" class="hidden">
-        <div class="guest-col">
-          <div class="page-head">
-            <button class="back" onclick="resetApp()" aria-label="Back"><svg class="ico" aria-hidden="true"><use href="#i-left"/></svg></button>
-            <div>
-              <h2 class="page-title" data-i18n="checkout.title">Trả phòng</h2>
-              <p class="page-sub" data-i18n="checkout.sub">Xác nhận kết thúc kỳ lưu trú</p>
-            </div>
-          </div>
-
-          <div class="panel panel-pad">
-            <div class="field">
-              <label class="label" for="outName" data-i18n="checkout.name"><span data-i18n="checkout.nameLbl">Họ tên người trả phòng</span> <span class="req">*</span></label>
-              <input class="input" id="outName" type="text" data-i18n-ph="checkout.namePh" placeholder="NGUYỄN VĂN A">
-            </div>
-            <div class="field" style="margin-bottom:0">
-              <label class="label" for="outRoom" data-i18n="checkout.room"><span data-i18n="checkout.roomLbl">Số phòng</span> <span class="req">*</span></label>
-              <input class="input input-mono input-center" id="outRoom" type="number" inputmode="numeric"
-                     style="font-size:26px;height:60px;letter-spacing:.12em" oninput="refreshOutHint()" placeholder="000">
-              <p class="hint" id="outRoomHint"></p>
-            </div>
-          </div>
-
-          <div class="panel panel-pad">
-            <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:4px">
-              <p style="font-family:var(--font-display);font-weight:600;font-size:14px;flex:1" data-i18n="checkout.damage">Báo hỏng / thiếu tài sản</p>
-              <span style="font-size:11.5px;color:var(--ink-4)" data-i18n="common.optional">Không bắt buộc</span>
-            </div>
-            <p style="font-size:12px;color:var(--ink-4);margin-bottom:11px" data-i18n="checkout.damageHint">Buồng phòng sẽ nhận thông báo này ngay khi bạn trả phòng.</p>
-            <div class="chips" id="outDamageList"></div>
-            <div class="field" style="margin-top:12px;margin-bottom:0">
-              <label class="label" for="outNote" data-i18n="checkout.note">Ghi chú cho buồng phòng</label>
-              <textarea class="input" id="outNote" rows="2" data-i18n-ph="checkout.notePh" placeholder="Ví dụ: cần dọn sớm trước 14h…"></textarea>
-            </div>
-          </div>
-
-          <button class="btn btn-primary btn-block btn-lg" id="btnOut" onclick="handleOut()">
-            <svg class="ico" aria-hidden="true"><use href="#i-out"/></svg>
-            <span data-i18n="checkout.btn">Xác nhận trả phòng</span>
-          </button>
-
-          <p class="secure-note" style="justify-content:center">
-            <svg class="ico ico-sm" style="margin-top:1px" aria-hidden="true"><use href="#i-info"/></svg>
-            <span data-i18n="checkout.hint">Nhớ tắt thiết bị điện và trả thẻ từ tại lễ tân.</span>
-          </p>
-        </div>
-      </section>
-
-      <!-- FEEDBACK -->
-      <section id="feedbackView" class="hidden">
-        <div class="guest-col">
-          <div class="page-head">
-            <button class="back" onclick="resetApp()" aria-label="Back"><svg class="ico" aria-hidden="true"><use href="#i-left"/></svg></button>
-            <div>
-              <h2 class="page-title" data-i18n="feedback.title">Đánh giá dịch vụ</h2>
-              <p class="page-sub" data-i18n="feedback.sub">Ý kiến của bạn giúp chúng tôi phục vụ tốt hơn</p>
-            </div>
-          </div>
-
-          <div class="panel panel-pad">
-            <div style="text-align:center;padding:4px 0 16px;border-bottom:1px solid var(--line-2)">
-              <p class="label" style="text-align:center" data-i18n="feedback.satisfaction">Mức độ hài lòng</p>
-              <div style="display:flex;justify-content:center;gap:10px;margin:6px 0 8px" role="radiogroup">
-                <button class="star-btn" id="star-1" role="radio" aria-checked="false" onclick="setRating(1)" aria-label="1"><svg class="ico ico-lg" aria-hidden="true"><use href="#i-star"/></svg></button>
-                <button class="star-btn" id="star-2" role="radio" aria-checked="false" onclick="setRating(2)" aria-label="2"><svg class="ico ico-lg" aria-hidden="true"><use href="#i-star"/></svg></button>
-                <button class="star-btn" id="star-3" role="radio" aria-checked="false" onclick="setRating(3)" aria-label="3"><svg class="ico ico-lg" aria-hidden="true"><use href="#i-star"/></svg></button>
-                <button class="star-btn" id="star-4" role="radio" aria-checked="false" onclick="setRating(4)" aria-label="4"><svg class="ico ico-lg" aria-hidden="true"><use href="#i-star"/></svg></button>
-                <button class="star-btn" id="star-5" role="radio" aria-checked="false" onclick="setRating(5)" aria-label="5"><svg class="ico ico-lg" aria-hidden="true"><use href="#i-star"/></svg></button>
-              </div>
-              <p id="ratingText" style="font-family:var(--font-display);font-weight:600;font-size:13.5px;color:var(--warn)">Tuyệt vời</p>
-            </div>
-
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px">
-              <div class="field" style="margin-bottom:0">
-                <label class="label" for="fbRoom" data-i18n="feedback.roomLbl">Số phòng <span class="req">*</span></label>
-                <input class="input input-mono input-center" id="fbRoom" type="number" inputmode="numeric" placeholder="201">
-              </div>
-              <div class="field" style="margin-bottom:0">
-                <label class="label" for="fbName" data-i18n="feedback.nameLbl">Họ tên</label>
-                <input class="input" id="fbName" type="text" data-i18n-ph="feedback.namePh" placeholder="Không bắt buộc">
-              </div>
-            </div>
-
-            <div class="field" style="margin-top:13px;margin-bottom:0">
-              <label class="label" for="fbNote" data-i18n="feedback.note">Góp ý chi tiết</label>
-              <textarea class="input" id="fbNote" rows="3" data-i18n-ph="feedback.notePh" placeholder="Điều gì làm bạn hài lòng hoặc chưa hài lòng?"></textarea>
-            </div>
-          </div>
-
-          <button class="btn btn-ink btn-block btn-lg" onclick="submitFeedback()">
-            <svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>
-            <span data-i18n="feedback.send">Gửi đánh giá</span>
-          </button>
-        </div>
-      </section>
-
-      <!-- HANDBOOK -->
-      <section id="handbookView" class="hidden">
-        <div class="guest-col">
-          <div class="page-head">
-            <button class="back" onclick="resetApp()" aria-label="Back"><svg class="ico" aria-hidden="true"><use href="#i-left"/></svg></button>
-            <div>
-              <h2 class="page-title" data-i18n="handbook.title">Cẩm nang KTX</h2>
-              <p class="page-sub" data-i18n="handbook.sub">Giờ giấc, nội quy và bảng giá</p>
-            </div>
-          </div>
-          <div id="handbookBody" style="display:flex;flex-direction:column;gap:12px"></div>
-        </div>
-      </section>
-    </div>
-
-    <div class="shell">
-      <div class="foot">
-        <span>Viettel Stayhub</span>
-        <span class="dot-sep"></span>
-        <span data-i18n="foot.rights">Hệ thống quản lý lưu trú nội bộ</span>
-        <span class="ver" style="margin-left:auto">v2.2</span>
-      </div>
-    </div>
-  </main>
-
-  <!-- ==================== ADMIN ==================== -->
-  <main id="adminRoot" class="hidden" style="flex:1">
-    <div class="admin-bar">
-      <div class="shell">
-        <div class="admin-bar-in">
-          <div class="tabs" role="tablist">
-            <button class="tab" role="tab" aria-selected="true" data-tab="map" onclick="switchTab('map')">
-              <svg class="ico ico-sm" aria-hidden="true"><use href="#i-grid"/></svg>
-              <span data-i18n="admin.tabMap">Sơ đồ phòng</span>
-            </button>
-            <button class="tab" role="tab" aria-selected="false" data-tab="history" onclick="switchTab('history')">
-              <svg class="ico ico-sm" aria-hidden="true"><use href="#i-history"/></svg>
-              <span data-i18n="admin.tabHistory">Lịch sử lưu trú</span>
-            </button>
-            <button class="tab" role="tab" aria-selected="false" data-tab="guests" onclick="switchTab('guests')">
-              <svg class="ico ico-sm" aria-hidden="true"><use href="#i-users"/></svg>
-              <span data-i18n="admin.tabGuests">Đang lưu trú</span>
-            </button>
-          </div>
-          <div class="admin-spacer"></div>
-          <span class="live" id="statusTime"><span class="live-dot"></span><span data-i18n="admin.connecting">Đang kết nối…</span></span>
-          <button class="btn btn-ghost btn-sm" onclick="refreshCurrent(true)" aria-label="Refresh">
-            <svg class="ico ico-sm" aria-hidden="true"><use href="#i-refresh"/></svg>
-          </button>
-          <button class="btn btn-ghost btn-sm saver-btn" id="saverBtn" onclick="toggleDataSaver()" aria-pressed="true">
-            <svg class="ico ico-sm" aria-hidden="true"><use href="#i-shield"/></svg>
-            <span class="saver-txt" data-i18n="saver.label">Tiết kiệm dữ liệu</span>
-            <span class="saver-state" id="saverState">Bật</span>
-          </button>
-          <button class="btn btn-ghost btn-sm" onclick="exitAdmin()">
-            <svg class="ico ico-sm" aria-hidden="true"><use href="#i-logout"/></svg>
-            <span data-i18n="admin.exit">Thoát</span>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <div class="shell admin-main">
-      <div class="quickbar" role="group" aria-label="Quick actions">
-        <button class="qbtn" data-tone="brand" onclick="openQuick('in')">
-          <svg class="ico" aria-hidden="true"><use href="#i-qr"/></svg>
-          <span data-i18n="quick.in">Nhận phòng</span>
-        </button>
-        <button class="qbtn" data-tone="ink" onclick="openQuick('out')">
-          <svg class="ico" aria-hidden="true"><use href="#i-out"/></svg>
-          <span data-i18n="quick.out">Trả phòng</span>
-        </button>
-        <button class="qbtn" data-tone="warn" onclick="openQuick('clean')">
-          <svg class="ico" aria-hidden="true"><use href="#i-broom"/></svg>
-          <span data-i18n="quick.clean">Dọn phòng</span>
-          <span class="qcount hidden" id="qDirtyCount">0</span>
-        </button>
-      </div>
-
-      <div class="sync" id="syncBannerAdmin" data-on="0" onclick="flushQueue(false)" role="button" tabindex="0">
-        <svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg>
-        <span id="syncBannerAdminText"></span>
-        <span class="retry" data-i18n="sync.retry">Gửi lại</span>
-      </div>
-
-      <!-- MAP TAB -->
-      <div id="tabMap">
-        <div class="stats">
-          <div class="stat">
-            <p class="stat-k" data-i18n="admin.rooms">Phòng hoạt động</p>
-            <p class="stat-v" id="statTotal">0</p>
-          </div>
-          <div class="stat" data-tone="ok">
-            <p class="stat-k" data-i18n="admin.occupied">Đang có khách</p>
-            <p class="stat-v" id="statOccupied">0<small id="statGuests"></small></p>
-          </div>
-          <div class="stat" data-tone="warn">
-            <p class="stat-k" data-i18n="admin.dirty">Chờ dọn</p>
-            <p class="stat-v" id="statDirty">0</p>
-          </div>
-          <div class="stat" data-tone="late">
-            <p class="stat-k" data-i18n="admin.late">Quá hạn trả</p>
-            <p class="stat-v" id="statLate">0</p>
-          </div>
-        </div>
-
-        <div class="ribbon-card">
-          <div class="ribbon-head">
-            <p class="ribbon-title" data-i18n="admin.ribbon">Toàn cảnh 158 phòng</p>
-            <div class="ribbon-legend">
-              <span class="legend"><i style="background:#DCE2EA"></i><span data-i18n="status.vacant">Trống</span></span>
-              <span class="legend"><i style="background:#8FD4B8"></i><span data-i18n="status.occupied">Đang ở</span></span>
-              <span class="legend"><i style="background:#EBC98C"></i><span data-i18n="status.dirty">Cần dọn</span></span>
-              <span class="legend"><i style="background:#E88B8B"></i><span data-i18n="status.late">Quá hạn</span></span>
-            </div>
-          </div>
-          <div class="ribbon" id="ribbon" aria-hidden="true"></div>
-          <div class="ribbon-axis" id="ribbonAxis"></div>
-        </div>
-
-        <div id="pendingPanel"></div>
-        <div id="adminContent"></div>
-      </div>
-
-      <!-- HISTORY TAB -->
-      <div id="tabHistory" class="hidden">
-        <div class="hist-toolbar">
-          <div class="hist-search">
-            <svg class="ico" aria-hidden="true"><use href="#i-search"/></svg>
-            <input class="input" id="historySearch" type="search" oninput="renderHistory()" data-i18n-ph="hist.ph" placeholder="Tìm theo phòng, tên khách hoặc ghi chú…">
-          </div>
-          <select class="input" id="historyFilter" onchange="renderHistory()" style="height:40px;width:auto;font-size:13px;padding:0 10px;border-radius:10px">
-            <option value="" data-i18n="hist.all">Tất cả loại</option>
-            <option value="in" data-i18n="hist.in">Nhận phòng</option>
-            <option value="out" data-i18n="hist.out">Trả phòng</option>
-            <option value="clean" data-i18n="hist.clean">Dọn phòng</option>
-            <option value="fb" data-i18n="hist.fb">Đánh giá</option>
-          </select>
-          <button class="btn btn-ghost btn-sm" onclick="loadHistory(true)" style="height:40px;border-radius:10px">
-            <svg class="ico ico-sm" aria-hidden="true"><use href="#i-refresh"/></svg>
-            <span data-i18n="hist.reload">Tải lại</span>
-          </button>
-        </div>
-
-        <div id="historySource" class="notice notice-info" style="margin-bottom:12px;display:none"></div>
-        <div class="hist-card" id="historyCard">
-          <div class="empty"><svg class="ico" aria-hidden="true"><use href="#i-history"/></svg><p data-i18n="hist.loading">Đang tải lịch sử…</p></div>
-        </div>
-      </div>
-
-      <!-- GUESTS TAB -->
-      <div id="tabGuests" class="hidden">
-        <div class="hist-card" id="guestTabCard">
-          <div class="empty"><svg class="ico" aria-hidden="true"><use href="#i-users"/></svg><p data-i18n="admin.noGuests">Chưa có khách lưu trú</p></div>
-        </div>
-      </div>
-    </div>
-  </main>
-</div>
-
-<!-- ==================== MODALS ==================== -->
-<div class="overlay" id="quickModal" hidden onclick="if(event.target===this)closeQuick()">
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="quickTitle">
-    <div class="modal-head">
-      <span class="modal-ico info" id="quickIco"><svg class="ico" aria-hidden="true"><use href="#i-qr"/></svg></span>
-      <div style="min-width:0">
-        <h3 class="modal-title" id="quickTitle"></h3>
-        <p style="font-size:12.5px;color:var(--ink-4)" id="quickSub"></p>
-      </div>
-      <button class="modal-close" onclick="closeQuick()" aria-label="Close"><svg class="ico ico-sm" aria-hidden="true"><use href="#i-x"/></svg></button>
-    </div>
-    <div class="modal-body" id="quickBody" style="padding-bottom:6px"></div>
-    <div class="modal-foot" id="quickFoot"></div>
-  </div>
-</div>
-
-<div class="overlay" id="pinModal" hidden>
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="pinTitle">
-    <div class="modal-head">
-      <span class="modal-ico info"><svg class="ico" aria-hidden="true"><use href="#i-lock"/></svg></span>
-      <div>
-        <h3 class="modal-title" id="pinTitle" data-i18n="pin.title">Khu vực quản lý</h3>
-        <p style="font-size:12.5px;color:var(--ink-4)" data-i18n="pin.sub">Nhập mã PIN để tiếp tục</p>
-      </div>
-      <button class="modal-close" onclick="closePinModal()" aria-label="Close"><svg class="ico ico-sm" aria-hidden="true"><use href="#i-x"/></svg></button>
-    </div>
-    <div class="modal-body" style="padding-top:14px">
-      <input class="input pin-input" id="pinInput" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="••••••" aria-label="PIN" onkeydown="if(event.key==='Enter')verifyPin()">
-    </div>
-    <div class="modal-foot">
-      <button class="btn btn-primary btn-block" onclick="verifyPin()" data-i18n="pin.confirm">Xác nhận</button>
-      <button class="btn btn-quiet btn-block" onclick="closePinModal()" data-i18n="common.cancel">Huỷ</button>
-    </div>
-  </div>
-</div>
-
-<div class="overlay" id="infoModal" hidden onclick="if(event.target===this)closeInfo()">
-  <div class="modal" role="dialog" aria-modal="true">
-    <div class="modal-head">
-      <span class="modal-ico info" id="infoIcon"><svg class="ico" aria-hidden="true"><use href="#i-info"/></svg></span>
-      <div style="min-width:0"><h3 class="modal-title" id="infoTitle"></h3></div>
-      <button class="modal-close" onclick="closeInfo()" aria-label="Close"><svg class="ico ico-sm" aria-hidden="true"><use href="#i-x"/></svg></button>
-    </div>
-    <div class="modal-body" id="infoDesc" style="white-space:pre-line"></div>
-    <div class="modal-foot">
-      <div id="infoActionContainer" style="display:flex;flex-direction:column;gap:8px"></div>
-      <button class="btn btn-ghost btn-block" onclick="closeInfo()" data-i18n="common.close">Đóng</button>
-    </div>
-  </div>
-</div>
-
-<div class="overlay" id="qrModal" hidden>
-  <div class="modal" role="dialog" aria-modal="true">
-    <div class="modal-head">
-      <span class="modal-ico info"><svg class="ico" aria-hidden="true"><use href="#i-qr"/></svg></span>
-      <div><h3 class="modal-title" data-i18n="qr.title">Quét mã QR</h3>
-      <p style="font-size:12.5px;color:var(--ink-4)" data-i18n="qr.sub">Đưa mã vào giữa khung</p></div>
-      <button class="modal-close" onclick="closeQRScanner()" aria-label="Close"><svg class="ico ico-sm" aria-hidden="true"><use href="#i-x"/></svg></button>
-    </div>
-    <div class="modal-body" style="padding-top:14px">
-      <div id="qr-camera-box"><div class="qr-box" id="qr-reader"></div></div>
-      <div id="qr-fallback-panel" class="hidden" style="background:var(--warn-bg);border-radius:12px;padding:13px">
-        <p style="font-size:12.5px;font-weight:600;color:#7C4A08" data-i18n="qr.noCam">Không mở được camera</p>
-        <p style="font-size:12px;color:#8A6218;margin-top:3px" data-i18n="qr.noCamBody">Bạn có thể chụp ảnh mã QR hoặc nhập tay.</p>
-      </div>
-      <input type="file" id="qr-camera-snap" accept="image/*" capture="environment" class="hidden" onchange="scanImage(event)">
-      <input type="file" id="qr-upload" accept="image/*" class="hidden" onchange="scanImage(event)">
-    </div>
-    <div class="modal-foot">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-        <button class="btn btn-ghost btn-sm" style="height:44px" onclick="document.getElementById('qr-camera-snap').click()">
-          <svg class="ico ico-sm" aria-hidden="true"><use href="#i-camera"/></svg><span data-i18n="qr.snap">Chụp ảnh</span>
-        </button>
-        <button class="btn btn-ghost btn-sm" style="height:44px" onclick="document.getElementById('qr-upload').click()">
-          <svg class="ico ico-sm" aria-hidden="true"><use href="#i-upload"/></svg><span data-i18n="qr.upload">Tải ảnh</span>
-        </button>
-      </div>
-      <button class="btn btn-quiet btn-block" onclick="closeQRScanner();showView('lookupView')">
-        <svg class="ico ico-sm" aria-hidden="true"><use href="#i-keyboard"/></svg><span data-i18n="qr.manual">Nhập tay</span>
-      </button>
-    </div>
-  </div>
-</div>
-
-<div class="overlay" id="cleanConfirmModal" hidden onclick="if(event.target===this)closeCleanModal()">
-  <div class="modal" role="dialog" aria-modal="true">
-    <div class="modal-head">
-      <span class="modal-ico warn"><svg class="ico" aria-hidden="true"><use href="#i-broom"/></svg></span>
-      <div><h3 class="modal-title" data-i18n="clean.title">Xác nhận dọn phòng</h3></div>
-      <button class="modal-close" onclick="closeCleanModal()" aria-label="Close"><svg class="ico ico-sm" aria-hidden="true"><use href="#i-x"/></svg></button>
-    </div>
-    <div class="modal-body" id="cleanConfirmText"></div>
-    <div class="modal-foot">
-      <button class="btn btn-primary btn-block" id="btnConfirmClean" data-i18n="clean.confirm">Đã dọn xong</button>
-      <button class="btn btn-quiet btn-block" onclick="closeCleanModal()" data-i18n="common.cancel">Huỷ</button>
-    </div>
-  </div>
-</div>
-
-<div class="overlay" id="roomSheet" hidden onclick="if(event.target===this)closeRoomSheet()">
-  <div class="modal" role="dialog" aria-modal="true">
-    <div class="modal-head">
-      <span class="modal-ico info" id="roomSheetIco"><svg class="ico" aria-hidden="true"><use href="#i-bed"/></svg></span>
-      <div><h3 class="modal-title" id="roomSheetTitle"></h3>
-      <p style="font-size:12.5px;color:var(--ink-4)" id="roomSheetSub"></p></div>
-      <button class="modal-close" onclick="closeRoomSheet()" aria-label="Close"><svg class="ico ico-sm" aria-hidden="true"><use href="#i-x"/></svg></button>
-    </div>
-    <div class="modal-body" id="roomSheetBody" style="padding-bottom:8px"></div>
-    <div class="modal-foot" id="roomSheetFoot"></div>
-  </div>
-</div>
-
-<script>
-/* ============================================================
-   VIETTEL STAYHUB — v2.2
-   Ghi nền bền vững (outbox) · song ngữ · lịch sử lưu trú
-   ============================================================ */
-const cfg = {
-  sheet: "https://script.google.com/macros/s/AKfycby1aEf9e1_OgSR6OIcSuZ1CBdlqNDJ0Dv9GA9Von0e34II7UZDmpPt68M4c0iSF4NJJ/exec",
-  token: "",     // đặt trùng Script Property AUTH_TOKEN
-  pin: "271020"
+/******************************************************************************
+ * VIETTEL STAYHUB — BACKEND (Apps Script)  v3.0
+ * ------------------------------------------------------------------------
+ * Thay đổi so với bản cũ:
+ *  1. Cột trong "DanhSachKhach" được TÌM THEO TÊN CỘT (header), không theo
+ *     số thứ tự cột → thêm/bớt/di chuyển cột không làm hỏng code.
+ *  2. Cột "Checkin/Checkout" cũ được tách thành 2 cột: "Check-in" và
+ *     "Check-out" (xem Migrate.gs để chuyển dữ liệu cũ).
+ *  3. Nhận phòng là IDEMPOTENT: khách đã nhận phòng mà bấm lại / tra cứu
+ *     lại → trả về already=true, KHÔNG ghi thêm dòng lịch sử, KHÔNG báo
+ *     Telegram lần 2.
+ *  4. Cột "STT" (số thứ tự) tự điền khi thêm khách mới.
+ *
+ * Cài đặt: dán toàn bộ file này vào Apps Script > Code.gs > Deploy.
+ * Script Properties nên có: AUTH_TOKEN, TELEGRAM_TOKEN, TELEGRAM_CHAT_ID
+ ******************************************************************************/
+
+var CFG = {
+  GUESTS : 'DanhSachKhach',
+  STAYS  : 'Stays',
+  HISTORY: 'LichSuLuuTru',
+  TXN    : 'GIAODICH',
+  RATING : 'DANHGIA',
+  ROOMS  : 'Rooms',
+  LOG    : 'NHATKYLOI',
+  USERS  : 'Users',
+  TZ     : 'Asia/Ho_Chi_Minh',
+  VERSION: '3.0'
 };
 
-const ROOM_BEDS_BY_FLOOR = {
-  1:[0,2,2,2,2,2,2,2,2,2,2],
-  2:[3,3,3,3,2,2,3,3,3,3,3,3,2,2,2,2,1,1,1,1,1,1,1,1,1],
-  3:[3,3,3,3,2,2,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  4:[3,3,3,3,2,2,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  5:[3,3,3,3,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3],
-  6:[3,3,3,3,2,2,3,3,3,3,3,3],
-  7:[3,3,3,3,2,2,3,3,3,3,3,3],
-  8:[3,3,3,3,2,2,3,3,3,3,3,3],
-  9:[4,4,4,4,2,2,3,3,3,2,4,4]
+/* Bảng tên cột chấp nhận được — so khớp sau khi bỏ dấu cách/gạch nối */
+var H = {
+  STT      : ['stt','sothutu','tt','no','#'],
+  MNV      : ['mnv','manv','manhanvien','id','cccd','cmnd'],
+  NAME     : ['hovaten','hoten','tenkhach','khachhang','name','fullname'],
+  ROOM     : ['phong','sophong','room','roomno'],
+  EVENT    : ['lophoc','lop','sukien','lophoc/sukien','event','class','doan'],
+  IN_DATE  : ['ngayden','ngayvao','checkindate','from','tungay'],
+  OUT_DATE : ['ngaydi','ngayra','checkoutdate','to','denngay'],
+  CHECKIN  : ['checkin','gionhan','giovao','nhanphong','ngaynhan'],
+  CHECKOUT : ['checkout','giotra','giora','traphong','ngaytra'],
+  LEGACY   : ['checkincheckout','nhantra'],
+  NOTE     : ['note','ghichu']
 };
-const ROOM_CATALOG = Object.keys(ROOM_BEDS_BY_FLOOR).reduce((acc, f) =>
-  acc.concat(ROOM_BEDS_BY_FLOOR[f].map((cap, i) => {
-    const room = String(Number(f) * 100 + i + 1);
-    return { room, floor: Number(f), capacity: cap, active: cap > 0,
-             roomType: cap === 0 ? 'INACTIVE' : (cap === 1 ? 'VIP' : cap + 'BED') };
-  })), []);
-const ROOM_CONFIG = {};
-ROOM_CATALOG.forEach(r => { ROOM_CONFIG[r.room] = r; });
-const TOTAL_BEDS = ROOM_CATALOG.reduce((s, r) => s + r.capacity, 0);
-const getRoomConfig = room => ROOM_CONFIG[String(room == null ? '' : room).trim()] || null;
 
-const ASSETS = [
-  {vi:'Tivi',en:'TV',q:1},{vi:'Điều khiển Tivi',en:'TV remote',q:1},
-  {vi:'Điều hòa',en:'Air conditioner',q:1},{vi:'Điều khiển điều hòa',en:'AC remote',q:1},
-  {vi:'Tủ lạnh',en:'Refrigerator',q:1},{vi:'Bình nóng lạnh',en:'Water heater',q:1},
-  {vi:'Ấm siêu tốc',en:'Electric kettle',q:1},{vi:'Vòi hoa sen',en:'Shower head',q:1},
-  {vi:'Thảm lau chân',en:'Doormat',q:1},{vi:'Gương soi',en:'Mirror',q:1},
-  {vi:'Rèm cửa',en:'Curtains',q:1},{vi:'Bàn làm việc',en:'Work desk',q:1},
-  {vi:'Thùng rác',en:'Trash bin',q:3},{vi:'Tranh trang trí',en:'Wall art',q:1},
-  {vi:'Mắc áo gỗ',en:'Wooden hangers',q:5},
-  {vi:'Giường',en:'Bed',q:'P'},{vi:'Đệm',en:'Mattress',q:'P'},{vi:'Chăn',en:'Blanket',q:'P'},
-  {vi:'Ga giường',en:'Bed sheet',q:'P'},{vi:'Gối',en:'Pillow',q:'P'},
-  {vi:'Vỏ gối',en:'Pillowcase',q:'P'},{vi:'Dép đi trong nhà',en:'Slippers',q:'P'},
-  {vi:'Khăn tắm',en:'Bath towel',q:'P'},{vi:'Khăn mặt',en:'Hand towel',q:'P'},
-  {vi:'Cốc thủy tinh',en:'Drinking glass',q:'P'},{vi:'Ghế',en:'Chair',q:'P'},
-  {vi:'Móc áo',en:'Hangers',q:'P'},{vi:'Tủ quần áo',en:'Wardrobe',q:'P'},
-  {vi:'Đèn học',en:'Desk lamp',q:'P'}
-];
+/* ============================ ROUTER ============================ */
 
-const DAMAGE_ITEMS = [
-  {vi:'Tivi',en:'TV'},{vi:'Điều khiển',en:'Remote'},{vi:'Điều hòa',en:'Air con'},
-  {vi:'Tủ lạnh',en:'Fridge'},{vi:'Ấm siêu tốc',en:'Kettle'},{vi:'Chăn / Ga',en:'Blanket / Sheet'},
-  {vi:'Khăn tắm',en:'Towels'},{vi:'Cốc thủy tinh',en:'Glasses'},{vi:'Mất thẻ từ',en:'Lost key card'},
-  {vi:'Vệ sinh kém',en:'Needs deep clean'}
-];
-
-const HANDBOOK = [
-  { icon:'i-clock', title:{vi:'Giờ ăn',en:'Meal times'},
-    rows:[{vi:'Bữa sáng',en:'Breakfast',v:'06:00'},{vi:'Bữa trưa',en:'Lunch',v:'11:30'},{vi:'Bữa tối',en:'Dinner',v:'18:00'}],
-    note:{vi:'Trang phục lịch sự tại nhà ăn — không quần short, áo ba lỗ.',en:'Smart casual in the dining hall — no shorts or sleeveless tops.'} },
-  { icon:'i-clock', title:{vi:'Bể bơi & thể thao',en:'Pool & sports'},
-    rows:[{vi:'Thứ 2 – Chủ nhật, ngày lễ',en:'Mon – Sun, holidays',v:'05:30–07:45 · 17:00–18:30'}],
-    note:{vi:'Bắt buộc mặc đồ bơi và tắm tráng trước khi xuống nước. Sân thể thao cần giày thể thao.',en:'Swimwear required; shower before entering the pool. Trainers required on the court.'} },
-  { icon:'i-book', title:{vi:'Nội quy phòng nghỉ',en:'Room rules'},
-    bullets:[
-      {vi:'Không tiếp khách trong phòng sau 22:00.',en:'No visitors in rooms after 22:00.'},
-      {vi:'Không hút thuốc, không đun nấu trong phòng.',en:'No smoking or cooking in rooms.'},
-      {vi:'Phơi quần áo tại khu vực ban công quy định.',en:'Dry laundry only in the designated balcony area.'},
-      {vi:'Hư hỏng hoặc thất lạc tài sản phải bồi thường theo quy định.',en:'Damage or loss must be compensated per regulations.'}
-    ] }
-];
-
-const PRICE_ROWS = [
-  {vi:'Tivi',en:'TV',p:'10.000.000đ'},
-  {vi:'Tủ lạnh mini',en:'Mini fridge',p:'2.800.000đ'},
-  {vi:'Điều khiển (TV / điều hòa)',en:'Remote (TV / AC)',p:'120.000 – 200.000đ'},
-  {vi:'Ruột chăn / vỏ chăn',en:'Duvet / cover',p:'800.000 – 1.000.000đ'},
-  {vi:'Cốc thủy tinh',en:'Drinking glass',p:'20.000đ'},
-  {vi:'Dép đi trong nhà',en:'Slippers',p:'150.000đ'},
-  {vi:'Mất thẻ từ',en:'Lost key card',p:'500.000đ'}
-];
-
-/* ---------------- i18n ---------------- */
-const DICT = {
-vi:{
-  'app.sub':'Quản lý lưu trú KTX','app.admin':'Quản lý',
-  'common.close':'Đóng','common.cancel':'Huỷ','common.optional':'Không bắt buộc',
-  'foot.rights':'Hệ thống quản lý lưu trú nội bộ',
-  'home.eyebrow':'Ký túc xá Viettel','home.title':'Thủ tục lưu trú',
-  'home.sub':'Nhận phòng, trả phòng và tra cứu thông tin lưu trú trong vài bước.',
-  'home.support':'Xử lý sự cố','home.checkin':'Nhận phòng','home.checkinSub':'Quét mã QR trên phiếu của bạn',
-  'home.checkout':'Trả phòng','home.checkoutSub':'Kết thúc kỳ lưu trú',
-  'home.info':'Cẩm nang','home.infoSub':'Giờ ăn, nội quy, bảng giá',
-  'home.feedback':'Đánh giá','home.feedbackSub':'Góp ý chất lượng dịch vụ',
-  'home.secure':'Thông tin chỉ dùng để xác thực lưu trú và không chia sẻ cho bên thứ ba.',
-  'steps.find':'Tra cứu','steps.confirm':'Xác nhận','steps.assets':'Bàn giao',
-  'lookup.title':'Tra cứu thông tin','lookup.sub':'Họ tên, mã nhân viên, số phòng hoặc mã QR',
-  'lookup.label':'Thông tin tra cứu','lookup.ph':'HỌ TÊN / MNV / SỐ PHÒNG','lookup.qr':'Quét mã QR',
-  'lookup.btn':'Kiểm tra hệ thống','lookup.found':'Đã tìm thấy thông tin','lookup.foundSub':'Kiểm tra lại trước khi xác nhận',
-  'lookup.guest':'Khách lưu trú','lookup.group':'Đoàn / Sự kiện','lookup.room':'Số phòng',
-  'lookup.locked':'Hiện sau khi xác nhận','lookup.agreeHint':'Bấm xác nhận để xem số phòng và hướng dẫn nhận thẻ từ.',
-  'lookup.agree':'Tôi xác nhận nhận phòng','lookup.manual':'Không có tên trong danh sách? Nhận phòng thủ công',
-  'checkin.title':'Nhận phòng','checkin.sub':'Bàn giao tài sản phòng','checkin.done':'Đã nhận phòng',
-  'checkin.yourRoom':'Số phòng của bạn','checkin.keyTitle':'Thẻ từ mở cửa phòng',
-  'checkin.keyBody':'Nhận thẻ tại lễ tân. Gửi lại thẻ khi ra ngoài và hoàn trả khi trả phòng.',
-  'checkin.keyWarn':'Mất thẻ từ: bồi hoàn 500.000đ/thẻ.',
-  'checkin.assets':'Bàn giao tài sản','checkin.assetsSub':'Bắt buộc theo quy chế KTX',
-  'checkin.name':'Họ và tên','checkin.namePh':'HỌ VÀ TÊN','checkin.room':'Số phòng',
-  'checkin.assetHint':'Chỉ tích những món đã hỏng hoặc thiếu. Còn đủ thì để trống.',
-  'checkin.note':'Ghi chú hiện trạng','checkin.notePh':'Ví dụ: vết xước trên mặt bàn…',
-  'checkin.finish':'Xác nhận & hoàn tất','checkin.standard':'Tiêu chuẩn','checkin.items':'hạng mục','checkin.saving':'Đang lưu…',
-  'checkout.title':'Trả phòng','checkout.sub':'Xác nhận kết thúc kỳ lưu trú',
-  'checkout.name':'Họ tên người trả phòng','checkout.nameLbl':'Họ tên người trả phòng','checkout.namePh':'NGUYỄN VĂN A',
-  'checkout.room':'Số phòng','checkout.roomLbl':'Số phòng','checkout.damage':'Báo hỏng / thiếu tài sản',
-  'checkout.damageHint':'Buồng phòng sẽ nhận thông báo này ngay khi bạn trả phòng.',
-  'checkout.note':'Ghi chú cho buồng phòng','checkout.notePh':'Ví dụ: cần dọn sớm trước 14h…',
-  'checkout.btn':'Xác nhận trả phòng','checkout.hint':'Nhớ tắt thiết bị điện và trả thẻ từ tại lễ tân.',
-  'feedback.title':'Đánh giá dịch vụ','feedback.sub':'Ý kiến của bạn giúp chúng tôi phục vụ tốt hơn',
-  'feedback.satisfaction':'Mức độ hài lòng','feedback.roomLbl':'Số phòng','feedback.nameLbl':'Họ tên',
-  'feedback.namePh':'Không bắt buộc','feedback.note':'Góp ý chi tiết','feedback.notePh':'Điều gì làm bạn hài lòng hoặc chưa hài lòng?',
-  'feedback.send':'Gửi đánh giá',
-  'handbook.title':'Cẩm nang KTX','handbook.sub':'Giờ giấc, nội quy và bảng giá','handbook.price':'Bảng giá đền bù tài sản',
-  'admin.tabMap':'Sơ đồ phòng','admin.tabHistory':'Lịch sử lưu trú','admin.tabGuests':'Đang lưu trú',
-  'admin.connecting':'Đang kết nối…','admin.online':'Đã cập nhật','admin.offline':'Mất kết nối · dữ liệu gần nhất',
-  'admin.rooms':'Phòng hoạt động','admin.floor':'Tầng','admin.occupied':'Đang có khách','admin.dirty':'Chờ dọn','admin.late':'Quá hạn trả',
-  'admin.ribbon':'Toàn cảnh 158 phòng','admin.exit':'Thoát','admin.noGuests':'Chưa có khách lưu trú',
-  'admin.refresh':'Làm mới','admin.guests':'khách','admin.room':'Phòng','admin.beds':'giường','admin.inactive':'Không sử dụng',
-  'status.vacant':'Trống','status.occupied':'Đang ở','status.dirty':'Cần dọn','status.late':'Quá hạn',
-  'hist.ph':'Tìm theo phòng, tên khách hoặc ghi chú…','hist.all':'Tất cả loại','hist.in':'Nhận phòng',
-  'hist.out':'Trả phòng','hist.clean':'Dọn phòng','hist.fb':'Đánh giá','hist.reload':'Tải lại','hist.loading':'Đang tải lịch sử…',
-  'hist.empty':'Chưa có dữ liệu lịch sử','hist.emptySub':'Lịch sử sẽ xuất hiện sau thao tác đầu tiên.',
-  'hist.local':'Đang hiển thị nhật ký trên thiết bị này. Chưa đọc được lịch sử từ Google Sheet — kiểm tra endpoint getHistory.',
-  'hist.server':'Nguồn: Google Sheet · {n} bản ghi gần nhất',
-  'pin.title':'Khu vực quản lý','pin.sub':'Nhập mã PIN để tiếp tục','pin.confirm':'Xác nhận',
-  'qr.title':'Quét mã QR','qr.sub':'Đưa mã vào giữa khung','qr.noCam':'Không mở được camera',
-  'qr.noCamBody':'Bạn có thể chụp ảnh mã QR hoặc nhập tay.','qr.snap':'Chụp ảnh','qr.upload':'Tải ảnh','qr.manual':'Nhập tay',
-  'clean.title':'Xác nhận dọn phòng','clean.confirm':'Đã dọn xong',
-  'quick.in':'Nhận phòng','quick.out':'Trả phòng','quick.clean':'Dọn phòng',
-  'quick.title.in':'Nhận phòng nhanh','quick.title.out':'Trả phòng nhanh','quick.title.clean':'Dọn phòng nhanh',
-  'quick.sub.in':'Tìm khách rồi xác nhận trong một lần chạm','quick.sub.out':'Chọn phòng, xác nhận, buồng phòng nhận thông báo',
-  'quick.sub.clean':'Chạm vào phòng đã dọn xong','quick.searchPh':'Tên khách, mã hoặc số phòng…',
-  'quick.noGuest':'Không tìm thấy khách. Kiểm tra lại hoặc nhận phòng thủ công.',
-  'quick.pickRoom':'Chọn phòng đang có khách','quick.manual':'Hoặc nhập số phòng',
-  'quick.namePh':'Tên người trả phòng','quick.damage':'Báo hỏng nếu có',
-  'quick.done.in':'Đã nhận phòng {room} cho {name}','quick.done.out':'Đã trả phòng {room} · buồng phòng đã được báo',
-  'quick.done.clean':'Phòng {room} đã chuyển sang trống',
-  'quick.emptyClean':'Không có phòng nào chờ dọn','quick.emptyCleanSub':'Các phòng cần dọn sẽ xuất hiện ở đây.',
-  'quick.emptyOut':'Chưa có khách trong hệ thống','quick.confirmOut':'Xác nhận trả phòng',
-  'quick.confirmClean':'Xác nhận đã dọn','quick.back':'Chọn phòng khác','quick.close':'Đóng',
-  'quick.roomLabel':'Phòng {room}','quick.noRoom':'Chưa chọn phòng',
-  'quick.dirtyBadge':'{n} phòng chờ dọn',
-  'saver.label':'Tiết kiệm dữ liệu','saver.on':'Đang bật','saver.off':'Đang tắt',
-  'lookup.already':'Bạn đã nhận phòng','lookup.alreadySub':'Thông tin đã được ghi nhận — không cần xác nhận lại',
-  'lookup.checkedAt':'Đã nhận lúc {time}','lookup.alreadyBody':'Bạn đã nhận phòng {room} lúc {time}. Không cần xác nhận lại.',
-  'lookup.checkedOut':'Bạn đã trả phòng','lookup.checkedOutSub':'Phòng đã được trả lúc {time}',
-  'quick.alreadyIn':'{name} đã nhận phòng {room} rồi',
-  'saver.hint':'Chỉ tải danh sách khách khi bấm tra cứu. Sơ đồ phòng làm mới mỗi 60 giây.',
-  'saver.offHint':'Tải danh sách khách ngay khi mở trang. Sơ đồ phòng làm mới mỗi 15 giây.',
-  'saver.loading':'Đang tải danh sách khách…','saver.empty':'Bấm tra cứu để tải danh sách khách',
-  'saver.emptySub':'Chế độ tiết kiệm dữ liệu đang bật — danh sách chưa được tải về máy.',
-  'saver.needLoad':'Chưa có danh sách khách','saver.needLoadBody':'Chế độ tiết kiệm dữ liệu đang bật. Bấm Tải danh sách để tra cứu nhanh.',
-  'saver.loadBtn':'Tải danh sách','saver.saved':'Đã bật tiết kiệm dữ liệu','saver.savedOff':'Đã tắt tiết kiệm dữ liệu',
-  'rating.1':'Rất tệ','rating.2':'Tệ','rating.3':'Bình thường','rating.4':'Tốt','rating.5':'Tuyệt vời',
-  'msg.missingLookup':'Vui lòng nhập họ tên, mã nhân viên hoặc quét mã QR.',
-  'msg.missingNameRoom':'Vui lòng nhập đủ họ tên và số phòng.',
-  'msg.missingRoom':'Vui lòng nhập số phòng.',
-  'msg.notFoundTitle':'Không tìm thấy thông tin','msg.notFoundBody':'Bạn kiểm tra lại cách nhập, hoặc liên hệ lễ tân để được hỗ trợ nhận phòng.',
-  'msg.callReception':'Gọi xử lý sự cố','msg.slowTitle':'Mạng đang chậm',
-  'msg.slowBody':'Chưa tải được danh sách khách. Bạn thử lại, hoặc nhận phòng thủ công tại lễ tân.',
-  'msg.roomTitle':'Phòng chưa thể nhận','msg.roomInactive':'Phòng này hiện không sử dụng. Vui lòng liên hệ lễ tân để được bố trí phòng khác.',
-  'msg.invalidRoom':'Số phòng không hợp lệ. Vui lòng kiểm tra lại hoặc liên hệ lễ tân.',
-  'msg.checkoutOkTitle':'Đã trả phòng','msg.checkoutOkBody':'Phòng {room} đã được ghi nhận. Buồng phòng sẽ nhận thông báo ngay để vào dọn.',
-  'msg.checkoutEmpty':'Phòng {room} hiện không có khách trong hệ thống. Bạn vẫn muốn trả phòng?',
-  'msg.checkoutOver':'{room} · Tiếp tục','msg.nameMismatch':'Tên không khớp với khách đang ở phòng {room} ({names}). Vẫn tiếp tục?',
-  'msg.feedbackOkTitle':'Đã gửi đánh giá','msg.feedbackOkBody':'Cảm ơn bạn. Ý kiến đã được ghi nhận và chuyển tới Ban quản lý KTX.',
-  'msg.assetOkTitle':'Hoàn tất nhận phòng','msg.assetOkBody':'Dùng thẻ từ để mở phòng {room}. Nhận thẻ tại lễ tân và trả lại khi trả phòng.',
-  'msg.cleanOk':'Phòng {room} đã chuyển về trạng thái trống.',
-  'msg.cleanBody':'Phòng {room} đã được dọn sạch và sẵn sàng đón khách mới?',
-  'msg.qrFail':'Không đọc được mã','msg.qrFailBody':'Ảnh chưa rõ hoặc không có mã QR. Bạn chụp gần hơn hoặc nhập tay.',
-  'msg.pinWrong':'Mã PIN không đúng.','msg.roomVacant':'Phòng {capacity} giường đang trống, sẵn sàng đón khách.',
-  'msg.occupiedBy':'Đang ở: {names}','msg.roomAvailable':'Phòng {room} · {capacity} giường · trống',
-  'msg.roomOccupied':'Phòng {room} · {names}','msg.roomUnknown':'Số phòng không có trong danh mục',
-  'msg.queued':'{n} thao tác đang chờ gửi lên Google Sheet','msg.queuedCritical':'{n} thao tác chưa lên được Google Sheet — báo lễ tân kiểm tra',
-  'msg.loadingLookup':'Đang tra cứu…','msg.loadingRooms':'Đang tải sơ đồ phòng…','msg.loadingHistory':'Đang tải lịch sử…',
-  'msg.savingAssets':'Đang lưu biên bản…','msg.confirmCheckin':'Đang xác nhận…','sync.retry':'Gửi lại','sync.title':'Chờ gửi','sync.critical':'Cần xử lý'
-},
-en:{
-  'app.sub':'Dormitory operations','app.admin':'Admin',
-  'common.close':'Close','common.cancel':'Cancel','common.optional':'Optional',
-  'foot.rights':'Internal stay management system',
-  'home.eyebrow':'Viettel dormitory','home.title':'Stay check-in',
-  'home.sub':'Check in, check out and look up your stay in a few steps.',
-  'home.support':'Report an issue','home.checkin':'Check in','home.checkinSub':'Scan the QR code on your slip',
-  'home.checkout':'Check out','home.checkoutSub':'End your stay',
-  'home.info':'Handbook','home.infoSub':'Meal times, rules, prices',
-  'home.feedback':'Feedback','home.feedbackSub':'Tell us how we did',
-  'home.secure':'Your details are only used to verify your stay and are never shared.',
-  'steps.find':'Find','steps.confirm':'Confirm','steps.assets':'Handover',
-  'lookup.title':'Find your booking','lookup.sub':'Name, staff ID, room number or QR code',
-  'lookup.label':'Search details','lookup.ph':'NAME / STAFF ID / ROOM','lookup.qr':'Scan QR code',
-  'lookup.btn':'Search','lookup.found':'Booking found','lookup.foundSub':'Check the details before confirming',
-  'lookup.guest':'Guest','lookup.group':'Group / Event','lookup.room':'Room',
-  'lookup.locked':'Shown after you confirm','lookup.agreeHint':'Confirm to see your room number and key-card instructions.',
-  'lookup.agree':'Confirm my check-in','lookup.manual':'Not on the list? Check in manually',
-  'checkin.title':'Check in','checkin.sub':'Room inventory handover','checkin.done':'Checked in',
-  'checkin.yourRoom':'Your room','checkin.keyTitle':'Room key card',
-  'checkin.keyBody':'Collect your card at reception. Leave it there when going out and return it at check-out.',
-  'checkin.keyWarn':'Lost key card fee: 500,000 VND.',
-  'checkin.assets':'Room inventory','checkin.assetsSub':'Required by dormitory rules',
-  'checkin.name':'Full name','checkin.namePh':'FULL NAME','checkin.room':'Room number',
-  'checkin.assetHint':'Tick only items that are damaged or missing. Leave everything else blank.',
-  'checkin.note':'Condition notes','checkin.notePh':'e.g. scratch on the desk…',
-  'checkin.finish':'Confirm & finish','checkin.standard':'Standard','checkin.items':'items','checkin.saving':'Saving…',
-  'checkout.title':'Check out','checkout.sub':'Confirm the end of your stay',
-  'checkout.name':'Guest name','checkout.nameLbl':'Guest name','checkout.namePh':'NGUYEN VAN A',
-  'checkout.room':'Room number','checkout.roomLbl':'Room number','checkout.damage':'Report damage / missing items',
-  'checkout.damageHint':'Housekeeping is notified as soon as you check out.',
-  'checkout.note':'Notes for housekeeping','checkout.notePh':'e.g. please clean before 2 pm…',
-  'checkout.btn':'Confirm check-out','checkout.hint':'Switch off electrical devices and return your key card at reception.',
-  'feedback.title':'Service feedback','feedback.sub':'Your feedback helps us serve you better',
-  'feedback.satisfaction':'How satisfied are you?','feedback.roomLbl':'Room','feedback.nameLbl':'Name',
-  'feedback.namePh':'Optional','feedback.note':'Comments','feedback.notePh':'What did you like or dislike?',
-  'feedback.send':'Send feedback',
-  'handbook.title':'Dormitory handbook','handbook.sub':'Hours, rules and prices','handbook.price':'Asset compensation prices',
-  'admin.tabMap':'Room map','admin.tabHistory':'Stay history','admin.tabGuests':'In residence',
-  'admin.connecting':'Connecting…','admin.online':'Updated','admin.offline':'Offline · last known data',
-  'admin.rooms':'Active rooms','admin.floor':'Floor','admin.occupied':'Occupied','admin.dirty':'Needs cleaning','admin.late':'Overdue',
-  'admin.ribbon':'All 158 rooms at a glance','admin.exit':'Exit','admin.noGuests':'No guests in residence',
-  'admin.refresh':'Refresh','admin.guests':'guests','admin.room':'Room','admin.beds':'beds','admin.inactive':'Not in use',
-  'status.vacant':'Vacant','status.occupied':'Occupied','status.dirty':'Needs cleaning','status.late':'Overdue',
-  'hist.ph':'Search by room, guest name or note…','hist.all':'All types','hist.in':'Check-in',
-  'hist.out':'Check-out','hist.clean':'Cleaning','hist.fb':'Feedback','hist.reload':'Reload','hist.loading':'Loading history…',
-  'hist.empty':'No history yet','hist.emptySub':'Records appear after the first action.',
-  'hist.local':'Showing this device\u2019s journal. Google Sheets history could not be read — check the getHistory endpoint.',
-  'hist.server':'Source: Google Sheets · latest {n} records',
-  'pin.title':'Admin access','pin.sub':'Enter your PIN to continue','pin.confirm':'Confirm',
-  'qr.title':'Scan QR code','qr.sub':'Place the code inside the frame','qr.noCam':'Camera unavailable',
-  'qr.noCamBody':'You can photograph the QR code or type your details instead.','qr.snap':'Take photo','qr.upload':'Upload','qr.manual':'Type instead',
-  'clean.title':'Confirm cleaning','clean.confirm':'Mark cleaned',
-  'quick.in':'Check in','quick.out':'Check out','quick.clean':'Clean',
-  'quick.title.in':'Quick check-in','quick.title.out':'Quick check-out','quick.title.clean':'Quick cleaning',
-  'quick.sub.in':'Find the guest and confirm in one tap','quick.sub.out':'Pick a room, confirm, housekeeping is notified',
-  'quick.sub.clean':'Tap a room once it has been cleaned','quick.searchPh':'Guest name, ID or room…',
-  'quick.noGuest':'No guest found. Check the spelling or use manual check-in.',
-  'quick.pickRoom':'Pick an occupied room','quick.manual':'Or type a room number',
-  'quick.namePh':'Guest checking out','quick.damage':'Report damage',
-  'quick.done.in':'Checked in room {room} for {name}','quick.done.out':'Checked out room {room} · housekeeping notified',
-  'quick.done.clean':'Room {room} is now vacant',
-  'quick.emptyClean':'No rooms waiting to be cleaned','quick.emptyCleanSub':'Rooms that need cleaning will appear here.',
-  'quick.emptyOut':'No guests in the system','quick.confirmOut':'Confirm check-out',
-  'quick.confirmClean':'Confirm cleaned','quick.back':'Pick another room','quick.close':'Close',
-  'quick.roomLabel':'Room {room}','quick.noRoom':'No room selected',
-  'quick.dirtyBadge':'{n} rooms to clean',
-  'saver.label':'Data saver','saver.on':'On','saver.off':'Off',
-  'lookup.already':'You are already checked in','lookup.alreadySub':'Recorded — no need to confirm again',
-  'lookup.checkedAt':'Checked in at {time}','lookup.alreadyBody':'You checked into room {room} at {time}. No need to confirm again.',
-  'lookup.checkedOut':'You have checked out','lookup.checkedOutSub':'Room returned at {time}',
-  'quick.alreadyIn':'{name} is already checked into {room}',
-  'saver.hint':'Loads the guest list only when you search. Room map refreshes every 60 seconds.',
-  'saver.offHint':'Loads the guest list as soon as the page opens. Room map refreshes every 15 seconds.',
-  'saver.loading':'Loading the guest list…','saver.empty':'Search to load the guest list',
-  'saver.emptySub':'Data saver is on — the list has not been downloaded to this device.',
-  'saver.needLoad':'No guest list on this device','saver.needLoadBody':'Data saver is on. Tap Load list to search.',
-  'saver.loadBtn':'Load list','saver.saved':'Data saver on','saver.savedOff':'Data saver off',
-  'rating.1':'Very poor','rating.2':'Poor','rating.3':'Average','rating.4':'Good','rating.5':'Excellent',
-  'msg.missingLookup':'Enter your name, staff ID, or scan the QR code.',
-  'msg.missingNameRoom':'Enter both your name and room number.',
-  'msg.missingRoom':'Enter your room number.',
-  'msg.notFoundTitle':'No booking found','msg.notFoundBody':'Check how you typed it, or ask reception for help checking in.',
-  'msg.callReception':'Report an issue','msg.slowTitle':'Slow connection',
-  'msg.slowBody':'The guest list could not be loaded. Try again, or check in manually at reception.',
-  'msg.roomTitle':'Room unavailable','msg.roomInactive':'This room is not in use. Please ask reception to assign another room.',
-  'msg.invalidRoom':'That room number is not valid. Check it again or ask reception.',
-  'msg.checkoutOkTitle':'Checked out','msg.checkoutOkBody':'Room {room} has been recorded. Housekeeping is being notified now.',
-  'msg.checkoutEmpty':'Room {room} has no guest in the system. Check out anyway?',
-  'msg.checkoutOver':'{room} · Continue','msg.nameMismatch':'The name does not match the guest in room {room} ({names}). Continue?',
-  'msg.feedbackOkTitle':'Feedback sent','msg.feedbackOkBody':'Thank you. Your comments have been passed to the dormitory management team.',
-  'msg.assetOkTitle':'Check-in complete','msg.assetOkBody':'Use your key card to open room {room}. Collect it at reception and return it at check-out.',
-  'msg.cleanOk':'Room {room} is now marked vacant.',
-  'msg.cleanBody':'Room {room} is cleaned and ready for the next guest?',
-  'msg.qrFail':'Could not read the code','msg.qrFailBody':'The image is unclear or has no QR code. Move closer, or type your details.',
-  'msg.pinWrong':'Incorrect PIN.','msg.roomVacant':'This {capacity}-bed room is vacant and ready for guests.',
-  'msg.occupiedBy':'In residence: {names}','msg.roomAvailable':'Room {room} · {capacity} beds · vacant',
-  'msg.roomOccupied':'Room {room} · {names}','msg.roomUnknown':'Room number not in the catalogue',
-  'msg.queued':'{n} action(s) waiting to send to Google Sheets','msg.queuedCritical':'{n} action(s) not saved to Google Sheets — ask reception to check',
-  'msg.loadingLookup':'Looking up…','msg.loadingRooms':'Loading the room map…','msg.loadingHistory':'Loading history…',
-  'msg.savingAssets':'Saving the report…','msg.confirmCheckin':'Confirming…','sync.retry':'Retry','sync.title':'Pending send','sync.critical':'Needs action'
-}
-};
-</script>
-
-<script>
-/* ---- polyfill cho máy Android cũ / WebView đời thấp ---- */
-if (!String.prototype.padStart) {
-  String.prototype.padStart = function (len, pad) {
-    var str = String(this);
-    pad = pad === undefined ? ' ' : String(pad);
-    while (str.length < len) str = pad + str;
-    return str;
-  };
-}
-if (!Array.prototype.includes) {
-  Array.prototype.includes = function (x) { return this.indexOf(x) !== -1; };
-}
-if (!Object.assign) {
-  Object.assign = function (t) {
-    for (var i = 1; i < arguments.length; i++) {
-      var a = arguments[i] || {};
-      for (var k in a) if (Object.prototype.hasOwnProperty.call(a, k)) t[k] = a[k];
-    }
-    return t;
-  };
-}
-if (!Element.prototype.closest) {
-  Element.prototype.closest = function (sel) {
-    var el = this;
-    while (el && el.nodeType === 1) {
-      if ((el.matches || el.msMatchesSelector || el.webkitMatchesSelector).call(el, sel)) return el;
-      el = el.parentElement;
-    }
-    return null;
-  };
-}
-if (!window.NodeList || !NodeList.prototype.forEach) {
-  NodeList.prototype.forEach = Array.prototype.forEach;
-}
-
-/* ---------------- state ---------------- */
-let LANG = 'vi';
-let guestList = [], guestListSyncedAt = 0, guestLoadPromise = null, isGuestListLoaded = false;
-let currentUser = null;
-let roomState = {};
-let historyRows = [], historyFromServer = false;
-let adminTimer = null, html5QrCode = null;
-let currentRating = 5, pendingCleanRoomNo = null, outDamage = new Set();
-let BUSY = {}, FLUSHING = false, CURRENT_TAB = 'map';
-let dataSaver = true;   // mặc định BẬT: không tải nền khi mở trang
-
-const CACHE_KEY_GUESTS = 'stayhub_guests_v3';
-const QUEUE_KEY   = 'stayhub_outbox_v1';
-const JOURNAL_KEY = 'stayhub_journal_v1';
-const LANG_KEY    = 'stayhub_lang';
-const SAVER_KEY   = 'stayhub_datasaver';
-const GUEST_TTL   = 120000;
-
-/* ---------------- helpers ---------------- */
-const $  = id => document.getElementById(id);
-const t  = (k, vars) => {
-  let s = (DICT[LANG] && DICT[LANG][k]) || DICT.vi[k] || k;
-  if (vars) Object.keys(vars).forEach(v => { s = s.split('{' + v + '}').join(vars[v]); });
-  return s;
-};
-const L = o => o ? (o[LANG] || o.vi || '') : '';
-const esc = v => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-const ico = (n, cls = 'ico') => '<svg class="' + cls + '" aria-hidden="true"><use href="#' + n + '"/></svg>';
-
-const normalizeText = v => String(v == null ? '' : v).toUpperCase().normalize('NFD')
-  .replace(/[\u0300-\u036f]/g,'').replace(/Đ/g,'D').replace(/đ/g,'d')
-  .replace(/[\s\u00A0\u200B]+/g,' ').trim();
-
-const cleanKey = k => String(k || '').toLowerCase().normalize('NFD')
-  .replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/[^a-z0-9]/g,'');
-
-const pad2 = n => String(n).padStart(2, '0');
-function fmtTime(ts) {
-  const d = new Date(ts);
-  return pad2(d.getDate()) + '/' + pad2(d.getMonth() + 1) + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes());
-}
-function makeTxnId(prefix, room, name) {
-  return [prefix, room, (name || '').replace(/\s+/g,''), Date.now(), Math.floor(Math.random()*100000)].join('-').toUpperCase();
-}
-function parseDateLoose(v) {
-  if (!v) return null;
-  const s = String(v).trim();
-  let m = s.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})/);
-  if (m) { let y = +m[3]; if (y < 100) y += 2000; return new Date(y, +m[2]-1, +m[1]); }
-  m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
-  if (m) return new Date(+m[1], +m[2]-1, +m[3]);
-  return null;
-}
-const dayKey = d => d ? new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime() : 0;
-
-function roomTypeLabel(cfg) {
-  if (!cfg) return t('admin.inactive');
-  if (!cfg.active) return t('admin.inactive');
-  if (cfg.roomType === 'VIP') return 'VIP';
-  return cfg.capacity + ' ' + t('admin.beds');
-}
-
-/* ---------------- i18n ---------------- */
-function applyLanguage() {
-  document.documentElement.lang = LANG;
-  document.title = LANG === 'en' ? 'Viettel Stayhub — Stay management' : 'Viettel Stayhub — Quản lý lưu trú';
-
-  document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
-  document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
-  document.querySelectorAll('[data-i18n-title]').forEach(el => { el.title = t(el.dataset.i18nTitle); });
-
-  $('langVi').setAttribute('aria-pressed', LANG === 'vi');
-  $('langEn').setAttribute('aria-pressed', LANG === 'en');
-
-  const opt = $('historyFilter').options;
-  ['', 'in', 'out', 'clean', 'fb'].forEach((v, i) => {
-    if (opt[i]) opt[i].textContent = t(['hist.all','hist.in','hist.out','hist.clean','hist.fb'][i]);
-  });
-
-  updateRatingLabel();
-  renderHandbook();
-  renderOutDamage();
-  renderAssets();
-  updateRoomBadge($('displayRoomNo').textContent);
-  renderRibbon();
-  renderAdmin();
-  updateStats();
-  renderGuestTab(); renderQuickbar();
-  renderHistory();
-  syncBanners();
-}
-
-function setLanguage(lang) {
-  LANG = lang === 'en' ? 'en' : 'vi';
-  try { localStorage.setItem(LANG_KEY, LANG); } catch (e) {}
-  applyLanguage();
-}
-
-function setLoading(on, msg) {
-  const el = $('loading');
-  if (!el) return;
-  el.dataset.on = on ? '1' : '0';
-  if (msg) $('loadingText').textContent = msg;
-}
-
-function showInfo(title, desc, type = 'info', actionHtml = '') {
-  const m = $('infoModal');
-  const box = $('infoIcon');
-  const map = {
-    ok:   ['ok',  'i-check'],
-    err:  ['err', 'i-alert'],
-    warn: ['warn','i-alert'],
-    info: ['info','i-info']
-  };
-  const [cls, icon] = map[type] || map.info;
-  box.className = 'modal-ico ' + cls;
-  box.innerHTML = ico(icon);
-  $('infoTitle').textContent = title;
-  $('infoDesc').textContent = desc;
-  $('infoActionContainer').innerHTML = actionHtml || '';
-  m.hidden = false;
-}
-function closeInfo() { $('infoModal').hidden = true; }
-
-function showView(id) {
-  document.querySelectorAll('#guestRoot > .shell > section').forEach(s => s.classList.add('hidden'));
-  const target = $(id);
-  if (target) target.classList.remove('hidden');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-/* ---------------- network ---------------- */
-function buildUrl(params) {
-  const u = new URL(cfg.sheet);
-  Object.keys(params || {}).forEach(k => u.searchParams.set(k, params[k] == null ? '' : params[k]));
-  if (cfg.token) u.searchParams.set('auth', cfg.token);
-  u.searchParams.set('_t', Date.now());
-  return u.toString();
-}
-async function fetchJson(params, timeoutMs = 12000) {
-  // Máy/browser không có fetch hoặc AbortController → dùng JSONP ngay
-  if (typeof fetch !== 'function' || typeof AbortController !== 'function') throw new Error('no-fetch');
-  const c = new AbortController();
-  const timer = setTimeout(() => c.abort(), timeoutMs);
+function doGet(e) {
+  var p = (e && e.parameter) ? e.parameter : {};
+  var cb = p.callback || '';
+  var out;
   try {
-    const res = await fetch(buildUrl(params), { method:'GET', redirect:'follow', cache:'no-store', signal:c.signal });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const text = await res.text();
-    let data;
-    try { data = JSON.parse(text); } catch (e) { throw new Error('invalid-json'); }
-    if (data && data.status === 'error') throw new Error(data.message || 'sheet-error');
-    return data;
-  } finally { clearTimeout(timer); }
+    out = route_(p);
+  } catch (err) {
+    logError_(p.type || '', p.room || '', p.name || '', err, p);
+    out = { status: 'error', ok: false, message: String((err && err.message) || err) };
+  }
+  if (cb) {
+    return ContentService.createTextOutput(cb + '(' + JSON.stringify(out) + ')')
+      .setMimeType(ContentService.MimeType.JAVASCRIPT);
+  }
+  return ContentService.createTextOutput(JSON.stringify(out))
+    .setMimeType(ContentService.MimeType.JSON);
 }
-function jsonpRequest(params, timeoutMs = 10000) {
-  return new Promise((resolve, reject) => {
-    const cb = 'ktx_' + Date.now() + '_' + Math.floor(Math.random()*99999);
-    const s = document.createElement('script');
-    let done = false;
-    const timer = setTimeout(() => { if (done) return; done = true; cleanup(); reject(new Error('timeout')); }, timeoutMs);
-    function cleanup() {
-      clearTimeout(timer);
-      if (s.parentNode) s.parentNode.removeChild(s);
-      try { delete window[cb]; } catch (e) { window[cb] = undefined; }
-    }
-    window[cb] = data => {
-      if (done) return; done = true; cleanup();
-      if (data && data.status === 'error') reject(new Error(data.message || 'sheet-error'));
-      else resolve(data);
+
+function doPost(e) {
+  var p = {};
+  try { p = JSON.parse((e && e.postData && e.postData.contents) || '{}'); } catch (err) {}
+  var out;
+  try { out = route_(p); }
+  catch (err) { out = { status: 'error', ok: false, message: String(err.message || err) }; }
+  return ContentService.createTextOutput(JSON.stringify(out))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function route_(p) {
+  var type = String(p.type || '').trim();
+  if (!type) return ok_({ service: 'viettel-stayhub', version: CFG.VERSION, time: nowStr_() });
+
+  checkToken_(p);
+
+  var t = type.toUpperCase();
+  if (t === 'PING')          return ok_({ pong: true, time: nowStr_(), version: CFG.VERSION });
+  if (t === 'GETGUESTS')     return ok_({ guests: getGuests_() });
+  if (t === 'LOOKUPGUEST')   return ok_({ found: lookupGuest_(p) });
+  if (t === 'GETOCCUPIED')   return ok_({ occupied: getOccupied_() });
+  if (t === 'GETHISTORY')    return ok_({ history: getHistory_(p.limit) });
+  if (t === 'NHẬN PHÒNG' || t === 'NHAN PHONG' || t === 'CHECKIN')  return actCheckIn_(p);
+  if (t === 'TRẢ PHÒNG'  || t === 'TRA PHONG'  || t === 'CHECKOUT')  return actCheckOut_(p);
+  if (t === 'ĐÁNH GIÁ'   || t === 'DANH GIA'   || t === 'RATING')    return actRating_(p);
+  if (t === 'CLEANROOM')     return actClean_(p);
+  if (t === 'BÁO HỎNG' || t === 'BAO HONG' || t === 'ASSET') return actAssetIssue_(p);
+  throw new Error('Loại yêu cầu không hợp lệ: ' + type);
+}
+
+/* ============================ TIỆN ÍCH ============================ */
+
+function ok_(o) {
+  o = o || {};
+  o.status = 'ok';
+  o.ok = true;
+  return o;
+}
+
+function ss_() {
+  var id = PropertiesService.getScriptProperties().getProperty('SPREADSHEET_ID');
+  if (id) return SpreadsheetApp.openById(id);
+  var a = SpreadsheetApp.getActiveSpreadsheet();
+  if (!a) throw new Error('Không tìm thấy trang tính. Đặt SPREADSHEET_ID trong Script Properties.');
+  return a;
+}
+
+function sheet_(name) {
+  var sh = ss_().getSheetByName(name);
+  if (!sh) throw new Error('Thiếu trang tính: ' + name);
+  return sh;
+}
+
+function tz_() { return Session.getScriptTimeZone() || CFG.TZ; }
+
+function nowStr_() {
+  return Utilities.formatDate(new Date(), tz_(), 'dd/MM/yyyy HH:mm:ss');
+}
+
+function dateStr_(v) {
+  if (!v) return '';
+  if (v instanceof Date) return Utilities.formatDate(v, tz_(), 'dd/MM/yyyy HH:mm:ss');
+  return String(v).trim();
+}
+
+function dayStr_(v) {
+  if (!v) return '';
+  if (v instanceof Date) return Utilities.formatDate(v, tz_(), 'yyyy-MM-dd');
+  return String(v).trim();
+}
+
+function normKey_(s) {
+  // Bỏ dấu tiếng Việt trước khi lọc ký tự, nếu không "Họ và tên" sẽ thành "hvt"
+  return String(s == null ? '' : s)
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd').replace(/Đ/g, 'D')
+    .toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+/* Bỏ dấu tiếng Việt để so tên: "Nguyễn Văn A" == "NGUYEN VAN A" */
+/**
+ * Ghi chú tài sản hỏng dạng gọn: "Tivi, Điều hòa, Chìa khóa +7"
+ * - Giữ tối đa `max` hạng mục đầu, phần còn lại gộp thành +N
+ * - Bỏ giá trị rỗng / "Không" / "Bình thường", bỏ trùng lặp
+ * Nhờ vậy cột ghi chú không tràn sang cột bên cạnh trên Google Sheet.
+ */
+function shortAssets_(v, max) {
+  max = max || 3;
+  var raw = String(v == null ? '' : v).replace(/\s+/g, ' ').trim();
+  if (!raw) return '';
+  var parts = raw.split(/[,;|\/]/);
+  var seen = {}, keep = [];
+  for (var i = 0; i < parts.length; i++) {
+    var p = String(parts[i] || '').trim();
+    if (!p) continue;
+    if (/^(kh(ô|o)ng|bình thường|binh thuong|none|-)$/i.test(p)) continue;
+    var k = p.toLowerCase();
+    if (seen[k]) continue;
+    seen[k] = true;
+    keep.push(p);
+  }
+  if (!keep.length) return '';
+  if (keep.length <= max) return keep.join(', ');
+  return keep.slice(0, max).join(', ') + ' +' + (keep.length - max);
+}
+
+/** Lưu danh sách ĐẦY ĐỦ vào nhật ký để không mất dữ liệu khi ghi chú đã rút gọn */
+function archiveAssets_(room, name, full, short) {
+  if (!full || full === short) return;
+  try {
+    var sh = ss_().getSheetByName(CFG.LOG);
+    if (!sh) return;
+    sh.appendRow([nowStr_(), 'ASSET_DETAIL', room || '', name || '', full, '']);
+  } catch (e) {}
+}
+
+function isTrue_(v) {
+  if (v === true) return true;
+  var s = String(v == null ? '' : v).toLowerCase();
+  return s === '1' || s === 'true' || s === 'yes' || s === 'co';
+}
+
+function normName_(s) {
+  return String(s == null ? '' : s)
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd').replace(/Đ/g, 'D')
+    .toUpperCase().replace(/[^A-Z0-9 ]/g, '').replace(/\s+/g, ' ').trim();
+}
+
+function checkToken_(p) {
+  var need = PropertiesService.getScriptProperties().getProperty('AUTH_TOKEN');
+  if (!need) return;                       // chưa đặt thì bỏ qua (tương thích cũ)
+  if (String(p.token || '') !== String(need)) throw new Error('Sai mã truy cập (AUTH_TOKEN)');
+}
+
+function logError_(fn, room, name, err, payload) {
+  try {
+    var sh = ss_().getSheetByName(CFG.LOG);
+    if (!sh) return;
+    sh.appendRow([nowStr_(), fn, room || '', name || '',
+      String((err && err.message) || err), JSON.stringify(payload || {}).slice(0, 900)]);
+  } catch (e) {}
+}
+
+function notify_(text) {
+  var props = PropertiesService.getScriptProperties();
+  var tok = props.getProperty('TELEGRAM_TOKEN');
+  var chat = props.getProperty('TELEGRAM_CHAT_ID');
+  if (!tok || !chat) return;
+  try {
+    UrlFetchApp.fetch('https://api.telegram.org/bot' + tok + '/sendMessage', {
+      method: 'post',
+      contentType: 'application/json',
+      muteHttpExceptions: true,
+      payload: JSON.stringify({ chat_id: chat, text: text, parse_mode: 'HTML' })
+    });
+  } catch (e) { logError_('telegram', '', '', e, { chat: chat }); }
+}
+
+/* ==================== CỘT DANHSACHKHACH (THEO TÊN) ==================== */
+
+function headerRow_(sh) {
+  var last = Math.max(sh.getLastColumn(), 1);
+  return sh.getRange(1, 1, 1, last).getValues()[0];
+}
+
+function findCol_(map, aliases) {
+  for (var i = 0; i < aliases.length; i++) {
+    var k = normKey_(aliases[i]);
+    if (map[k]) return map[k];
+  }
+  return 0;
+}
+
+/**
+ * Trả về index (1-based) của từng cột trong DanhSachKhach.
+ * Tự tạo cột còn thiếu ở CUỐI bảng (không dịch dữ liệu cũ).
+ * Nhờ vậy thêm cột STT / Check-in / Check-out ở bất kỳ đâu đều an toàn.
+ */
+function ensureGuestColumns_(sh) {
+  var head = headerRow_(sh);
+  var map = {};
+  for (var i = 0; i < head.length; i++) {
+    var k = normKey_(head[i]);
+    if (k && map[k] === undefined) map[k] = i + 1;
+  }
+  var c = {
+    STT      : findCol_(map, H.STT),
+    MNV      : findCol_(map, H.MNV),
+    NAME     : findCol_(map, H.NAME),
+    ROOM     : findCol_(map, H.ROOM),
+    EVENT    : findCol_(map, H.EVENT),
+    IN_DATE  : findCol_(map, H.IN_DATE),
+    OUT_DATE : findCol_(map, H.OUT_DATE),
+    CHECKIN  : findCol_(map, H.CHECKIN),
+    CHECKOUT : findCol_(map, H.CHECKOUT),
+    NOTE     : findCol_(map, H.NOTE),
+    LEGACY   : findCol_(map, H.LEGACY)
+  };
+
+  // Cột gộp cũ "Checkin/Checkout" → đổi tên thành "Check-in"
+  if (!c.CHECKIN && c.LEGACY) {
+    sh.getRange(1, c.LEGACY).setValue('Check-in');
+    c.CHECKIN = c.LEGACY;
+    c.LEGACY = 0;
+  }
+  var next = Math.max(sh.getLastColumn(), 1);
+  if (!c.CHECKIN)  { next++; sh.getRange(1, next).setValue('Check-in');  c.CHECKIN = next; }
+  if (!c.CHECKOUT) { next++; sh.getRange(1, next).setValue('Check-out'); c.CHECKOUT = next; }
+  if (!c.STT)      { next++; sh.getRange(1, next).setValue('STT');       c.STT = next; }
+  if (!c.NAME) throw new Error('DanhSachKhach thiếu cột "Họ và tên"');
+  if (!c.ROOM) throw new Error('DanhSachKhach thiếu cột "Phòng"');
+  return c;
+}
+
+function readGuestRows_(sh) {
+  var c = ensureGuestColumns_(sh);
+  var last = sh.getLastRow();
+  if (last < 2) return { cols: c, rows: [] };
+  var width = Math.max(sh.getLastColumn(), c.CHECKOUT, c.STT, 10);
+  var vals = sh.getRange(2, 1, last - 1, width).getValues();
+  var rows = [];
+  for (var i = 0; i < vals.length; i++) {
+    var r = vals[i];
+    var g = {
+      _row: i + 2,
+      stt     : c.STT      ? String(r[c.STT - 1] || '').trim() : '',
+      id      : c.MNV      ? String(r[c.MNV - 1] || '').trim() : '',
+      name    : c.NAME     ? String(r[c.NAME - 1] || '').trim() : '',
+      room    : c.ROOM     ? String(r[c.ROOM - 1] || '').trim() : '',
+      event   : c.EVENT    ? String(r[c.EVENT - 1] || '').trim() : '',
+      inDate  : c.IN_DATE  ? dayStr_(r[c.IN_DATE - 1]) : '',
+      outDate : c.OUT_DATE ? dayStr_(r[c.OUT_DATE - 1]) : '',
+      checkin : c.CHECKIN  ? dateStr_(r[c.CHECKIN - 1]) : '',
+      checkout: c.CHECKOUT ? dateStr_(r[c.CHECKOUT - 1]) : '',
+      note    : c.NOTE     ? String(r[c.NOTE - 1] || '').trim() : ''
     };
-    s.onerror = () => { if (done) return; done = true; cleanup(); reject(new Error('script-error')); };
-    const url = buildUrl(params);
-    s.src = url + (url.includes('?') ? '&' : '?') + 'callback=' + cb;
-    document.body.appendChild(s);
-  });
-}
-async function apiRead(params, timeoutMs) {
-  try { return await fetchJson(params, timeoutMs || 15000); }
-  catch (e) { return await jsonpRequest(params, 12000); }
-}
-
-/* ---------------- outbox ---------------- */
-const readQueue = () => { try { return JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]') || []; } catch (e) { return []; } };
-function saveQueue(q) {
-  try { localStorage.setItem(QUEUE_KEY, JSON.stringify(q)); } catch (e) {}
-  syncBanners();
-  renderPending();
-}
-function enqueueOutbox(payload, opts) {
-  const q = readQueue();
-  if (payload.txnId && q.some(it => it.payload && it.payload.txnId === payload.txnId)) return;
-  q.push({ payload, ts: Date.now(), tries: 0, critical: !!(opts && opts.critical), lastError: '' });
-  saveQueue(q);
-}
-// Ghi nền: cất sổ chờ trước, gửi sau, không chặn giao diện.
-function pushBackground(payload, opts) {
-  enqueueOutbox(payload, opts);
-  recordJournal(payload);
-  flushQueue(true).catch(() => {});
-  return true;
-}
-async function flushQueue(silent) {
-  if (FLUSHING) return;
-  const q = readQueue();
-  if (!q.length) { syncBanners(); return; }
-  FLUSHING = true;
-  const remaining = [];
-  try {
-    for (const item of q) {
-      try {
-        await fetchJson(item.payload, 9000);
-        markJournalSent(item.payload.txnId);
-      } catch (e) {
-        item.tries = (item.tries || 0) + 1;
-        item.lastError = (e && e.message) || 'fail';
-        if (item.tries < 30) remaining.push(item);
-      }
-    }
-  } finally { FLUSHING = false; }
-  saveQueue(remaining);
-  if (!silent) syncBanners();
-}
-
-function syncBanners() {
-  const q = readQueue();
-  const n = q.length;
-  const critical = q.some(it => it.critical);
-  const text = critical ? t('msg.queuedCritical', { n }) : t('msg.queued', { n });
-  [['syncBanner','syncBannerText'], ['syncBannerAdmin','syncBannerAdminText']].forEach(([a, b]) => {
-    const bar = $(a); if (!bar) return;
-    bar.dataset.on = n ? '1' : '0';
-    bar.dataset.critical = critical ? '1' : '0';
-    const el = $(b); if (el) el.textContent = text;
-  });
-}
-
-function renderPending() {
-  const box = $('pendingPanel');
-  if (!box) return;
-  const q = readQueue();
-  if (!q.length) { box.innerHTML = ''; return; }
-  box.innerHTML = '<div class="pending">' +
-    '<div class="pending-head">' + ico('i-alert','ico ico-sm') +
-      '<span class="pending-title">' + esc(t('sync.title')) + ' (' + q.length + ')</span>' +
-      '<button class="btn btn-sm btn-ghost" style="margin-left:auto" onclick="flushQueue(false)">' + esc(t('sync.retry')) + '</button>' +
-    '</div>' +
-    q.slice(0, 6).map(it => {
-      const p = it.payload || {};
-      return '<div class="pending-item"><span><b>' + esc(p.type || '') + '</b> · ' + esc(p.room || '') +
-        ' · ' + esc(p.name || '') + '</span><span class="m">' + fmtTime(it.ts) +
-        (it.tries ? ' · ' + it.tries + '×' : '') + (it.critical ? ' · ' + esc(t('sync.critical')) : '') + '</span></div>';
-    }).join('') + '</div>';
-}
-
-/* ---------------- local journal ---------------- */
-function recordJournal(payload) {
-  try {
-    const j = JSON.parse(localStorage.getItem(JOURNAL_KEY) || '[]') || [];
-    j.unshift({
-      txnId: payload.txnId || makeTxnId('LOCAL', payload.room, ''),
-      at: Date.now(),
-      type: payload.type || '',
-      room: String(payload.room || ''),
-      name: String(payload.name || ''),
-      note: String(payload.note || ''),
-      broken: String(payload.brokenAssets || ''),
-      rating: payload.rating || '',
-      sent: false
-    });
-    localStorage.setItem(JOURNAL_KEY, JSON.stringify(j.slice(0, 400)));
-  } catch (e) {}
-}
-function markJournalSent(txnId) {
-  if (!txnId) return;
-  try {
-    const j = JSON.parse(localStorage.getItem(JOURNAL_KEY) || '[]') || [];
-    let hit = false;
-    j.forEach(r => { if (r.txnId === txnId && !r.sent) { r.sent = true; hit = true; } });
-    if (hit) localStorage.setItem(JOURNAL_KEY, JSON.stringify(j));
-  } catch (e) {}
-}
-const readJournal = () => { try { return JSON.parse(localStorage.getItem(JOURNAL_KEY) || '[]') || []; } catch (e) { return []; } };
-
-/* ---------------- guest records ---------------- */
-function normalizeGuestRecord(g) {
-  if (!g || typeof g !== 'object') return null;
-  let id = '', name = '', room = '', inDate = '', outDate = '', eventText = '', ho = '', ten = '';
-  let stayStatus = '', checkInAt = '', checkOutAt = '';
-  const raw = [];
-  for (const k in g) {
-    if (!Object.prototype.hasOwnProperty.call(g, k)) continue;
-    const val = String(g[k] == null ? '' : g[k]).trim();
-    if (!val) continue;
-    raw.push(val);
-    const ck = cleanKey(k);
-    if (!id && ['id','mnv','code','ma','manv','cccd','cmnd','stt','sdt','passport','hochieu'].includes(ck)) id = val;
-    if (!name && ['name','hoten','hovaten','tenkhach','khach','fullname','guest'].includes(ck)) name = val;
-    if (ck === 'ho' || ck === 'hodem') ho = val;
-    if (ck === 'ten' && !name) ten = val;
-    if (!room && ['room','phong','sophong','phongo','phongktx','vitri','roomno','roomnumber'].includes(ck)) room = val;
-    if (!inDate && ['in','ngayvao','ngayden','tungay','den','checkindate','arrival'].includes(ck)) inDate = val;
-    if (!outDate && ['out','ngayra','ngaydi','denngay','checkoutdate','departure'].includes(ck)) outDate = val;
-    if (!stayStatus && (ck === 'status' || ck === 'trangthai')) stayStatus = val;
-    if (!checkInAt && ['checkin','gionhan','giovao','nhanphong'].includes(ck)) checkInAt = val;
-    if (!checkOutAt && ['checkout','giotra','giora','traphong'].includes(ck)) checkOutAt = val;
-    if (!eventText && ['event','tenlop','lop','sukien','lophoc','note','ghichu','doan','donvi','group','company'].includes(ck)) eventText = val;
+    if (!g.name && !g.id && !g.room) continue;
+    g.status = g.checkout ? 'checkedout' : (g.checkin ? 'checkedin' : 'booked');
+    rows.push(g);
   }
-  if (!name && (ho || ten)) name = [ho, ten].filter(Boolean).join(' ');
-  return {
-    id: String(id).trim(),
-    name: String(name).trim().toUpperCase(),
-    room: String(room).trim(),
-    in: String(inDate || checkInAt).trim(),
-    out: String(outDate || checkOutAt).trim(),
-    event: String(eventText).trim(),
-    checkIn: String(checkInAt).trim(),
-    checkOut: String(checkOutAt).trim(),
-    status: String(stayStatus).trim() || (String(checkOutAt).trim() ? 'checkedout' : (String(checkInAt).trim() ? 'checkedin' : 'booked')),
-    haystack: raw.map(normalizeText).join(' | ')
-  };
-}
-function parseGuestsResponse(res) {
-  if (!res) return [];
-  let list = Array.isArray(res) ? res
-    : (res.guests || res.data || res.result || res.list || res.rows || res.values || []);
-  if (!Array.isArray(list)) return [];
-  if (list.length && Array.isArray(list[0])) {
-    const head = list[0].map(h => String(h || '').trim());
-    const rows = [];
-    for (let i = 1; i < list.length; i++) {
-      const row = list[i];
-      if (!Array.isArray(row) || !row.length) continue;
-      const o = {};
-      head.forEach((h, idx) => { if (h) o[h] = row[idx] == null ? '' : row[idx]; });
-      rows.push(o);
-    }
-    list = rows;
-  }
-  return list.map(normalizeGuestRecord).filter(g => g && (g.name || g.id || g.room));
+  return { cols: c, rows: rows };
 }
 
-function extractSearchCandidates(raw) {
-  if (!raw) return [];
-  const str = String(raw).trim();
-  const set = new Set([str]);
-
-  if (/^https?:\/\//i.test(str)) {
-    try {
-      const u = new URL(str);
-      ['code','id','stayCode','room','emp','guest','phong','ma','mnv','q','name'].forEach(p => {
-        const v = u.searchParams.get(p); if (v && v.trim()) set.add(v.trim());
-      });
-      const segs = u.pathname.split('/').filter(Boolean);
-      if (segs.length) {
-        const last = segs[segs.length - 1].replace(/\.html$/i, '');
-        if (last && !/github|stayhub|exec/i.test(last)) set.add(last);
-      }
-    } catch (e) {}
+function nextStt_(rows) {
+  var max = 0;
+  for (var i = 0; i < rows.length; i++) {
+    var n = parseInt(rows[i].stt, 10);
+    if (!isNaN(n) && n > max) max = n;
   }
-  if (str.includes('|')) str.split('|').map(p => p.trim()).filter(p => p.length >= 2).forEach(p => set.add(p));
-
-  const stripped = str.replace(/^(CODE|ID|ROOM|MNV|NV|MA|PHONG|SOPHONG|Đ\/C|ĐỒNG CHÍ|D\/C|ROOM NO)[:\s-]+/i, '').trim();
-  if (stripped) set.add(stripped);
-
-  if (/[-;\n,]/.test(str)) {
-    str.split(/[-;\n,]+/).map(x => x.trim()).filter(x => x.length >= 2).forEach(x => set.add(x));
-  }
-  const rm = str.match(/(?:p|phong|phòng|room)[\s.]*(\d{2,4})/i);
-  if (rm) set.add(rm[1]);
-
-  const num = str.replace(/\D/g, '');
-  if (num) { set.add(num); const nz = num.replace(/^0+/, ''); if (nz) set.add(nz); }
-  return [...set].filter(Boolean);
+  return max + 1;
 }
 
-function findGuestInList(input) {
-  if (!guestList.length) return null;
-  const cands = Array.isArray(input) ? input : extractSearchCandidates(input);
-  for (const c of cands) {
-    const q = normalizeText(c);
-    if (!q) continue;
-
-    let hit = guestList.find(g => {
-      const gid = normalizeText(g.id);
-      return gid && (gid === q || gid.replace(/^0+/,'') === q.replace(/^0+/,'') || gid.replace(/^(VT|NV)/,'') === q.replace(/^(VT|NV)/,''));
-    });
-    if (hit) return hit;
-
-    if (/^[0-9A-Z\/\-]{2,}$/.test(q)) {
-      hit = guestList.find(g => {
-        const gr = normalizeText(g.room);
-        return gr && (gr === q || gr.replace(/\D/g,'') === q.replace(/\D/g,''));
-      });
-      if (hit) return hit;
-    }
-
-    hit = guestList.find(g => {
-      const gn = normalizeText(g.name);
-      if (!gn) return false;
-      return gn === q || (q.length >= 3 && gn.includes(q)) || (gn.length >= 5 && q.includes(gn));
-    });
-    if (hit) return hit;
-
-    const tokens = q.split(' ').filter(x => x.length >= 2);
-    if (tokens.length >= 2) {
-      hit = guestList.find(g => {
-        const gn = normalizeText(g.name);
-        return tokens.every(tok => gn.includes(tok));
-      });
-      if (hit) return hit;
-    }
-    if (q.length >= 3) {
-      hit = guestList.find(g => (g.haystack || '').includes(q));
-      if (hit) return hit;
-    }
+function findGuestRow_(rows, name, room, mnv) {
+  var nName = normName_(name), r = String(room || '').trim(), id = String(mnv || '').trim();
+  var pool = rows;
+  if (r) { var byRoom = rows.filter(function (g) { return String(g.room).trim() === r; }); if (byRoom.length) pool = byRoom; }
+  for (var i = 0; i < pool.length; i++) {
+    var g = pool[i];
+    if (nName && normName_(g.name) === nName) return g;
+    if (!nName && id && g.id === id) return g;
   }
   return null;
 }
 
-function initGuestCache() {
+/* ============================ ĐỌC ============================ */
+
+function getGuests_() {
+  var sh = sheet_(CFG.GUESTS);
+  return readGuestRows_(sh).rows.map(function (g) {
+    return {
+      stt: g.stt, id: g.id, name: g.name, room: g.room, event: g.event,
+      in: g.inDate, out: g.outDate,
+      checkIn: g.checkin, checkOut: g.checkout, status: g.status, note: g.note
+    };
+  });
+}
+
+/** Tra 1 khách — nhẹ hơn getGuests rất nhiều (dùng cho chế độ tiết kiệm dữ liệu) */
+function lookupGuest_(p) {
+  var q = String(p.q || p.mnv || p.name || p.room || '').trim();
+  if (!q) return [];
+  var sh = sheet_(CFG.GUESTS);
+  var rows = readGuestRows_(sh).rows;
+  var nq = normName_(q), ql = q.toLowerCase();
+  var hits = rows.filter(function (g) {
+    return g.id === q || String(g.room) === q ||
+      (nq && normName_(g.name).indexOf(nq) >= 0) ||
+      (g.name && g.name.toLowerCase().indexOf(ql) >= 0);
+  });
+  hits.sort(function (a, b) { return a.status === 'checkedin' ? -1 : 1; });
+  return hits.slice(0, 8).map(function (g) {
+    return { stt: g.stt, id: g.id, name: g.name, room: g.room, event: g.event,
+      in: g.inDate, out: g.outDate, checkIn: g.checkin, checkOut: g.checkout,
+      status: g.status, note: g.note };
+  });
+}
+
+function getOccupied_() {
+  var sh = sheet_(CFG.GUESTS);
+  var rows = readGuestRows_(sh).rows;
+  var types = roomTypes_();
+  var out = [];
+  rows.forEach(function (g) {
+    if (g.status === 'checkedin' && g.room) {
+      out.push({ room: g.room, name: g.name, event: g.event,
+        roomType: types[g.room] || '', since: g.checkin, status: 'occupied' });
+    }
+  });
+  return out;
+}
+
+function roomTypes_() {
+  var map = {};
   try {
-    const c = JSON.parse(localStorage.getItem(CACHE_KEY_GUESTS) || 'null');
-    if (c && Array.isArray(c.list) && c.list.length) {
-      guestList = c.list;
-      guestListSyncedAt = c.ts || 0;
-      isGuestListLoaded = true;
+    var sh = ss_().getSheetByName(CFG.ROOMS);
+    if (!sh || sh.getLastRow() < 2) return map;
+    var v = sh.getRange(2, 1, sh.getLastRow() - 1, Math.max(sh.getLastColumn(), 4)).getValues();
+    for (var i = 0; i < v.length; i++) {
+      var room = String(v[i][0] || '').trim();
+      if (!room) continue;
+      var type = String(v[i][3] || '').trim();   // room | floor | capacity | roomType | note
+      if (room) map[room] = type;
     }
   } catch (e) {}
-  // Tiết kiệm dữ liệu: KHÔNG gọi mạng khi mở trang
-  if (!dataSaver) syncGuests(false, 25000).catch(() => {});
+  return map;
 }
 
-async function syncGuests(show, timeoutMs) {
-  if (show) setLoading(true, t('msg.loadingLookup'));
-  if (guestLoadPromise) return guestLoadPromise;
-  guestLoadPromise = (async () => {
-    try {
-      const res = await apiRead({ type: 'getGuests' }, timeoutMs || 25000);
-      const raw = Array.isArray(res) ? res : (res.guests || res.data || res.result || res.list || res.rows || res.values);
-      if (!Array.isArray(raw)) throw new Error('bad-getGuests');
-      guestList = parseGuestsResponse(res);
-      guestListSyncedAt = Date.now();
-      isGuestListLoaded = true;
-      try {
-        const slim = guestList.map(g => ({ id:g.id, name:g.name, room:g.room, in:g.in, out:g.out, event:g.event }));
-        localStorage.setItem(CACHE_KEY_GUESTS, JSON.stringify({ ts: guestListSyncedAt, list: slim }));
-      } catch (e) {}
-      return guestList;
-    } finally { if (show) setLoading(false); }
-  })();
-  try { return await guestLoadPromise; } finally { guestLoadPromise = null; }
+function getHistory_(limit) {
+  var n = Math.min(parseInt(limit, 10) || 200, 1000);
+  var sh = ss_().getSheetByName(CFG.HISTORY);
+  if (!sh || sh.getLastRow() < 2) return [];
+  var take = Math.min(sh.getLastRow() - 1, n);
+  var start = sh.getLastRow() - take + 1;
+  var v = sh.getRange(start, 1, take, Math.max(sh.getLastColumn(), 7)).getValues();
+  var out = [];
+  for (var i = v.length - 1; i >= 0; i--) {
+    var r = v[i];
+    out.push({
+      time: dateStr_(r[0]), action: String(r[1] || ''), room: String(r[2] || ''),
+      name: String(r[3] || ''), event: String(r[4] || ''),
+      brokenAssets: String(r[5] || ''), note: String(r[6] || '')
+    });
+  }
+  return out;
 }
 
-/* ---------------- lookup flow ---------------- */
-async function searchRoom() {
-  const raw = $('searchEmpId').value.trim();
-  if (!raw) return showInfo(t('lookup.title'), t('msg.missingLookup'), 'warn');
+/* ============================ GHI ============================ */
 
-  const cands = extractSearchCandidates(raw);
-  $('lookupResult').classList.add('hidden');
-  currentUser = null;
+function txnExists_(txnId) {
+  if (!txnId) return false;
+  var sh = ss_().getSheetByName(CFG.TXN);
+  if (!sh || sh.getLastRow() < 2) return false;
+  var col = 2;
+  var v = sh.getRange(2, col, sh.getLastRow() - 1, 1).getValues();
+  for (var i = 0; i < v.length; i++) if (String(v[i][0]) === String(txnId)) return true;
+  return false;
+}
 
-  if (isGuestListLoaded && guestList.length) {
-    const hit = findGuestInList(cands);
-    if (hit) { renderSearchResult(hit); refreshGuestsQuiet(cands); return; }
-  }
-
-  // Chế độ tiết kiệm dữ liệu: chỉ tải ĐÚNG khách đang tra (1 dòng) thay vì cả danh sách
-  if (dataSaver && !guestList.length) {
-    setLoading(true, t('msg.loadingLookup'));
-    try {
-      const r = await apiRead({ type:'lookupGuest', q: raw }, 9000);
-      const arr = r && (r.found || r.guests);
-      if (Array.isArray(arr) && arr.length) {
-        arr.map(normalizeGuestRecord).filter(Boolean).forEach(g => {
-          if (!guestList.some(x => x.name === g.name && String(x.room) === String(g.room))) guestList.push(g);
-        });
-      }
-    } catch (e) { console.warn(e); }
-    setLoading(false);
-    const hitOne = findGuestInList(cands);
-    if (hitOne) return renderSearchResult(hitOne);
-  }
-
-  setLoading(true, t('msg.loadingLookup'));
-  let found = null, timedOut = false;
+function pushTxn_(txnId, loai, room, name) {
   try {
-    await Promise.race([
-      syncGuests(false, 9000),
-      new Promise(r => setTimeout(() => { timedOut = true; r(); }, 9500))
-    ]);
-    if (!timedOut) found = findGuestInList(cands);
-  } catch (e) { console.warn(e); }
-  setLoading(false);
-
-  if (found) return renderSearchResult(found);
-  if (timedOut) return showInfo(t('msg.slowTitle'), t('msg.slowBody'), 'warn', callReceptionHtml());
-  showInfo(t('msg.notFoundTitle'), t('msg.notFoundBody'), 'err', callReceptionHtml());
+    var sh = ss_().getSheetByName(CFG.TXN);
+    if (!sh) return;
+    sh.appendRow([nowStr_(), txnId || '', loai, room || '', name || '', 'DONE']);
+  } catch (e) { logError_('pushTxn', room, name, e, { txnId: txnId }); }
 }
 
-function refreshGuestsQuiet(cands) {
-  if (dataSaver) return;                    // tiết kiệm dữ liệu: không làm mới ngầm
-  if (Date.now() - guestListSyncedAt < 30000) return;
-  syncGuests(false, 20000).then(() => {
-    const better = findGuestInList(cands);
-    if (!better) return;
-    if ($('lookupResult').classList.contains('hidden')) return;
-    if (currentUser && better.room === currentUser.room && better.name === currentUser.name) return;
-    renderSearchResult(better);
-  }).catch(() => {});
-}
-const callReceptionHtml = () =>
-  '<a class="btn btn-primary btn-block" href="tel:0399026026">' + ico('i-phone','ico ico-sm') + esc(t('msg.callReception')) + ': 0399 026 026</a>';
-
-const LOCKED_ROOM_HTML = '<span class="locked">' + ico('i-lock','ico') +
-  '<span>' + esc(t('lookup.locked')) + '</span></span>';
-
-function renderSearchResult(g) {
-  currentUser = g;
-  const status = (g && g.status) || 'booked';
-  const room = (g && g.room) ? g.room : '—';
-  $('resName').textContent = g.name || '—';
-  $('resDates').textContent = g.event || [g.in, g.out].filter(Boolean).join(' → ') || '—';
-
-  const roomEl = $('resRoom'), titleEl = $('resTitle'), subEl = $('resSub'),
-        noticeEl = $('resNotice'), btn = $('btnConfirmCheckIn');
-
-  if (status === 'checkedin' || status === 'checkedout') {
-    const isOut = status === 'checkedout';
-    if (titleEl) titleEl.textContent = t(isOut ? 'lookup.checkedOut' : 'lookup.already');
-    if (subEl) subEl.textContent = t(isOut ? 'lookup.checkedOutSub' : 'lookup.alreadySub');
-    if (roomEl) roomEl.innerHTML = '<span class="res-room">' + esc(room) + '</span>';
-    if (noticeEl) {
-      noticeEl.textContent = isOut
-        ? t('lookup.checkedOutSub', { time: g.checkOut || '' })
-        : t('lookup.checkedAt', { time: g.checkIn || '' });
-    }
-    if (btn) btn.classList.add('hidden');
-  } else {
-    if (titleEl) titleEl.textContent = t('lookup.found');
-    if (subEl) subEl.textContent = t('lookup.foundSub');
-    if (roomEl) roomEl.innerHTML = LOCKED_ROOM_HTML;
-    if (noticeEl) noticeEl.textContent = t('lookup.agreeHint');
-    if (btn) btn.classList.remove('hidden');
-  }
-
-  $('lookupResult').classList.remove('hidden');
-  $('lookupResult').scrollIntoView({ behavior:'smooth', block:'nearest' });
-}
-
-function openCheckIn() { showView('lookupView'); }
-function openCheckOut() { showView('checkOutView'); }
-
-/* ---------------- check-in ---------------- */
-function requireActiveRoom(room) {
-  const cfg = getRoomConfig(room);
-  if (!cfg) { showInfo(t('msg.roomTitle'), t('msg.invalidRoom'), 'err', callReceptionHtml()); return null; }
-  if (!cfg.active) { showInfo(t('msg.roomTitle'), t('msg.roomInactive'), 'err', callReceptionHtml()); return null; }
-  return cfg;
-}
-
-function confirmAndCheckIn() {
-  if (!currentUser || BUSY.checkin) return;
-  // Đã nhận phòng rồi → chỉ nhắc lại, KHÔNG ghi thêm lịch sử
-  if (currentUser.status === 'checkedin') {
-    return showInfo(t('lookup.already'),
-      t('lookup.alreadyBody', { room: currentUser.room || '—', time: currentUser.checkIn || '—' }), 'ok');
-  }
-  const cfg = requireActiveRoom(currentUser.room);
-  if (!cfg) return;
-
-  BUSY.checkin = true;
-  const btn = $('btnConfirmCheckIn');
-  if (btn) btn.disabled = true;
-
-  const name = (currentUser.name || '').trim().toUpperCase();
-  const room = String(currentUser.room || '').trim();
-  const eventText = currentUser.event || '';
-
-  if (!roomState[room]) roomState[room] = { room, guests: [], status:'occupied', roomType: cfg.roomType, note:'' };
-  if (!roomState[room].guests.some(g => normalizeText(g.name) === normalizeText(name))) {
-    roomState[room].guests.push({ name, note: eventText, out: currentUser.out || '' });
-  }
-  if (roomState[room].status !== 'late') roomState[room].status = 'occupied';
-
-  pushBackground({
-    type:'NHẬN PHÒNG', room, name, note: eventText, brokenAssets:'',
-    roomType: cfg.roomType, txnId: makeTxnId('IN', room, name), clientLang: LANG
-  }, { critical: true });
-
-  displayRoomAndAssetCheck(room, name, eventText);
-  updateStats(); renderAdmin(); renderRibbon(); renderGuestTab();
-
-  if (btn) btn.disabled = false;
-  BUSY.checkin = false;
-}
-
-function displayRoomAndAssetCheck(room, name, eventText) {
-  $('displayRoomNo').textContent = room;
-  $('displayGuestName').textContent = name;
-  updateRoomBadge(room);
-  $('inName').value = name;
-  $('inRoom').value = room;
-  $('inNote').value = '';
-  $('manualInputsBox').classList.add('hidden');
-  autoCheckRoom(room);
-  showView('checkInView');
-}
-
-function updateRoomBadge(room) {
-  const el = $('roomBadge');
-  if (!el) return;
-  const cfg = getRoomConfig(room);
-  if (!room || room === '---' || !cfg || !cfg.active) { el.textContent = ''; el.style.display = 'none'; return; }
-  el.style.display = 'inline-block';
-  el.textContent = roomTypeLabel(cfg);
-}
-
-function autoCheckRoom(room) {
-  const cfg = getRoomConfig(room);
-  const wrap = $('assetContainer');
-  if (!cfg || !cfg.active) {
-    if (wrap) wrap.classList.add('hidden');
-    $('assetList').innerHTML = '';
-    updateRoomBadge('');
-    if (room) showInfo(t('msg.roomTitle'), cfg ? t('msg.roomInactive') : t('msg.invalidRoom'), 'warn');
-    return;
-  }
-  wrap.classList.remove('hidden');
-  updateRoomBadge(cfg.room);
-  $('assetCountLabel').textContent = ASSETS.length + ' ' + t('checkin.items');
-  renderAssets();
-}
-
-function getCheckedAssets() {
-  return [...document.querySelectorAll('.asset[data-on="1"]')].map(el => el.dataset.name);
-}
-
-function renderAssets() {
-  const box = $('assetList');
-  if (!box) return;
-  const keep = new Set(getCheckedAssets().map(normalizeText));
-  const room = $('inRoom') ? $('inRoom').value : '';
-  const cfg = getRoomConfig(room);
-  const p = cfg && cfg.active ? cfg.capacity : 1;
-
-  box.innerHTML = ASSETS.map((a, i) => {
-    const qty = a.q === 'P' ? p : a.q;
-    const label = L(a);
-    const on = keep.has(normalizeText(label));
-    return '<div class="asset" data-on="' + (on ? '1' : '0') + '" data-name="' + esc(a.vi) + '" role="checkbox" tabindex="0" aria-checked="' + on + '"' +
-      ' onclick="toggleAsset(this)" onkeydown="if(event.key===\' \'||event.key===\'Enter\'){event.preventDefault();toggleAsset(this)}">' +
-      '<span class="asset-index">' + (i + 1) + '</span>' +
-      '<span class="asset-name">' + esc(label) + '</span>' +
-      '<span class="asset-qty">×' + qty + '</span>' +
-      '<span class="check">' + ico('i-check','ico') + '</span></div>';
-  }).join('');
-}
-
-function toggleAsset(el) {
-  const on = el.dataset.on === '1' ? '0' : '1';
-  el.dataset.on = on;
-  el.setAttribute('aria-checked', on === '1');
-}
-
-function handleAssetComplete() {
-  if (BUSY.asset) return;
-  const room = $('inRoom').value.trim();
-  const name = ($('inName').value || '').trim().toUpperCase();
-  const note = $('inNote').value.trim();
-  if (!name || !room) return showInfo(t('checkin.title'), t('msg.missingNameRoom'), 'warn');
-  const cfg = requireActiveRoom(room);
-  if (!cfg) return;
-
-  BUSY.asset = true;
-  const broken = getCheckedAssets();
-  if (broken.length) {
-    // Chỉ ghi sự cố tài sản — KHÔNG ghi lại NHẬN PHÒNG (tránh dòng lịch sử trùng)
-    pushBackground({
-      type:'BÁO HỎNG', room, name,
-      note: note || '',
-      brokenAssets: broken.join(', '), roomType: cfg.roomType,
-      txnId: makeTxnId('ASSET', room, name), clientLang: LANG, actor:'guest'
-    }, { critical: true });
-  }
-  BUSY.asset = false;
-  showInfo(t('msg.assetOkTitle'), t('msg.assetOkBody', { room }), 'ok');
-  setTimeout(() => { closeInfo(); resetApp(); }, 2600);
-}
-
-function showManualCheckIn() {
-  currentUser = null;
-  $('displayRoomNo').textContent = '---';
-  $('displayGuestName').textContent = '';
-  updateRoomBadge('');
-  $('manualInputsBox').classList.remove('hidden');
-  $('inName').value = '';
-  $('inRoom').value = '';
-  $('inNote').value = '';
-  $('assetContainer').classList.add('hidden');
-  showView('checkInView');
-}
-
-/* ---------------- checkout ---------------- */
-function renderOutDamage() {
-  const box = $('outDamageList');
-  if (!box) return;
-  box.innerHTML = DAMAGE_ITEMS.map((d, i) => {
-    const on = outDamage.has(i);
-    return '<button type="button" class="chip" aria-pressed="' + on + '" onclick="toggleDamage(' + i + ')">' +
-      '<span class="dot"></span>' + esc(L(d)) + '</button>';
-  }).join('');
-}
-function toggleDamage(i) {
-  outDamage.has(i) ? outDamage.delete(i) : outDamage.add(i);
-  renderOutDamage();
-}
-
-function refreshOutHint() {
-  const input = $('outRoom');
-  const hint = $('outRoomHint');
-  if (!input || !hint) return;
-  const room = input.value.trim();
-  hint.className = 'hint';
-  if (!room) { hint.textContent = ''; return; }
-  const cfg = getRoomConfig(room);
-  if (!cfg || !cfg.active) { hint.textContent = t('msg.roomUnknown'); hint.classList.add('hint-warn'); return; }
-  const entry = roomState[room];
-  if (entry && entry.guests.length) {
-    hint.textContent = t('msg.roomOccupied', { room, names: entry.guests.map(g => g.name).join(', ') });
-    hint.classList.add('hint-ok');
-  } else {
-    hint.textContent = t('msg.roomAvailable', { room, capacity: cfg.capacity });
-  }
-}
-
-function handleOut() {
-  if (BUSY.out) return;
-  const name = $('outName').value.trim().toUpperCase();
-  const room = $('outRoom').value.trim();
-  if (!name || !room) return showInfo(t('checkout.title'), t('msg.missingNameRoom'), 'warn');
-
-  const entry = roomState[room];
-  if (!entry || !entry.guests.length) {
-    return showInfo(t('checkout.title'), t('msg.checkoutEmpty', { room }), 'warn',
-      '<button class="btn btn-primary btn-block" onclick="closeInfo();doCheckout(true)">' + esc(t('msg.checkoutOver')) + '</button>');
-  }
-  const names = entry.guests.map(g => g.name).join(', ');
-  const match = entry.guests.some(g => {
-    const a = normalizeText(g.name), b = normalizeText(name);
-    return a === b || a.includes(b) || b.includes(a);
-  });
-  if (!match) {
-    return showInfo(t('checkout.title'), t('msg.nameMismatch', { room, names }), 'warn',
-      '<button class="btn btn-primary btn-block" onclick="closeInfo();doCheckout(true)">' + esc(t('msg.checkoutOver')) + '</button>');
-  }
-  doCheckout(false);
-}
-
-function doCheckout(force) {
-  if (BUSY.out) return;
-  BUSY.out = true;
-  const name = $('outName').value.trim().toUpperCase();
-  const room = $('outRoom').value.trim();
-  const note = $('outNote').value.trim();
-  const broken = [...outDamage].map(i => DAMAGE_ITEMS[i] ? DAMAGE_ITEMS[i].vi : '').filter(Boolean);
-
-  // UI trước — khách rời quầy ngay
-  delete roomState[room];
-  renderAdmin(); renderRibbon(); updateStats(); renderGuestTab(); renderQuickbar();
-  closeInfo();
-  showInfo(t('msg.checkoutOkTitle'), t('msg.checkoutOkBody', { room }), 'ok');
-
-  pushBackground({
-    type:'TRẢ PHÒNG', room, name, brokenAssets: broken.join(', '), note,
-    force: force ? '1' : '', txnId: makeTxnId('OUT', room, name), clientLang: LANG
-  }, { critical: true });
-
-  const btn = $('btnOut');
-  if (btn) btn.disabled = false;
-  BUSY.out = false;
-  setTimeout(() => { closeInfo(); resetApp(); }, 2400);
-}
-
-/* ---------------- feedback ---------------- */
-function setRating(stars) {
-  currentRating = stars;
-  updateRatingLabel();
-  for (let i = 1; i <= 5; i++) {
-    const el = $('star-' + i);
-    if (!el) continue;
-    el.setAttribute('aria-checked', i <= stars);
-    el.style.color = i <= stars ? '#D99323' : '#C9D1DC';
-  }
-}
-function updateRatingLabel() {
-  const el = $('ratingText');
-  if (el) el.textContent = t('rating.' + currentRating);
-}
-function submitFeedback() {
-  if (BUSY.feedback) return;
-  const room = $('fbRoom').value.trim();
-  if (!room) return showInfo(t('feedback.title'), t('msg.missingRoom'), 'warn');
-  const name = $('fbName').value.trim() || (LANG === 'en' ? 'Anonymous' : 'Ẩn danh');
-  const note = $('fbNote').value.trim() || '—';
-
-  BUSY.feedback = true;
-  pushBackground({
-    type:'ĐÁNH GIÁ', room, name, rating: currentRating, note,
-    txnId: makeTxnId('FB', room, name), clientLang: LANG
-  });
-  BUSY.feedback = false;
-  showInfo(t('msg.feedbackOkTitle'), t('msg.feedbackOkBody'), 'ok');
-  setTimeout(() => { closeInfo(); resetApp(); }, 2200);
-}
-</script>
-
-<script>
-/* ---------------- admin ---------------- */
-function showPinModal() {
-  $('pinModal').hidden = false;
-  $('pinInput').value = '';
-  setTimeout(() => $('pinInput').focus(), 60);
-}
-function closePinModal() { $('pinModal').hidden = true; }
-function verifyPin() {
-  if ($('pinInput').value === cfg.pin) {
-    closePinModal();
-    enterAdmin();
-  } else {
-    showInfo(t('pin.title'), t('msg.pinWrong'), 'err');
-    $('pinInput').value = '';
-  }
-}
-
-function enterAdmin() {
-  $('guestRoot').classList.add('hidden');
-  $('adminRoot').classList.remove('hidden');
-  switchTab('map');
-  loadHistory(false);
-  refreshAdmin(true);
-  if (adminTimer) clearInterval(adminTimer);
-  const poll = dataSaver ? 60000 : 15000;
-  adminTimer = setInterval(() => {
-    if (document.hidden) return;
-    if (CURRENT_TAB === 'map') refreshAdmin(false);
-    flushQueue(true).catch(() => {});
-  }, poll);
-  window.scrollTo({ top:0 });
-}
-
-function exitAdmin() {
-  if (adminTimer) { clearInterval(adminTimer); adminTimer = null; }
-  $('adminRoot').classList.add('hidden');
-  $('guestRoot').classList.remove('hidden');
-  resetApp();
-}
-
-function switchTab(tab) {
-  CURRENT_TAB = tab;
-  document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === tab)));
-  $('tabMap').classList.toggle('hidden', tab !== 'map');
-  $('tabHistory').classList.toggle('hidden', tab !== 'history');
-  $('tabGuests').classList.toggle('hidden', tab !== 'guests');
-  if (tab === 'history') loadHistory(false);
-  if (tab === 'guests') renderGuestTab();
-}
-
-function refreshCurrent(show) {
-  if (CURRENT_TAB === 'history') loadHistory(true);
-  else if (CURRENT_TAB === 'guests') { refreshAdmin(show).then(renderGuestTab); }
-  else refreshAdmin(show);
-}
-
-function ingestRooms(rows) {
-  roomState = {};
-  const today = dayKey(new Date());
-
-  (rows || []).forEach(r => {
-    const room = String(r.room || r.phong || r.roomNo || '').trim();
-    if (!room) return;
-    const cfg = getRoomConfig(room);
-    if (cfg && !cfg.active) return;
-
-    const st = String(r.status || 'occupied').toLowerCase();
-    if (st === 'empty' || st === 'vacant') return;
-
-    if (!roomState[room]) roomState[room] = { room, guests: [], status:'occupied', roomType: r.roomType || '', note:'' };
-    const e = roomState[room];
-
-    const name = String(r.name || r.occupant || '').trim();
-    if (name && !e.guests.some(g => normalizeText(g.name) === normalizeText(name))) {
-      e.guests.push({ name, note: r.note || r.event || '', out: r.out || r.checkout || '' });
-    }
-    if (r.note || r.event) e.note = r.note || r.event;
-    if (r.roomType) e.roomType = r.roomType;
-
-    if (st === 'late') e.status = 'late';
-    else if (st === 'dirty' && e.status !== 'late') e.status = 'dirty';
-  });
-
-  Object.values(roomState).forEach(e => {
-    if (e.status !== 'occupied') return;
-    if (e.guests.some(g => { const d = parseDateLoose(g.out); return d && dayKey(d) < today; })) e.status = 'late';
-  });
-}
-
-async function refreshAdmin(show) {
+function pushHistory_(loai, room, name, event, broken, note) {
   try {
-    if (show) setLoading(true, t('msg.loadingRooms'));
-    const data = await apiRead({ type:'getOccupied' }, 12000);
-    ingestRooms((data && data.rooms) || (Array.isArray(data) ? data : []));
-    setLive(true);
-  } catch (e) {
-    console.warn('admin', e);
-    setLive(false);
+    var sh = ss_().getSheetByName(CFG.HISTORY);
+    if (!sh) return;
+    sh.appendRow([nowStr_(), loai, room, name, event || '', broken || '', note || '']);
+  } catch (e) { logError_('pushHistory', room, name, e, {}); }
+}
+
+function pushStay_(loai, room, name, event, txnId) {
+  try {
+    var sh = ss_().getSheetByName(CFG.STAYS);
+    if (!sh) return;
+    sh.appendRow([nowStr_(), loai, room, name, event || '', '', '', txnId || '']);
+  } catch (e) { logError_('pushStay', room, name, e, {}); }
+}
+
+function actCheckIn_(p) {
+  var room = String(p.room || '').trim();
+  var name = String(p.name || '').trim();
+  if (!room || !name) throw new Error('Thiếu số phòng hoặc tên khách');
+  var txnId = String(p.txnId || '').trim();
+
+  var lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+  try {
+    var sh = sheet_(CFG.GUESTS);
+    var data = readGuestRows_(sh);
+    var c = data.cols, rows = data.rows;
+
+    /* 1. Chống ghi trùng theo mã giao dịch (mạng chập chờn, gửi lại) */
+    if (txnExists_(txnId)) {
+      var dup = findGuestRow_(rows, name, room, p.mnv);
+      var st = dup ? dup.status : 'checkedin';
+      return ok_({ already: true, deduped: true, state: st,
+        room: dup ? dup.room : room, name: dup ? dup.name : name,
+        checkIn: dup ? dup.checkin : '', checkOut: dup ? dup.checkout : '',
+        message: st === 'checkedout'
+          ? ('Bạn đã trả phòng ' + (dup ? dup.room : room) + ' lúc ' + (dup ? dup.checkout : ''))
+          : 'Giao dịch này đã được ghi trước đó.' });
+    }
+
+    /* 2. Khách đã TRẢ PHÒNG rồi → chỉ báo lại giờ trả, KHÔNG ghi thêm dòng nào.
+          Ngoại lệ: lễ tân gửi recheckin=1 (khách quay lại ở tiếp) thì mở phiên mới. */
+    var hit = findGuestRow_(rows, name, room, p.mnv);
+    if (hit && hit.checkout && !isTrue_(p.recheckin)) {
+      return ok_({
+        already: true, deduped: false, state: 'checkedout',
+        room: hit.room, name: hit.name, stt: hit.stt,
+        checkIn: hit.checkin, checkOut: hit.checkout, checkoutAt: hit.checkout,
+        canRecheckin: true,
+        message: 'Bạn đã trả phòng ' + hit.room + ' lúc ' + hit.checkout,
+        title: 'Bạn đã trả phòng',
+        detail: 'Phòng đã được trả lúc ' + hit.checkout + '. Không cần xác nhận lại.'
+      });
+    }
+
+    /* 3. Khách đang ở (đã nhận, chưa trả) → KHÔNG ghi lại lịch sử */
+    if (hit && hit.checkin && !hit.checkout) {
+      return ok_({
+        already: true, deduped: false, state: 'checkedin',
+        room: hit.room, name: hit.name, checkIn: hit.checkin,
+        stt: hit.stt, checkOut: '',
+        message: 'Khách đã nhận phòng ' + hit.room + ' lúc ' + hit.checkin
+      });
+    }
+
+    var now = nowStr_();
+
+    if (hit) {
+      // Có dòng sẵn (khách trong danh sách) → chỉ điền giờ nhận
+      sh.getRange(hit._row, c.CHECKIN).setValue(now);
+      if (hit.checkout) sh.getRange(hit._row, c.CHECKOUT).setValue('');
+    } else {
+      // Khách mới → thêm dòng, tự đánh STT
+      var width = Math.max(sh.getLastColumn(), c.CHECKOUT, c.STT, 10);
+      var row = new Array(width);
+      for (var i = 0; i < width; i++) row[i] = '';
+      row[c.STT - 1] = nextStt_(rows);
+      if (c.MNV)      row[c.MNV - 1]      = String(p.mnv || '').trim();
+      row[c.NAME - 1] = name;
+      row[c.ROOM - 1] = room;
+      if (c.EVENT)    row[c.EVENT - 1]    = String(p.note || p.event || '').trim();
+      if (c.IN_DATE)  row[c.IN_DATE - 1]  = new Date();
+      row[c.CHECKIN - 1] = now;
+      if (c.CHECKOUT) row[c.CHECKOUT - 1] = '';
+      sh.appendRow(row);
+    }
+
+    /* 3. Chỉ ghi lịch sử khi THỰC SỰ có nhận phòng mới */
+    var noteTxt = p.note || '';
+    if (isTrue_(p.recheckin)) noteTxt = ('[Nhận lại] ' + noteTxt).trim();
+    var bShort = shortAssets_(p.brokenAssets);
+    if (bShort) archiveAssets_(room, name, String(p.brokenAssets || '').trim(), bShort);
+    pushStay_('NHẬN PHÒNG', room, name, noteTxt, txnId);
+    pushHistory_('NHẬN PHÒNG', room, name, noteTxt, bShort, '');
+    pushTxn_(txnId, 'NHẬN PHÒNG', room, name);
+    notify_('🟢 <b>NHẬN PHÒNG</b>\nPhòng: <b>' + room + '</b>\nKhách: ' + name +
+      (p.note ? '\nGhi chú: ' + p.note : '') +
+      (bShort ? '\nHỏng: ' + bShort : '') + '\nLúc: ' + now);
+
+    return ok_({ already: false, state: 'checkedin', room: room, name: name,
+      checkIn: now, message: 'Đã nhận phòng ' + room });
   } finally {
-    if (show) setLoading(false);
-    renderAdmin(); renderRibbon(); updateStats(); renderGuestTab(); renderQuickbar();
+    lock.releaseLock();
   }
 }
 
-function setLive(ok) {
-  const el = $('statusTime');
-  if (!el) return;
-  el.dataset.off = ok ? '0' : '1';
-  const now = new Date();
-  el.innerHTML = '<span class="live-dot"></span><span>' + esc(ok ? t('admin.online') : t('admin.offline')) +
-    (ok ? ' ' + pad2(now.getHours()) + ':' + pad2(now.getMinutes()) : '') + '</span>';
-}
+function actCheckOut_(p) {
+  var room = String(p.room || '').trim();
+  var name = String(p.name || '').trim();
+  if (!room) throw new Error('Thiếu số phòng');
+  var txnId = String(p.txnId || '').trim();
 
-function updateStats() {
-  const active = ROOM_CATALOG.filter(r => r.active);
-  const entries = Object.values(roomState).filter(e => { const c = getRoomConfig(e.room); return c && c.active; });
-  const occ = entries.filter(e => e.status === 'occupied').length;
-  const dirty = entries.filter(e => e.status === 'dirty').length;
-  const late = entries.filter(e => e.status === 'late').length;
-  const guests = entries.reduce((s, e) => s + Math.max(1, e.guests.length), 0);
-
-  $('statTotal').textContent = active.length;
-  $('statOccupied').innerHTML = (occ + dirty + late) + '<small> / ' + guests + ' ' + esc(t('admin.guests')) + '</small>';
-  $('statDirty').textContent = dirty;
-  $('statLate').textContent = late;
-}
-
-function stateOf(room) {
-  const cfg = getRoomConfig(room);
-  if (!cfg || !cfg.active) return 'inactive';
-  const e = roomState[room];
-  return e ? e.status : 'vacant';
-}
-
-function renderRibbon() {
-  const box = $('ribbon');
-  const axis = $('ribbonAxis');
-  if (!box || !axis) return;
-  const floors = [...new Set(ROOM_CATALOG.map(r => r.floor))].sort((a,b) => a-b);
-  box.innerHTML = floors.map(f => {
-    const rooms = ROOM_CATALOG.filter(r => r.floor === f);
-    return '<div class="rgroup">' + rooms.map(r =>
-      '<button class="rseg" data-s="' + stateOf(r.room) + '" title="' + esc(t('admin.room') + ' ' + r.room) +
-      '" onclick="showRoomDetails(\'' + r.room + '\')" tabindex="-1" aria-label="' + esc(t('admin.room') + ' ' + r.room) + '"></button>'
-    ).join('') + '</div>';
-  }).join('');
-  axis.innerHTML = floors.map(f => '<span>' + f + '</span>').join('');
-}
-
-function renderAdmin() {
-  const cont = $('adminContent');
-  if (!cont) return;
-  const floors = [...new Set(ROOM_CATALOG.map(r => r.floor))].sort((a,b) => a-b);
-
-  cont.innerHTML = floors.map(f => {
-    const rooms = ROOM_CATALOG.filter(r => r.floor === f);
-    const occ = rooms.filter(r => ['occupied','dirty','late'].includes(stateOf(r.room))).length;
-    const beds = rooms.reduce((s, r) => s + (r.active ? r.capacity : 0), 0);
-
-    const cards = rooms.map(r => {
-      const st = stateOf(r.room);
-      const e = roomState[r.room];
-      let who = '';
-      if (st === 'inactive') who = t('admin.inactive');
-      else if (st === 'dirty') who = t('status.dirty');
-      else if (st === 'late') who = e && e.guests.length ? e.guests[0].name : t('status.late');
-      else if (e && e.guests.length) who = e.guests.length > 1 ? e.guests.length + ' ' + t('admin.guests') : e.guests[0].name;
-      else who = '—';
-
-      const sub = r.active ? (r.capacity + ' ' + t('admin.beds')) : '';
-      return '<button class="room" data-state="' + st + '" onclick="showRoomDetails(\'' + r.room + '\')" title="' +
-        esc(t('admin.room') + ' ' + r.room + ' · ' + who) + '">' +
-        (st === 'late' ? '<span class="room-flag"></span>' : '') +
-        '<span class="room-no">' + r.room + '</span>' +
-        '<span class="room-beds">' + esc(sub) + '</span>' +
-        '<span class="room-who">' + esc(who) + '</span>' +
-        '</button>';
-    }).join('');
-
-    return '<section class="floor"><div class="floor-head">' +
-      '<span class="floor-name">' + esc(t('admin.floor')) + ' ' + f + '</span>' +
-      '<span class="floor-meta">' + occ + '/' + rooms.length + ' · ' + beds + ' ' + esc(t('admin.beds')) + '</span>' +
-      '<span class="floor-rule"></span></div>' +
-      '<div class="rooms">' + cards + '</div></section>';
-  }).join('');
-}
-
-function showRoomDetails(room) {
-  const cfg = getRoomConfig(room);
-  const st = stateOf(room);
-  const e = roomState[room];
-  const title = t('admin.room') + ' ' + room;
-
-  $('roomSheetTitle').textContent = title;
-  $('roomSheetSub').textContent = cfg && cfg.active ? cfg.capacity + ' ' + t('admin.beds') + ' · ' + t('status.' + st) : t('admin.inactive');
-
-  const icoMap = { vacant:'i-check', occupied:'i-bed', dirty:'i-broom', late:'i-alert', inactive:'i-info' };
-  const icoTone = { vacant:'ok', occupied:'info', dirty:'warn', late:'err', inactive:'info' };
-  $('roomSheetIco').className = 'modal-ico ' + (icoTone[st] || 'info');
-  $('roomSheetIco').innerHTML = ico(icoMap[st] || 'i-info');
-
-  if (!cfg || !cfg.active) {
-    $('roomSheetBody').innerHTML = '<p style="color:var(--ink-3)">' + esc(t('msg.roomInactive')) + '</p>';
-    $('roomSheetFoot').innerHTML = '<button class="btn btn-ghost btn-block" onclick="closeRoomSheet()">' + esc(t('common.close')) + '</button>';
-    $('roomSheet').hidden = false;
-    return;
-  }
-
-  if (!e || !e.guests.length) {
-    $('roomSheetBody').innerHTML = '<p style="color:var(--ink-3)">' + esc(t('msg.roomVacant', { capacity: cfg.capacity })) + '</p>';
-    $('roomSheetFoot').innerHTML = '<button class="btn btn-ghost btn-block" onclick="closeRoomSheet()">' + esc(t('common.close')) + '</button>';
-    $('roomSheet').hidden = false;
-    return;
-  }
-
-  const rows = e.guests.map(g => '<div class="kv"><span class="kv-k">' + esc(t('lookup.guest')) + '</span><span class="kv-v">' + esc(g.name) +
-    (g.out ? '<br><span style="font-family:var(--font-mono);font-size:11px;color:var(--ink-4);font-weight:400">→ ' + esc(g.out) + '</span>' : '') +
-    '</span></div>').join('');
-  const note = e.note ? '<div class="notice" style="margin-top:10px">' + ico('i-info') + '<span>' + esc(e.note) + '</span></div>' : '';
-  $('roomSheetBody').innerHTML = '<div class="result" style="border:0">' + rows + '</div>' + note;
-
-  const isDirty = st === 'dirty' || st === 'late';
-  $('roomSheetFoot').innerHTML =
-    (isDirty ? '<button class="btn btn-primary btn-block" onclick="askClean(\'' + room + '\')">' + ico('i-broom','ico ico-sm') + esc(t('clean.confirm')) + '</button>' : '') +
-    '<button class="btn btn-ghost btn-block" onclick="closeRoomSheet()">' + esc(t('common.close')) + '</button>';
-  $('roomSheet').hidden = false;
-}
-function closeRoomSheet() { $('roomSheet').hidden = true; }
-
-function askClean(room) {
-  pendingCleanRoomNo = room;
-  $('cleanConfirmText').textContent = t('msg.cleanBody', { room });
-  $('roomSheet').hidden = true;
-  $('cleanConfirmModal').hidden = false;
-}
-function closeCleanModal() { pendingCleanRoomNo = null; $('cleanConfirmModal').hidden = true; }
-
-function confirmClean() {
-  if (!pendingCleanRoomNo || BUSY.clean) return;
-  const room = pendingCleanRoomNo;
-  closeCleanModal();
-  BUSY.clean = true;
-  delete roomState[room];
-  renderAdmin(); renderRibbon(); updateStats(); renderGuestTab(); renderQuickbar();
-  pushBackground({ type:'cleanRoom', room, name:'Quản lý', txnId: makeTxnId('CLEAN', room, 'QL') });
-  showInfo(t('clean.title'), t('msg.cleanOk', { room }), 'ok');
-  BUSY.clean = false;
-}
-
-function renderGuestTab() {
-  const card = $('guestTabCard');
-  if (!card) return;
-  const entries = Object.values(roomState)
-    .filter(e => { const c = getRoomConfig(e.room); return c && c.active && e.guests.length; })
-    .sort((a, b) => parseInt(a.room) - parseInt(b.room));
-
-  if (!entries.length) {
-    card.innerHTML = '<div class="empty">' + ico('i-users') + '<p>' + esc(t('admin.noGuests')) + '</p></div>';
-    return;
-  }
-  card.innerHTML = '<div class="hist-cards">' + entries.map(e => {
-    const st = e.status;
-    const badge = st === 'late' ? 'b-late' : st === 'dirty' ? 'b-clean' : 'b-in';
-    return '<div class="hist-row" style="cursor:pointer" onclick="showRoomDetails(\'' + e.room + '\')">' +
-      '<span class="hist-room">' + esc(e.room) + '</span>' +
-      '<span class="hist-body"><span class="hist-top">' +
-        '<span class="hist-name">' + esc(e.guests.map(g => g.name).join(', ')) + '</span>' +
-        '<span class="badge ' + badge + '">' + esc(t('status.' + st)) + '</span>' +
-      '</span>' +
-      '<span class="hist-meta">' + e.guests.length + ' ' + esc(t('admin.guests')) + (e.note ? ' · ' + esc(e.note) : '') + '</span></span>' +
-      '</div>';
-  }).join('') + '</div>';
-}
-
-/* ---------------- history ---------------- */
-const HISTORY_TYPES = ['in', 'out', 'clean', 'fb'];
-
-async function loadHistory(show) {
-  const card = $('historyCard');
-  if (show && card) card.innerHTML = '<div class="empty">' + ico('i-history') + '<p>' + esc(t('hist.loading')) + '</p></div>';
-  if (show) setLoading(true, t('msg.loadingHistory'));
-
-  let rows = null;
+  var lock = LockService.getScriptLock();
+  lock.waitLock(20000);
   try {
-    const data = await apiRead({ type:'getHistory', limit: 300 }, 15000);
-    const list = Array.isArray(data) ? data : (data.rows || data.data || data.history || []);
-    if (Array.isArray(list) && list.length) {
-      rows = list.map(normalizeHistoryRow).filter(Boolean);
-      historyFromServer = true;
+    var sh = sheet_(CFG.GUESTS);
+    var data = readGuestRows_(sh);
+    var c = data.cols, rows = data.rows;
+
+    if (txnExists_(txnId)) {
+      return ok_({ already: true, deduped: true, state: 'checkedout', room: room, name: name,
+        message: 'Giao dịch này đã được ghi trước đó.' });
     }
-  } catch (e) { console.warn('history', e); }
 
-  if (rows === null) {
-    rows = readJournal().map(j => normalizeJournalRow(j)).filter(Boolean);
-    historyFromServer = false;
-  }
-  historyRows = rows.sort((a, b) => b.at - a.at);
-  if (show) setLoading(false);
-  renderHistory();
-}
-
-function normalizeHistoryRow(r) {
-  if (!r || typeof r !== 'object') return null;
-  const get = names => {
-    for (const n of names) {
-      for (const k in r) if (cleanKey(k) === n) { const v = String(r[k] == null ? '' : r[k]).trim(); if (v) return v; }
+    var hit = findGuestRow_(rows, name, room, p.mnv);
+    if (hit && hit.checkout) {
+      return ok_({ already: true, deduped: false, state: 'checkedout', room: hit.room, name: hit.name,
+        stt: hit.stt, checkIn: hit.checkin, checkOut: hit.checkout, checkoutAt: hit.checkout,
+        message: 'Bạn đã trả phòng ' + hit.room + ' lúc ' + hit.checkout,
+        title: 'Bạn đã trả phòng',
+        detail: 'Phòng đã được trả lúc ' + hit.checkout + '. Không cần xác nhận lại.' });
     }
-    return '';
-  };
-  const typeRaw = get(['type','loai','action','event']).toUpperCase();
-  let type = 'in';
-  if (/TRẢ|OUT/.test(typeRaw)) type = 'out';
-  else if (/DỌN|CLEAN/.test(normalizeText(typeRaw))) type = 'clean';
-  else if (/ĐÁNH|FEEDBACK|FB/.test(normalizeText(typeRaw))) type = 'fb';
 
-  const atRaw = get(['timestamp','time','thoigian','ngay','createdat']);
-  const d = parseDateLoose(atRaw) || (atRaw ? new Date(atRaw) : null);
-  if (typeof atRaw === 'string' && /\d{2}:\d{2}/.test(atRaw)) {
-    const m = atRaw.match(/(\d{1,2}):(\d{2})/);
-    if (d && m) d.setHours(+m[1], +m[2], 0, 0);
-  }
-
-  return {
-    at: d && !isNaN(d.getTime()) ? d.getTime() : Date.now(),
-    type,
-    room: get(['room','phong','sophong']),
-    name: get(['guestname','name','hoten','khach','occupant']),
-    note: get(['note','ghichu']),
-    broken: get(['brokenassets','hong','baohong']),
-    rating: get(['rating','danhgia','sao']),
-    status: get(['status','trangthai']),
-    source: 'server'
-  };
-}
-
-function normalizeJournalRow(j) {
-  const up = String(j.type || '').toUpperCase();
-  let type = 'in';
-  if (/TRẢ/.test(up)) type = 'out';
-  else if (/DỌN|CLEAN/.test(up)) type = 'clean';
-  else if (/ĐÁNH|FB/.test(up)) type = 'fb';
-  return { at: j.at || Date.now(), type, room: j.room, name: j.name, note: j.note, broken: j.broken,
-           rating: j.rating, status: j.sent ? 'ok' : 'pending', source: 'local' };
-}
-
-function renderHistory() {
-  const card = $('historyCard');
-  const srcBox = $('historySource');
-  if (!card) return;
-
-  if (srcBox) {
-    if (historyRows.length && !historyFromServer) {
-      srcBox.style.display = 'flex';
-      srcBox.innerHTML = ico('i-info') + '<span>' + esc(t('hist.local')) + '</span>';
-    } else if (historyRows.length && historyFromServer) {
-      srcBox.style.display = 'flex';
-      srcBox.className = 'notice notice-info';
-      srcBox.innerHTML = ico('i-info') + '<span>' + esc(t('hist.server', { n: historyRows.length })) + '</span>';
+    var now = nowStr_();
+    if (hit) {
+      sh.getRange(hit._row, c.CHECKOUT).setValue(now);
     } else {
-      srcBox.style.display = 'none';
+      var width = Math.max(sh.getLastColumn(), c.CHECKOUT, c.STT, 10);
+      var row = new Array(width);
+      for (var i = 0; i < width; i++) row[i] = '';
+      row[c.STT - 1] = nextStt_(rows);
+      if (c.MNV)      row[c.MNV - 1]  = String(p.mnv || '').trim();
+      row[c.NAME - 1] = name;
+      row[c.ROOM - 1] = room;
+      row[c.CHECKOUT - 1] = now;
+      sh.appendRow(row);
     }
+
+    var outShort = shortAssets_(p.brokenAssets);
+    if (outShort) archiveAssets_(room, name, String(p.brokenAssets || '').trim(), outShort);
+    pushStay_('TRẢ PHÒNG', room, name, '', txnId);
+    pushHistory_('TRẢ PHÒNG', room, name, '', outShort, p.note || '');
+    pushTxn_(txnId, 'TRẢ PHÒNG', room, name);
+    notify_('🔴 <b>TRẢ PHÒNG</b>\nPhòng: <b>' + room + '</b>\nKhách: ' + name +
+      (outShort ? '\nHỏng: ' + outShort : '') + '\nLúc: ' + now);
+
+    return ok_({ already: false, state: 'checkedout', room: room, name: name,
+      checkOut: now, message: 'Đã trả phòng ' + room });
+  } finally {
+    lock.releaseLock();
   }
-
-  const q = normalizeText($('historySearch') ? $('historySearch').value : '');
-  const filter = $('historyFilter') ? $('historyFilter').value : '';
-  const list = historyRows.filter(r => {
-    if (filter && r.type !== filter) return false;
-    if (!q) return true;
-    return normalizeText([r.room, r.name, r.note, r.broken].join(' ')).includes(q);
-  });
-
-  if (!list.length) {
-    card.innerHTML = '<div class="empty">' + ico('i-history') + '<p>' + esc(t('hist.empty')) +
-      '</p><small>' + esc(t('hist.emptySub')) + '</small></div>';
-    return;
-  }
-
-  const badge = r => {
-    if (r.type === 'out') return '<span class="badge b-out">' + esc(t('hist.out')) + '</span>';
-    if (r.type === 'clean') return '<span class="badge b-clean">' + esc(t('hist.clean')) + '</span>';
-    if (r.type === 'fb') return '<span class="badge b-fb">' + esc(t('hist.fb')) + '</span>';
-    return '<span class="badge b-in">' + esc(t('hist.in')) + '</span>';
-  };
-
-  card.innerHTML = '<div class="hist-cards">' + list.map(r => {
-    const extra = [];
-    if (r.rating) extra.push('★ ' + r.rating + '/5');
-    if (r.broken) extra.push('⚠ ' + r.broken);
-    return '<div class="hist-row">' +
-      '<span class="hist-room">' + esc(r.room || '—') + '</span>' +
-      '<span class="hist-body">' +
-        '<span class="hist-top">' + badge(r) + '<span class="hist-name">' + esc(r.name || '—') + '</span>' +
-          (r.source === 'local' && r.status === 'pending' ? '<span class="badge b-clean">' + esc(t('sync.title')) + '</span>' : '') +
-        '</span>' +
-        (r.note || extra.length ? '<span class="t-note">' + esc([r.note, extra.join(' · ')].filter(Boolean).join(' · ')) + '</span>' : '') +
-        '<span class="hist-meta">' + fmtTime(r.at) + '</span>' +
-      '</span></div>';
-  }).join('') + '</div>';
 }
 
-/* ---------------- data saver ---------------- */
-function loadSaverPref() {
+/* Khách báo hỏng tài sản SAU khi đã nhận phòng.
+   Chỉ ghi 1 dòng sự cố — không tạo thêm dòng NHẬN PHÒNG trùng. */
+function actAssetIssue_(p) {
+  var room = String(p.room || '').trim();
+  var name = String(p.name || '').trim();
+  var brokenFull = String(p.brokenAssets || '').trim();
+  if (!room || !brokenFull) throw new Error('Thiếu phòng hoặc danh sách tài sản hỏng');
+  var txnId = String(p.txnId || '').trim();
+  if (txnExists_(txnId)) return ok_({ already: true, deduped: true, room: room, message: 'Sự cố này đã được ghi.' });
+  var broken = shortAssets_(brokenFull) || brokenFull;
+  archiveAssets_(room, name, brokenFull, broken);
+  pushHistory_('BÁO HỎNG', room, name, p.note || '', broken, '');
+  pushTxn_(txnId, 'BÁO HỎNG', room, name);
+  notify_('⚠️ <b>BÁO HỎNG TÀI SẢN</b>\nPhòng: <b>' + room + '</b>\nKhách: ' + name + '\nHỏng: ' + broken);
+  return ok_({ room: room, broken: broken, brokenFull: brokenFull });
+}
+
+function actRating_(p) {
+  var room = String(p.room || '').trim();
+  var name = String(p.name || 'Ẩn danh').trim();
+  var rating = Number(p.rating || 0);
+  var note = String(p.note || '').trim();
+  if (!room || !rating) throw new Error('Thiếu phòng hoặc số sao');
   try {
-    const v = localStorage.getItem(SAVER_KEY);
-    if (v === '0') dataSaver = false;
-    else if (v === '1') dataSaver = true;
-  } catch (e) {}
-}
-function toggleDataSaver() {
-  dataSaver = !dataSaver;
-  try { localStorage.setItem(SAVER_KEY, dataSaver ? '1' : '0'); } catch (e) {}
-  applySaverState();
-  if (!dataSaver) {
-    // vừa tắt → tải ngay để có dữ liệu
-    syncGuests(false, 25000).then(() => { renderQuickInList(); }).catch(() => {});
-    showInfo(t('saver.label'), t('saver.savedOff') + '\n' + t('saver.offHint'), 'info');
-  } else {
-    showInfo(t('saver.label'), t('saver.saved') + '\n' + t('saver.hint'), 'ok');
-  }
-  // Khởi động lại nhịp làm mới theo chế độ mới, giữ nguyên tab đang xem
-  if (adminTimer) { clearInterval(adminTimer); adminTimer = null; }
-  if (!$('adminRoot').classList.contains('hidden')) {
-    const poll = dataSaver ? 60000 : 15000;
-    adminTimer = setInterval(() => {
-      if (document.hidden) return;
-      if (CURRENT_TAB === 'map') refreshAdmin(false);
-      flushQueue(true).catch(() => {});
-    }, poll);
-    refreshAdmin(false);
-  }
-}
-function applySaverState() {
-  const b = $('saverBtn'), st = $('saverState');
-  if (b) b.setAttribute('aria-pressed', dataSaver ? 'true' : 'false');
-  if (st) st.textContent = dataSaver ? t('saver.on') : t('saver.off');
+    sheet_(CFG.RATING).appendRow([nowStr_(), room, name, rating, note]);
+  } catch (e) { logError_('rating', room, name, e, p); }
+  pushTxn_(String(p.txnId || ''), 'ĐÁNH GIÁ', room, name);
+  return ok_({ room: room, rating: rating });
 }
 
-/* ---------------- quick actions (reception, one hand) ---------------- */
-let QUICK = { mode:'in', q:'', room:'', damage:new Set(), busy:false, done:'' };
-
-function openQuick(mode) {
-  QUICK = { mode, q:'', room:'', damage:new Set(), busy:false, done:'' };
-  const m = $('quickModal');
-  m.hidden = false;
-  renderQuick();
+function actClean_(p) {
+  var room = String(p.room || '').trim();
+  if (!room) throw new Error('Thiếu số phòng');
+  var who = String(p.name || 'Buồng phòng').trim();
+  pushHistory_('DỌN PHÒNG', room, who, '', '', 'Đã dọn xong');
+  pushTxn_(String(p.txnId || ''), 'DỌN PHÒNG', room, who);
+  return ok_({ room: room, cleaned: true });
 }
 
-function closeQuick() { $('quickModal').hidden = true; }
+/**
+ * DỌN DÒNG BỊ LỆCH CỘT DO CODE CŨ GHI.
+ * Code cũ ghi "Da den (…)" vào cột 7 (Ngày đi). Hàm này tách ra:
+ *   - cột Ngày đi trả về đúng ngày
+ *   - giờ check-in chuyển sang cột Check-in (nếu cột đó còn trống)
+ * Chạy TRỰC TIẾP trong editor (chọn hàm → Run) — KHÔNG cần deploy.
+ */
+function repairMisalignedRows() {
+  var sh = SpreadsheetApp.getActive().getSheetByName(CFG.GUESTS);
+  if (!sh) { SpreadsheetApp.getUi().alert('Không thấy trang DanhSachKhach.'); return; }
+  var c = ensureGuestColumns_(sh);
+  var last = sh.getLastRow();
+  if (last < 2) { SpreadsheetApp.getUi().alert('Bảng trống.'); return; }
 
-function renderQuick() {
-  const mode = QUICK.mode;
-  const meta = {
-    in:    { title:'quick.title.in',    sub:'quick.sub.in',    cls:'ok',   icon:'i-qr' },
-    out:   { title:'quick.title.out',   sub:'quick.sub.out',   cls:'info', icon:'i-out' },
-    clean: { title:'quick.title.clean', sub:'quick.sub.clean', cls:'warn', icon:'i-broom' }
-  }[mode];
+  var width = Math.max(sh.getLastColumn(), c.CHECKOUT, 10);
+  var vals = sh.getRange(2, 1, last - 1, width).getValues();
+  var fixed = [];
 
-  $('quickTitle').textContent = t(meta.title);
-  $('quickSub').textContent = t(meta.sub);
-  $('quickIco').className = 'modal-ico ' + meta.cls;
-  $('quickIco').innerHTML = ico(meta.icon);
+  for (var i = 0; i < vals.length; i++) {
+    var row = i + 2;
+    var g = String(vals[i][c.OUT_DATE - 1] == null ? '' : vals[i][c.OUT_DATE - 1]).trim();
+    if (!g || g.indexOf('|') < 0) continue;
 
-  if (mode === 'in') renderQuickIn();
-  else if (mode === 'out') renderQuickOut();
-  else renderQuickClean();
-}
-
-/* --- check-in --- */
-function renderQuickIn() {
-  $('quickBody').innerHTML =
-    (QUICK.done ? '<div class="qdone">' + ico('i-check') + '<span>' + esc(QUICK.done) + '</span></div>' : '') +
-    '<div class="input-wrap" style="margin-bottom:10px">' +
-      '<input class="input" id="quickSearch" type="search" autocomplete="off" enterkeyhint="search" ' +
-        'placeholder="' + esc(t('quick.searchPh')) + '" value="' + esc(QUICK.q) + '" oninput="quickSearchInput(this.value)">' +
-      '<button class="input-btn" onclick="openQRScanner()" aria-label="QR">' + ico('i-qr') + '</button>' +
-    '</div>' +
-    '<div id="quickList"></div>';
-  $('quickFoot').innerHTML = '<button class="btn btn-ghost btn-block" onclick="closeQuick()">' + esc(t('quick.close')) + '</button>';
-  renderQuickInList();
-  setTimeout(() => { const el = $('quickSearch'); if (el && !QUICK.q) el.focus(); }, 80);
-}
-
-function quickSearchInput(v) {
-  QUICK.q = v;
-  renderQuickInList();
-}
-
-// Tiết kiệm dữ liệu: chỉ tải khi lễ tân thực sự cần
-function quickLoadGuests() {
-  if (QUICK.loading) return;
-  QUICK.loading = true;
-  const box = $('quickList');
-  if (box) box.innerHTML = '<div class="qempty">' + esc(t('saver.loading')) + '</div>';
-  syncGuests(false, 15000).then(function () {
-    QUICK.loading = false;
-    renderQuickInList();
-  }).catch(function () {
-    QUICK.loading = false;
-    renderQuickInList();
-  });
-}
-
-function renderQuickInList() {
-  const box = $('quickList');
-  if (!box) return;
-  const q = QUICK.q.trim();
-  let list;
-  if (q) list = guestList.filter(g => (g.haystack || '').includes(normalizeText(q)) || normalizeText(g.name).includes(normalizeText(q)));
-  else list = guestList.slice(0, 12);
-
-  if (!list.length) {
-    if (dataSaver && !guestList.length) {
-      box.innerHTML = '<div class="qempty">' +
-        '<p style="font-weight:600;color:var(--ink-2)">' + esc(t('saver.needLoad')) + '</p>' +
-        '<p style="margin-top:4px;font-size:12px">' + esc(t('saver.needLoadBody')) + '</p>' +
-        '<button class="btn btn-primary btn-block" style="margin-top:12px" onclick="quickLoadGuests()">' +
-        ico('i-refresh','ico ico-sm') + esc(t('saver.loadBtn')) + '</button></div>';
-    } else {
-      box.innerHTML = '<div class="qempty">' + esc(t('quick.noGuest')) + '</div>';
+    var parts = g.split('|');
+    var datePart = String(parts[0] || '').trim();
+    var stamps = [];
+    for (var k = 1; k < parts.length; k++) {
+      var m = String(parts[k] || '').match(/\((\d{2}\/\d{2}\/\d{4}\s+\d{2}:\d{2}:\d{2})\)/);
+      if (m) stamps.push(m[1]);
     }
-    return;
-  }
-  box.innerHTML = list.slice(0, 24).map(g =>
-    '<button class="qrow" onclick="quickCheckIn(\'' + esc(g.room) + '\')">' +
-      '<span class="qrow-room">' + esc(g.room || '—') + '</span>' +
-      '<span style="min-width:0;flex:1"><span class="qrow-name">' + esc(g.name || '—') + '</span>' +
-      '<span class="qrow-sub">' + esc(g.event || [g.in, g.out].filter(Boolean).join(' → ') || '') + '</span></span>' +
-      ico('i-chev', 'ico ico-sm') +
-    '</button>'
-  ).join('');
-}
+    vals[i][c.OUT_DATE - 1] = datePart;
 
-function quickCheckIn(room) {
-  if (QUICK.busy) return;
-  const cfg = getRoomConfig(room);
-  if (!cfg || !cfg.active) return showInfo(t('msg.roomTitle'), t('msg.roomInactive'), 'err');
-
-  const guest = guestList.find(g => String(g.room).trim() === String(room).trim()) || {};
-  const name = String(guest.name || '').trim().toUpperCase();
-  if (!name) return showInfo(t('msg.roomTitle'), t('quick.noGuest'), 'err');
-  if (guest.status === 'checkedin') {
-    QUICK.done = t('quick.alreadyIn', { room, name });
-    QUICK.q = '';
-    renderQuickIn();
-    return;
+    var hCur = String(vals[i][c.CHECKIN - 1] || '').trim();
+    if (!hCur && stamps.length) vals[i][c.CHECKIN - 1] = stamps[0];
+    fixed.push('Dòng ' + row + ': ' + datePart + (stamps.length ? ' · check-in ' + stamps[0] : ''));
   }
 
-  QUICK.busy = true;
-  if (!roomState[room]) roomState[room] = { room, guests:[], status:'occupied', roomType: cfg.roomType, note:'' };
-  const e = roomState[room];
-  if (!e.guests.some(g => normalizeText(g.name) === normalizeText(name))) {
-    e.guests.push({ name, note: guest.event || '', out: guest.out || '' });
-  }
-  if (e.status !== 'late') e.status = 'occupied';
-
-  pushBackground({
-    type:'NHẬN PHÒNG', room, name, note: guest.event || '', brokenAssets:'',
-    roomType: cfg.roomType, txnId: makeTxnId('IN', room, name), clientLang: LANG, actor:'reception',
-    recheckin: 1
-  }, { critical: true });
-
-  QUICK.busy = false;
-  QUICK.done = t('quick.done.in', { room, name });
-  QUICK.q = '';
-
-  renderAdmin(); renderRibbon(); updateStats(); renderGuestTab(); renderQuickbar(); renderQuickbar();
-  renderQuickIn();
+  if (fixed.length) sh.getRange(2, 1, vals.length, width).setValues(vals);
+  SpreadsheetApp.getUi().alert(
+    fixed.length
+      ? 'ĐÃ DỌN ' + fixed.length + ' DÒNG\n\n' + fixed.slice(0, 15).join('\n') +
+        (fixed.length > 15 ? '\n… và ' + (fixed.length - 15) + ' dòng nữa' : '')
+      : 'Không có dòng nào bị lệch cột.'
+  );
 }
-
-/* --- check-out --- */
-function renderQuickOut() {
-  const occupied = Object.values(roomState)
-    .filter(e => { const c = getRoomConfig(e.room); return c && c.active && e.guests.length; })
-    .sort((a, b) => parseInt(a.room) - parseInt(b.room));
-
-  if (!QUICK.room) {
-    $('quickBody').innerHTML =
-      (QUICK.done ? '<div class="qdone">' + ico('i-check') + '<span>' + esc(QUICK.done) + '</span></div>' : '') +
-      '<div class="field"><label class="label" for="quickOutRoom">' + esc(t('quick.manual')) + '</label>' +
-        '<input class="input input-mono input-center" id="quickOutRoom" type="number" inputmode="numeric" ' +
-          'style="font-size:22px;height:58px" placeholder="000" value="' + esc(QUICK.room) + '" ' +
-          'oninput="QUICK.room=this.value.trim();renderQuickOut()"></div>' +
-      (occupied.length
-        ? '<p class="label" style="margin-top:6px">' + esc(t('quick.pickRoom')) + '</p><div class="qroom-grid">' +
-          occupied.map(e => '<button class="qroom" data-s="' + e.status + '" onclick="pickOutRoom(\'' + e.room + '\')">' +
-            '<span class="qroom-no">' + esc(e.room) + '</span>' +
-            '<span class="qroom-who">' + esc(e.guests.map(g => g.name).join(', ')) + '</span></button>').join('') + '</div>'
-        : '<div class="qempty">' + esc(t('quick.emptyOut')) + '</div>');
-    $('quickFoot').innerHTML = '<button class="btn btn-ghost btn-block" onclick="closeQuick()">' + esc(t('quick.close')) + '</button>';
-    return;
-  }
-
-  const e = roomState[QUICK.room];
-  const who = e && e.guests.length ? e.guests.map(g => g.name).join(', ') : '';
-  $('quickBody').innerHTML =
-    '<div class="result" style="margin-bottom:11px"><div class="kv" style="padding:12px 14px">' +
-      '<span class="kv-k">' + esc(t('lookup.room')) + '</span>' +
-      '<span class="kv-v big">' + esc(QUICK.room) + '</span></div>' +
-      (who ? '<div class="kv" style="padding:12px 14px"><span class="kv-k">' + esc(t('lookup.guest')) + '</span>' +
-        '<span class="kv-v">' + esc(who) + '</span></div>' : '') + '</div>' +
-    '<div class="field"><label class="label" for="quickOutName">' + esc(t('quick.namePh')) + '</label>' +
-      '<input class="input" id="quickOutName" type="text" placeholder="' + esc(who || '') + '" ' +
-        (who && e.guests.length === 1 ? 'value="' + esc(who) + '"' : '') + '></div>' +
-    '<p class="label">' + esc(t('quick.damage')) + '</p><div class="chips" id="quickDamage"></div>';
-
-  renderQuickDamage();
-  $('quickFoot').innerHTML =
-    '<button class="btn btn-primary btn-block btn-lg" onclick="quickDoCheckout()">' + ico('i-out', 'ico ico-sm') + esc(t('quick.confirmOut')) + '</button>' +
-    '<button class="btn btn-quiet btn-block" onclick="QUICK.room=\'\';renderQuickOut()">' + esc(t('quick.back')) + '</button>';
-}
-
-function pickOutRoom(room) {
-  QUICK.room = String(room).trim();
-  const e = roomState[QUICK.room];
-  if (e && e.guests.length === 1) QUICK.name = e.guests[0].name;
-  renderQuickOut();
-}
-
-function renderQuickDamage() {
-  const box = $('quickDamage');
-  if (!box) return;
-  box.innerHTML = DAMAGE_ITEMS.map((d, i) => {
-    const on = QUICK.damage.has(i);
-    return '<button type="button" class="chip" aria-pressed="' + on + '" onclick="quickToggleDamage(' + i + ')">' +
-      '<span class="dot"></span>' + esc(L(d)) + '</button>';
-  }).join('');
-}
-function quickToggleDamage(i) {
-  QUICK.damage.has(i) ? QUICK.damage.delete(i) : QUICK.damage.add(i);
-  renderQuickDamage();
-}
-
-function quickDoCheckout() {
-  if (QUICK.busy) return;
-  const room = String(QUICK.room || '').trim();
-  if (!room) return;
-  const nameInput = $('quickOutName');
-  let name = (nameInput && nameInput.value.trim().toUpperCase()) || '';
-  const e = roomState[room];
-  if (!name && e && e.guests.length) name = e.guests[0].name;
-  if (!name) name = LANG === 'en' ? 'WALK-IN' : 'KHÁCH LẺ';
-
-  QUICK.busy = true;
-  const broken = [...QUICK.damage].map(i => DAMAGE_ITEMS[i] ? DAMAGE_ITEMS[i].vi : '').filter(Boolean);
-
-  delete roomState[room];
-  pushBackground({
-    type:'TRẢ PHÒNG', room, name, brokenAssets: broken.join(', '), note:'',
-    txnId: makeTxnId('OUT', room, name), clientLang: LANG, actor:'reception'
-  }, { critical: true });
-
-  QUICK.busy = false;
-  QUICK.damage = new Set();
-  QUICK.done = t('quick.done.out', { room });
-  QUICK.room = '';
-
-  renderAdmin(); renderRibbon(); updateStats(); renderGuestTab(); renderQuickbar(); renderQuickbar();
-  renderQuickOut();
-}
-
-/* --- cleaning --- */
-function renderQuickClean() {
-  const waiting = Object.values(roomState)
-    .filter(e => { const c = getRoomConfig(e.room); return c && c.active && (e.status === 'dirty' || e.status === 'late'); })
-    .sort((a, b) => parseInt(a.room) - parseInt(b.room));
-
-  if (!QUICK.room) {
-    $('quickBody').innerHTML =
-      (QUICK.done ? '<div class="qdone">' + ico('i-check') + '<span>' + esc(QUICK.done) + '</span></div>' : '') +
-      (waiting.length
-        ? '<div class="qroom-grid">' + waiting.map(e =>
-            '<button class="qroom" data-s="' + e.status + '" onclick="pickCleanRoom(\'' + e.room + '\')">' +
-              '<span class="qroom-no">' + esc(e.room) + '</span>' +
-              '<span class="qroom-who">' + esc(e.guests.length ? e.guests[0].name : t('status.' + e.status)) + '</span>' +
-            '</button>').join('') + '</div>'
-        : '<div class="qempty">' + ico('i-broom', 'ico') + '<p style="margin-top:8px;font-weight:600;color:var(--ink-2)">' +
-          esc(t('quick.emptyClean')) + '</p><p style="margin-top:4px;font-size:12px">' + esc(t('quick.emptyCleanSub')) + '</p></div>');
-    $('quickFoot').innerHTML = '<button class="btn btn-ghost btn-block" onclick="closeQuick()">' + esc(t('quick.close')) + '</button>';
-    return;
-  }
-
-  const e = roomState[QUICK.room] || {};
-  $('quickBody').innerHTML =
-    '<div class="result" style="margin-bottom:11px"><div class="kv" style="padding:12px 14px">' +
-      '<span class="kv-k">' + esc(t('lookup.room')) + '</span><span class="kv-v big">' + esc(QUICK.room) + '</span></div>' +
-      '<div class="kv" style="padding:12px 14px"><span class="kv-k">' + esc(t('lookup.guest')) + '</span>' +
-      '<span class="kv-v">' + esc(e.guests && e.guests.length ? e.guests.map(g => g.name).join(', ') : '—') + '</span></div></div>' +
-    '<div class="notice">' + ico('i-info') + '<span>' + esc(t('msg.cleanBody', { room: QUICK.room })) + '</span></div>';
-
-  $('quickFoot').innerHTML =
-    '<button class="btn btn-primary btn-block btn-lg" onclick="quickDoClean()">' + ico('i-check', 'ico ico-sm') + esc(t('quick.confirmClean')) + '</button>' +
-    '<button class="btn btn-quiet btn-block" onclick="QUICK.room=\'\';renderQuickClean()">' + esc(t('quick.back')) + '</button>';
-}
-
-function pickCleanRoom(room) { QUICK.room = String(room).trim(); renderQuickClean(); }
-
-function quickDoClean() {
-  if (QUICK.busy || !QUICK.room) return;
-  const room = QUICK.room;
-  QUICK.busy = true;
-  delete roomState[room];
-  pushBackground({ type:'cleanRoom', room, name:'Quản lý', txnId: makeTxnId('CLEAN', room, 'QL'), actor:'reception' });
-  QUICK.busy = false;
-  QUICK.done = t('quick.done.clean', { room });
-  QUICK.room = '';
-  renderAdmin(); renderRibbon(); updateStats(); renderGuestTab(); renderQuickbar(); renderQuickbar();
-  renderQuickClean();
-}
-
-function renderQuickbar() {
-  const n = Object.values(roomState).filter(e => {
-    const c = getRoomConfig(e.room);
-    return c && c.active && (e.status === 'dirty' || e.status === 'late');
-  }).length;
-  const badge = $('qDirtyCount');
-  if (!badge) return;
-  badge.textContent = n;
-  badge.classList.toggle('hidden', n === 0);
-}
-
-/* ---------------- qr ---------------- */
-let qrLibPromise = null;
-function ensureQrLib() {
-  if (window.Html5Qrcode) return Promise.resolve(true);
-  if (qrLibPromise) return qrLibPromise;
-  qrLibPromise = new Promise(function (resolve) {
-    var s = document.createElement('script');
-    s.src = 'https://unpkg.com/html5-qrcode@2.3.8';
-    s.async = true;
-    s.onload = function () { resolve(!!window.Html5Qrcode); };
-    s.onerror = function () { qrLibPromise = null; resolve(false); };
-    document.head.appendChild(s);
-    setTimeout(function () { resolve(!!window.Html5Qrcode); }, 9000);
-  });
-  return qrLibPromise;
-}
-
-async function openQRScanner() {
-  $('qrModal').hidden = false;
-  $('qr-fallback-panel').classList.add('hidden');
-  $('qr-camera-box').classList.remove('hidden');
-  $('qr-upload').value = '';
-  $('qr-camera-snap').value = '';
-  await new Promise(r => setTimeout(r, 120));
-  const ready = await ensureQrLib();
-  if (!ready) {
-    $('qr-camera-box').classList.add('hidden');
-    $('qr-fallback-panel').classList.remove('hidden');
-    return;
-  }
-  startCamera();
-}
-async function startCamera() {
-  try {
-    if (!html5QrCode) html5QrCode = new Html5Qrcode('qr-reader');
-    if (html5QrCode.isScanning) await html5QrCode.stop().catch(() => {});
-    const scanCfg = { fps: 12, qrbox: (w, h) => { const m = Math.min(w, h); const s = Math.floor(m * 0.72); return { width:s, height:s }; } };
-    try { await html5QrCode.start({ facingMode:'environment' }, scanCfg, onScanSuccess); return; } catch (e) {}
-    const cams = await Html5Qrcode.getCameras().catch(() => []);
-    if (cams && cams.length) { await html5QrCode.start(cams[cams.length - 1].id, scanCfg, onScanSuccess); return; }
-    await html5QrCode.start({ facingMode:'user' }, scanCfg, onScanSuccess);
-  } catch (e) {
-    $('qr-camera-box').classList.add('hidden');
-    $('qr-fallback-panel').classList.remove('hidden');
-  }
-}
-function closeQRScanner() {
-  $('qrModal').hidden = true;
-  if (html5QrCode && html5QrCode.isScanning) html5QrCode.stop().catch(() => {});
-}
-function scanImage(ev) {
-  const file = ev.target.files && ev.target.files[0];
-  if (!file) return;
-  setLoading(true, t('msg.loadingLookup'));
-  const reader = new FileReader();
-  reader.onload = e => {
-    const img = new Image();
-    img.onload = () => {
-      const cv = document.createElement('canvas');
-      let w = img.width, h = img.height;
-      const max = 1000;
-      if (w > max || h > max) { if (w > h) { h = Math.round(h * max / w); w = max; } else { w = Math.round(w * max / h); h = max; } }
-      cv.width = w; cv.height = h;
-      cv.getContext('2d').drawImage(img, 0, 0, w, h);
-      cv.toBlob(blob => {
-        const f = new File([blob], file.name || 'qr.jpg', { type:'image/jpeg' });
-        if (!html5QrCode) html5QrCode = new Html5Qrcode('qr-reader');
-        const p = html5QrCode.isScanning ? html5QrCode.stop().catch(() => {}) : Promise.resolve();
-        p.then(() => html5QrCode.scanFile(f, true))
-         .then(txt => { setLoading(false); onScanSuccess(txt); })
-         .catch(() => { setLoading(false); showInfo(t('msg.qrFail'), t('msg.qrFailBody'), 'err'); });
-      }, 'image/jpeg', 0.85);
-    };
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
-}
-function onScanSuccess(txt) {
-  closeQRScanner();
-  $('searchEmpId').value = (extractSearchCandidates(txt)[0] || txt);
-  showView('lookupView');
-  setTimeout(searchRoom, 80);
-}
-
-/* ---------------- handbook ---------------- */
-function renderHandbook() {
-  const box = $('handbookBody');
-  if (!box) return;
-  const cards = HANDBOOK.map(sec => {
-    let body = '';
-    if (sec.rows) {
-      body += '<div style="display:flex;flex-direction:column;gap:2px">' + sec.rows.map(r =>
-        '<div class="kv" style="padding:8px 0"><span class="kv-k">' + esc(L(r)) + '</span><span class="kv-v" style="font-family:var(--font-mono)">' + esc(r.v) + '</span></div>'
-      ).join('') + '</div>';
-    }
-    if (sec.bullets) {
-      body += '<ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:7px">' + sec.bullets.map(b =>
-        '<li style="font-size:13px;color:var(--ink-3)">' + esc(L(b)) + '</li>'
-      ).join('') + '</ul>';
-    }
-    if (sec.note) {
-      body += '<p style="margin-top:10px;font-size:12px;color:var(--ink-4);line-height:1.5;border-top:1px solid var(--line-2);padding-top:9px">' + esc(L(sec.note)) + '</p>';
-    }
-    return '<div class="panel panel-pad">' +
-      '<div style="display:flex;align-items:center;gap:9px;margin-bottom:10px">' +
-        '<span style="width:30px;height:30px;border-radius:8px;background:var(--bg);display:grid;place-items:center;color:var(--ink-2)">' + ico(sec.icon, 'ico ico-sm') + '</span>' +
-        '<p style="font-family:var(--font-display);font-weight:600;font-size:14px">' + esc(L(sec.title)) + '</p></div>' + body + '</div>';
-  }).join('');
-
-  const prices = '<div class="panel panel-pad">' +
-    '<div style="display:flex;align-items:center;gap:9px;margin-bottom:10px">' +
-      '<span style="width:30px;height:30px;border-radius:8px;background:var(--bg);display:grid;place-items:center;color:var(--ink-2)">' + ico('i-cash','ico ico-sm') + '</span>' +
-      '<p style="font-family:var(--font-display);font-weight:600;font-size:14px">' + esc(t('handbook.price')) + '</p></div>' +
-    PRICE_ROWS.map(p => '<div class="kv" style="padding:8px 0"><span class="kv-k">' + esc(L(p)) + '</span>' +
-      '<span class="kv-v" style="font-family:var(--font-mono);font-size:12.5px;color:var(--brand-ink)">' + esc(p.p) + '</span></div>').join('') +
-    '</div>';
-
-  box.innerHTML = cards + prices;
-}
-
-/* ---------------- reset / init ---------------- */
-function resetApp() {
-  ['searchEmpId','inName','inRoom','inNote','outName','outRoom','outNote','fbRoom','fbName','fbNote']
-    .forEach(id => { const el = $(id); if (el) el.value = ''; });
-  outDamage = new Set();
-  $('lookupResult').classList.add('hidden');
-  $('manualInputsBox').classList.add('hidden');
-  $('displayRoomNo').textContent = '---';
-  $('displayGuestName').textContent = '';
-  $('assetList').innerHTML = '';
-  $('assetContainer').classList.add('hidden');
-  $('outRoomHint').textContent = '';
-  updateRoomBadge('');
-  currentUser = null;
-  setRating(5);
-  renderOutDamage();
-  $('adminRoot').classList.add('hidden');
-  $('guestRoot').classList.remove('hidden');
-  showView('homeView');
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  try {
-    const saved = localStorage.getItem(LANG_KEY);
-    LANG = (saved === 'vi' || saved === 'en') ? saved
-      : ((navigator.language || 'vi').toLowerCase().startsWith('vi') ? 'vi' : 'en');
-  } catch (e) { LANG = 'vi'; }
-
-  const params = new URLSearchParams(location.search);
-  const wanted = params.get('lang');
-  if (wanted === 'en' || wanted === 'vi') LANG = wanted;
-
-  applyLanguage();
-  setRating(5);
-  renderOutDamage();
-  syncBanners();
-  renderPending();
-  loadSaverPref();
-  initGuestCache();
-  applySaverState();
-  flushQueue(true).catch(() => {});
-
-  $('btnConfirmClean').addEventListener('click', confirmClean);
-  $('pinInput').addEventListener('keydown', e => { if (e.key === 'Enter') verifyPin(); });
-  $('searchEmpId').addEventListener('keydown', e => { if (e.key === 'Enter') searchRoom(); });
-
-  window.addEventListener('online', () => flushQueue(false).catch(() => {}));
-  setInterval(() => { if (!document.hidden && readQueue().length) flushQueue(true).catch(() => {}); }, 30000);
-  setInterval(() => {
-    if (dataSaver) return;                  // tiết kiệm dữ liệu: bỏ hẳn vòng làm mới nền
-    if (document.hidden) return;
-    if (Date.now() - guestListSyncedAt > 240000) syncGuests(false, 20000).catch(() => {});
-  }, 60000);
-
-  const code = params.get('code') || params.get('stayCode') || params.get('id') || params.get('room') || params.get('emp');
-  if (code) {
-    $('searchEmpId').value = code;
-    showView('lookupView');
-    setTimeout(searchRoom, 250);
-  }
-});
-</script>
-<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","spa":2}' crossorigin="anonymous"></script>
-</body>
-</html>
