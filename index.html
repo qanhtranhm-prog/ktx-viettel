@@ -1417,6 +1417,8 @@ vi:{
   'lookup.already':'Bạn đã nhận phòng','lookup.alreadySub':'Thông tin đã được ghi nhận — không cần xác nhận lại',
   'lookup.checkedAt':'Đã nhận lúc {time}','lookup.alreadyBody':'Bạn đã nhận phòng {room} lúc {time}. Không cần xác nhận lại.',
   'lookup.checkedOut':'Bạn đã trả phòng','lookup.checkedOutSub':'Phòng đã được trả lúc {time}',
+  'lookup.multiStay':'Có {n} lượt lưu trú — đang hiển thị lượt gần nhất',
+  'lookup.staleWarn':'Đang dùng dữ liệu lưu tạm, có thể chưa cập nhật — bấm tra cứu lại khi có mạng',
   'quick.alreadyIn':'{name} đã nhận phòng {room} rồi',
   'saver.hint':'Chỉ tải danh sách khách khi bấm tra cứu. Sơ đồ phòng làm mới mỗi 60 giây.',
   'saver.offHint':'Tải danh sách khách ngay khi mở trang. Sơ đồ phòng làm mới mỗi 15 giây.',
@@ -1522,6 +1524,8 @@ en:{
   'lookup.already':'You are already checked in','lookup.alreadySub':'Recorded — no need to confirm again',
   'lookup.checkedAt':'Checked in at {time}','lookup.alreadyBody':'You checked into room {room} at {time}. No need to confirm again.',
   'lookup.checkedOut':'You have checked out','lookup.checkedOutSub':'Room returned at {time}',
+  'lookup.multiStay':'{n} stays on record — showing the latest',
+  'lookup.staleWarn':'Showing saved data, may be out of date — search again when online',
   'quick.alreadyIn':'{name} is already checked into {room}',
   'saver.hint':'Loads the guest list only when you search. Room map refreshes every 60 seconds.',
   'saver.offHint':'Loads the guest list as soon as the page opens. Room map refreshes every 15 seconds.',
@@ -1906,6 +1910,19 @@ function cleanStamp(v) {
   }
   return raw;
 }
+function normStatus(v) {
+  const s = normalizeText(v).replace(/\s+/g,' ').trim();
+  if (!s) return '';
+  if (/^CHECKED ?OUT$|DA TRA|TRA PHONG|DA VE|CHECKOUT/.test(s)) return 'checkedout';
+  if (/^CHECKED ?IN$|DA NHAN|NHAN PHONG|DA DEN|CHECKIN/.test(s)) return 'checkedin';
+  if (/^BOOKED$|^DAT$|^DAT PHONG$|CHO NHAN/.test(s)) return 'booked';
+  return '';
+}
+function stampMs(s) {
+  const m = String(s == null ? '' : s).match(/(\d{2})\/(\d{2})\/(\d{4})(?:[\s.]+(\d{2})[.:](\d{2})[.:](\d{2}))?/);
+  if (!m) return 0;
+  return new Date(+m[3], +m[2] - 1, +m[1], +(m[4] || 0), +(m[5] || 0), +(m[6] || 0)).getTime();
+}
 function normalizeGuestRecord(g) {
   if (!g || typeof g !== 'object') return null;
   let id = '', name = '', room = '', inDate = '', outDate = '', eventText = '', ho = '', ten = '';
@@ -1922,8 +1939,11 @@ function normalizeGuestRecord(g) {
     if (ck === 'ho' || ck === 'hodem') ho = val;
     if (ck === 'ten' && !name) ten = val;
     if (!room && ['room','phong','sophong','phongo','phongktx','vitri','roomno','roomnumber'].includes(ck)) room = val;
-    if (!inDate && ['in','ngayvao','ngayden','tungay','den','checkindate','arrival'].includes(ck)) inDate = val;
-    if (!outDate && ['out','ngayra','ngaydi','denngay','checkoutdate','departure'].includes(ck)) outDate = val;
+    if (!inDate && ['in','ngayvao','ngayden','tungay','den','checkindate','arrival','dukienngayden','dukienngayvao','ngaydukien','ngaydukienvao'].includes(ck)) inDate = val;
+    if (!outDate && ['out','ngayra','ngaydi','denngay','checkoutdate','departure','dukienngaytra','dukienngaydi','dukienngayra','ngaydukientra','ngaytra'].includes(ck)) outDate = val;
+    const ckA = String(k || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/[^a-z0-9]/g,'');
+    if (!inDate && /ngay(den|vao)/.test(ckA) && !/tra|di|ra/.test(ckA)) inDate = val;
+    if (!outDate && /ngay(tra|di|ra)/.test(ckA)) outDate = val;
     if (!stayStatus && (ck === 'status' || ck === 'trangthai')) stayStatus = val;
     if (['checkin','gionhan','giovao','nhanphong'].includes(ck)) {
       const sp = stampsIn(val);
@@ -1951,7 +1971,8 @@ function normalizeGuestRecord(g) {
     event: String(eventText).trim(),
     checkIn: String(checkInAt).trim(),
     checkOut: String(checkOutAt).trim(),
-    status: String(stayStatus).trim() || (String(checkOutAt).trim() ? 'checkedout' : (String(checkInAt).trim() ? 'checkedin' : 'booked')),
+    row: Number(g.__row != null ? g.__row : (g.row != null ? g.row : -1)),
+    status: normStatus(stayStatus) || (String(checkOutAt).trim() ? 'checkedout' : (String(checkInAt).trim() ? 'checkedin' : 'booked')),
     haystack: raw.map(normalizeText).join(' | ')
   };
 }
@@ -1981,12 +2002,16 @@ function parseGvizRows(json) {
     const o = {};
     let any = false;
     for (let j = 0; j < head.length; j++) {
-      if (!head[j] || j > 11) continue;
+      const key = head[j];
+      if (!key || j > 15) continue;
       const v = gvizCell(t.rows[i], j);
-      if (v) any = true;
-      o[head[j]] = v;
+      if (!v) continue;
+      any = true;
+      // Sheet có thể có 2 cột cùng tên (vd "Check-in" ở I và K).
+      // Tuyệt đối không để ô rỗng của cột sau ghi đè dữ liệu thật của cột trước.
+      o[key] = o[key] ? (o[key] + ' | ' + v) : v;
     }
-    if (any) out.push(o);
+    if (any) { o.__row = i; out.push(o); }
   }
   return out;
 }
@@ -2078,28 +2103,49 @@ function extractSearchCandidates(raw) {
   return [...set].filter(Boolean);
 }
 
+function stayRank(g, todayMs) {
+  const st = (g && g.status) || 'booked';
+  const base = st === 'checkedin' ? 500 : (st === 'booked' ? 300 : 100);
+  const sMs = stampMs(g && g.checkIn) || stampMs(g && g.in) || 0;
+  let score = base + (sMs ? sMs / 1e13 : 0) + (Number(g && g.row) || 0) / 1e7;
+  return score;
+}
+function pickBestStay(list, todayMs) {
+  if (!list || !list.length) return null;
+  todayMs = todayMs || Date.now();
+  // Có lượt đặt mới quanh hôm nay mà lượt "đang ở" đã cũ >3 ngày -> ưu tiên lượt mới
+  const freshBooking = list.some(g => g.status === 'booked' && stampMs(g.in) && Math.abs(stampMs(g.in) - todayMs) < 3 * 864e5);
+  let best = null, bestScore = -Infinity;
+  for (const g of list) {
+    let sc = stayRank(g, todayMs);
+    if (freshBooking && g.status === 'checkedin' && stampMs(g.checkIn) && (todayMs - stampMs(g.checkIn)) > 3 * 864e5) sc -= 400;
+    if (sc > bestScore) { bestScore = sc; best = g; }
+  }
+  return best;
+}
 function findGuestInList(input) {
   if (!guestList.length) return null;
   const cands = Array.isArray(input) ? input : extractSearchCandidates(input);
+  const M = pred => pickBestStay(guestList.filter(pred));
   for (const c of cands) {
     const q = normalizeText(c);
     if (!q) continue;
 
-    let hit = guestList.find(g => {
+    let hit = M(g => {
       const gid = normalizeText(g.id);
       return gid && (gid === q || gid.replace(/^0+/,'') === q.replace(/^0+/,'') || gid.replace(/^(VT|NV)/,'') === q.replace(/^(VT|NV)/,''));
     });
     if (hit) return hit;
 
     if (/^[0-9A-Z\/\-]{2,}$/.test(q)) {
-      hit = guestList.find(g => {
+      hit = M(g => {
         const gr = normalizeText(g.room);
         return gr && (gr === q || gr.replace(/\D/g,'') === q.replace(/\D/g,''));
       });
       if (hit) return hit;
     }
 
-    hit = guestList.find(g => {
+    hit = M(g => {
       const gn = normalizeText(g.name);
       if (!gn) return false;
       return gn === q || (q.length >= 3 && gn.includes(q)) || (gn.length >= 5 && q.includes(gn));
@@ -2108,14 +2154,14 @@ function findGuestInList(input) {
 
     const tokens = q.split(' ').filter(x => x.length >= 2);
     if (tokens.length >= 2) {
-      hit = guestList.find(g => {
+      hit = M(g => {
         const gn = normalizeText(g.name);
         return tokens.every(tok => gn.includes(tok));
       });
       if (hit) return hit;
     }
     if (q.length >= 3) {
-      hit = guestList.find(g => (g.haystack || '').includes(q));
+      hit = M(g => (g.haystack || '').includes(q));
       if (hit) return hit;
     }
   }
@@ -2125,13 +2171,17 @@ function findGuestInList(input) {
 function initGuestCache() {
   try {
     const c = JSON.parse(localStorage.getItem(CACHE_KEY_GUESTS) || 'null');
-    if (c && Array.isArray(c.list) && c.list.length) {
-      guestList = c.list;
+    const age = c ? (Date.now() - (c.ts || 0)) : 0;
+    if (c && Array.isArray(c.list) && c.list.length && age < 30 * 60 * 1000) {
+      guestList = c.list.map(normalizeGuestRecord).filter(Boolean);
       guestListSyncedAt = c.ts || 0;
-      isGuestListLoaded = true;
+      isGuestListLoaded = !!guestList.length;
+    } else {
+      try { localStorage.removeItem(CACHE_KEY_GUESTS); } catch (e) {}
+      guestList = []; isGuestListLoaded = false;
     }
   } catch (e) {}
-  // Tiết kiệm dữ liệu: KHÔNG gọi mạng khi mở trang
+  // Tiết kiệm dữ liệu: KHÔNG gọi mạng khi mở trang (tra cứu sẽ luôn tải mới)
   if (!dataSaver) syncGuests(false, 25000).catch(() => {});
 }
 
@@ -2157,7 +2207,10 @@ async function syncGuests(show, timeoutMs) {
       guestListSyncedAt = Date.now();
       isGuestListLoaded = true;
       try {
-        const slim = guestList.map(g => ({ id:g.id, name:g.name, room:g.room, in:g.in, out:g.out, event:g.event }));
+        const slim = guestList.map(g => ({
+          id:g.id, name:g.name, room:g.room, in:g.in, out:g.out, event:g.event,
+          checkIn:g.checkIn, checkOut:g.checkOut, status:g.status, row:g.row, __row:g.row
+        }));
         localStorage.setItem(CACHE_KEY_GUESTS, JSON.stringify({ ts: guestListSyncedAt, list: slim }));
       } catch (e) {}
       return guestList;
@@ -2175,33 +2228,25 @@ async function searchRoom() {
   $('lookupResult').classList.add('hidden');
   currentUser = null;
 
-  if (isGuestListLoaded && guestList.length) {
-    const hit = findGuestInList(cands);
-    if (hit) { renderSearchResult(hit); refreshGuestsQuiet(cands); return; }
-  }
-
-  // Chế độ tiết kiệm dữ liệu: chưa có danh sách thì tải ngay từ Sheet (0,4s)
-  if (dataSaver && !guestList.length) {
-    setLoading(true, t('msg.loadingLookup'));
-    try { await syncGuests(false, 8000); } catch (e) { console.warn(e); }
-    setLoading(false);
-    const hitOne = findGuestInList(cands);
-    if (hitOne) { renderSearchResult(hitOne); return; }
-  }
-
+  // Tra cứu là thao tác chủ động -> luôn đọc dữ liệu mới từ Sheet (0,4s).
+  // Dữ liệu lưu trong máy KHÔNG bao giờ được dùng làm kết quả cuối.
   setLoading(true, t('msg.loadingLookup'));
-  let found = null, timedOut = false;
+  let fresh = false;
   try {
     await Promise.race([
       syncGuests(false, 9000),
-      new Promise(r => setTimeout(() => { timedOut = true; r(); }, 9500))
+      new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 9500))
     ]);
-    if (!timedOut) found = findGuestInList(cands);
-  } catch (e) { console.warn(e); }
+    fresh = !!(guestList && guestList.length);
+  } catch (e) { fresh = false; }
   setLoading(false);
 
-  if (found) return renderSearchResult(found);
-  if (timedOut) return showInfo(t('msg.slowTitle'), t('msg.slowBody'), 'warn', callReceptionHtml());
+  const hit = findGuestInList(cands);
+  if (hit) {
+    if (hit.name) hit.stays = guestList.filter(x => normalizeText(x.name) === normalizeText(hit.name)).length;
+    return renderSearchResult(hit, !fresh);
+  }
+  if (!fresh) return showInfo(t('msg.slowTitle'), t('msg.slowBody'), 'warn', callReceptionHtml());
   showInfo(t('msg.notFoundTitle'), t('msg.notFoundBody'), 'err', callReceptionHtml());
 }
 
@@ -2222,15 +2267,20 @@ const callReceptionHtml = () =>
 const LOCKED_ROOM_HTML = '<span class="locked">' + ico('i-lock','ico') +
   '<span>' + esc(t('lookup.locked')) + '</span></span>';
 
-function renderSearchResult(g) {
+function renderSearchResult(g, stale) {
   currentUser = g;
   const status = (g && g.status) || 'booked';
-  const room = (g && g.room) ? g.room : '—';
-  $('resName').textContent = g.name || '—';
-  $('resDates').textContent = g.event || [g.in, g.out].filter(Boolean).join(' → ') || '—';
+  const room = (g && g.room) ? g.room : '\u2014';
+  $('resName').textContent = g.name || '\u2014';
+  $('resDates').textContent = g.event || [g.in, g.out].filter(Boolean).join(' \u2192 ') || '\u2014';
 
   const roomEl = $('resRoom'), titleEl = $('resTitle'), subEl = $('resSub'),
         noticeEl = $('resNotice'), btn = $('btnConfirmCheckIn');
+
+  const extra = [];
+  if (Number(g.stays) > 1) extra.push(t('lookup.multiStay', { n: g.stays }));
+  if (stale) extra.push(t('lookup.staleWarn'));
+  const tail = extra.length ? ' \u2014 ' + extra.join(' \u00b7 ') : '';
 
   if (status === 'checkedin' || status === 'checkedout') {
     const isOut = status === 'checkedout';
@@ -2238,16 +2288,16 @@ function renderSearchResult(g) {
     if (subEl) subEl.textContent = t(isOut ? 'lookup.checkedOutSub' : 'lookup.alreadySub');
     if (roomEl) roomEl.innerHTML = '<span class="res-room">' + esc(room) + '</span>';
     if (noticeEl) {
-      noticeEl.textContent = isOut
+      noticeEl.textContent = (isOut
         ? t('lookup.checkedOutSub', { time: g.checkOut || '' })
-        : t('lookup.checkedAt', { time: g.checkIn || '' });
+        : t('lookup.checkedAt', { time: g.checkIn || '' })) + tail;
     }
     if (btn) btn.classList.add('hidden');
   } else {
     if (titleEl) titleEl.textContent = t('lookup.found');
     if (subEl) subEl.textContent = t('lookup.foundSub');
     if (roomEl) roomEl.innerHTML = LOCKED_ROOM_HTML;
-    if (noticeEl) noticeEl.textContent = t('lookup.agreeHint');
+    if (noticeEl) noticeEl.textContent = t('lookup.agreeHint') + tail;
     if (btn) btn.classList.remove('hidden');
   }
 
@@ -3565,6 +3615,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const code = params.get('code') || params.get('stayCode') || params.get('id') || params.get('room') || params.get('emp');
   if (code) {
+    resetApp();
     $('searchEmpId').value = code;
     showView('lookupView');
     setTimeout(searchRoom, 250);
